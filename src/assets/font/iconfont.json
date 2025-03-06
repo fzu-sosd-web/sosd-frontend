@@ -1,0 +1,65 @@
+{
+  "id": "4704276",
+  "name": "实验室管理主页",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1221892",
+      "name": "个人",
+      "font_class": "personal",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "5086430",
+      "name": "日历",
+      "font_class": "rili",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "5650940",
+      "name": "物资",
+      "font_class": "wuzi",
+      "unicode": "e642",
+      "unicode_decimal": 58946
+    },
+    {
+      "icon_id": "6193598",
+      "name": "活动组织",
+      "font_class": "huodongzuzhi",
+      "unicode": "e655",
+      "unicode_decimal": 58965
+    },
+    {
+      "icon_id": "7171160",
+      "name": "项目管理",
+      "font_class": "xiangmu",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "10164907",
+      "name": "图书馆",
+      "font_class": "tushuguan",
+      "unicode": "e664",
+      "unicode_decimal": 58980
+    },
+    {
+      "icon_id": "11016141",
+      "name": "资料",
+      "font_class": "ziliao",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "16270624",
+      "name": "研究生院",
+      "font_class": "yanjiushengyuan",
+      "unicode": "e6f6",
+      "unicode_decimal": 59126
+    }
+  ]
+}
