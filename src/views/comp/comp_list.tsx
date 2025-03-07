@@ -37,7 +37,7 @@ const CompetitionListPage: React.FC = () => {
   const fetchCompetitions = async () => {
     try {
       // API请求竞赛列表
-      const response = await axios.get(`${API_BASE_URL}/api/competitions`);
+      const response = await axios.get(`${API_BASE_URL}/user/competition/getAll`);
 
       if (response.data && response.data.code === 200) {
         setCompetitions(response.data.data || []);
