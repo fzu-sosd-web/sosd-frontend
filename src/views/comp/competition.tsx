@@ -27,36 +27,13 @@ import axios from 'axios'
 import sadaharu from '@/assets/sadaharu.png'
 import RegisterModal from './register_modal'
 import TeamModal from './teaminfo_modal'
+import { API_BASE_URL } from '@/constant/web';
+import { Competition, CompetitionFile } from './type'
 
 const { Title, Paragraph, Text } = Typography
 
-// 竞赛数据接口
-interface CompetitionData {
-  id: string;
-  title: string;
-  description: string;
-  participantRequirements: string;
-  coverImage: string;
-  startDate: string;
-  endDate: string;
-  status: string;
-  prizeInfo: string;
-  mentorInfo: string;
-  timelineItems: Array<{
-    title: string;
-    time: string;
-    description: string;
-    status: 'finish' | 'process' | 'wait';
-  }>;
-  files: Array<{
-    name: string;
-    key: string;
-    url: string;
-  }>;
-}
 
-// API基础URL
-const API_BASE_URL = 'http://81.68.212.127:5083';
+
 
 const CompPage = React.memo(() => {
   // 获取URL参数
@@ -66,7 +43,7 @@ const CompPage = React.memo(() => {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showTeamModal, setShowTeamModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [competition, setCompetition] = useState<CompetitionData | null>(null);
+  const [competition, setCompetition] = useState<Competition | null>(null);
 
   // 获取竞赛详情数据
   const fetchCompetitionDetails = async () => {
@@ -95,7 +72,7 @@ const CompPage = React.memo(() => {
   };
 
   // 文件下载处理函数
-  const handleFileDownload = (file: { name: string, key: string, url: string }) => {
+  const handleFileDownload = (file: CompetitionFile) => {
     // 实际项目中应该处理文件下载
     message.info(`开始下载: ${file.name}`);
     
@@ -111,50 +88,140 @@ const CompPage = React.memo(() => {
     }
   };
 
-  // 生成模拟竞赛数据
-  const getMockCompetitionData = (): CompetitionData => {
-    return {
-      id: competitionId || 'comp-default',
-      title: '2024年福州大学服务外包校赛',
-      description: '福州大学服务外包与软件设计实验室举办的校内软件设计大赛，旨在提高学生的实际项目开发能力、创新思维和团队协作精神。比赛模拟真实企业项目需求，参赛者将在有限时间内完成从需求分析到系统实现的全过程。',
-      participantRequirements: '面向福州大学全日制在校学生，不限年级和专业。每队3-5人，鼓励跨专业组队。',
-      coverImage: sadaharu,
-      startDate: '2024-04-10',
-      endDate: '2024-06-15',
-      status: 'ongoing',
-      prizeInfo: '总奖金池超过1万元',
-      mentorInfo: '行业专家一对一指导',
-      timelineItems: [
+  // 获取竞赛状态
+  const getCompetitionStatus = (comp: Competition): 'upcoming' | 'ongoing' | 'ended' => {
+    // 如果有竞赛阶段数据，尝试从中确定状态
+    if (comp.data?.competitionStages?.length > 0) {
+      // 查找进行中的阶段
+      const ongoingStage = comp.data.competitionStages.find(
+        stage => stage.status === 'process' || stage.status === 'ongoing'
+      );
+      if (ongoingStage) return 'ongoing';
+      
+      // 检查时间判断是否已结束
+      const now = new Date();
+      const endDate = new Date(comp.endDate);
+      if (endDate < now) return 'ended';
+      
+      // 否则为即将开始
+      return 'upcoming';
+    } else {
+      // 根据开始和结束日期判断
+      const now = new Date();
+      const startDate = new Date(comp.startDate);
+      const endDate = new Date(comp.endDate);
+      
+      if (now < startDate) return 'upcoming';
+      if (now > endDate) return 'ended';
+      return 'ongoing';
+    }
+  };
+
+  // 从竞赛阶段数据生成时间轴项
+  const generateTimelineItems = (comp: Competition) => {
+    if (!comp.data?.competitionStages?.length) {
+      return [
         {
           title: '报名阶段',
-          time: '4月10日-4月30日',
+          time: formatTimeRange(comp.startDate, addDays(new Date(comp.startDate), 20)),
           description: '组建团队并完成报名手续',
-          status: 'finish',
+          status: 'process' as 'finish' | 'process' | 'wait'
         },
         {
-          title: '初赛阶段',
-          time: '5月1日-5月20日',
-          description: '完成初赛作品提交',
-          status: 'process',
-        },
-        {
-          title: '决赛阶段',
-          time: '5月25日-6月10日',
-          description: '入围队伍进行决赛路演',
-          status: 'wait',
-        },
-        {
-          title: '颁奖典礼',
-          time: '6月15日',
-          description: '公布获奖名单并举行颁奖仪式',
-          status: 'wait',
+          title: '比赛阶段',
+          time: formatTimeRange(addDays(new Date(comp.startDate), 21), new Date(comp.endDate)),
+          description: '完成项目开发和提交',
+          status: 'wait' as 'finish' | 'process' | 'wait'
         }
-      ],
-      files: [
-        { name: '赛事规则.pdf', key: 'rules', url: '' },
-        { name: '评分标准.pdf', key: 'scoring', url: '' },
-        { name: '参赛指南.pdf', key: 'guide', url: '' }
-      ]
+      ];
+    }
+    
+    return comp.data.competitionStages.map(stage => {
+      // 将API返回的状态映射到Timeline需要的状态
+      let timelineStatus: 'finish' | 'process' | 'wait';
+      switch(stage.status) {
+        case 'finish':
+        case 'finished':
+          timelineStatus = 'finish';
+          break;
+        case 'process':
+        case 'ongoing':
+          timelineStatus = 'process';
+          break;
+        default:
+          timelineStatus = 'wait';
+      }
+      
+      return {
+        title: stage.description,
+        time: formatTimeRange(new Date(stage.startAt), new Date(stage.endAt)),
+        description: stage.description,
+        status: timelineStatus
+      };
+    });
+  };
+
+  // 格式化时间范围
+  const formatTimeRange = (start: Date | string, end: Date | string) => {
+    const startDate = typeof start === 'string' ? new Date(start) : start;
+    const endDate = typeof end === 'string' ? new Date(end) : end;
+    
+    return `${startDate.getMonth() + 1}月${startDate.getDate()}日-${endDate.getMonth() + 1}月${endDate.getDate()}日`;
+  };
+
+  // 日期工具：添加天数
+  const addDays = (date: Date, days: number) => {
+    const result = new Date(date);
+    result.setDate(date.getDate() + days);
+    return result;
+  };
+
+  // 生成模拟文件列表
+  const getMockFiles = (): CompetitionFile[] => {
+    return [
+      { name: '赛事规则.pdf', key: 'rules', url: '' },
+      { name: '评分标准.pdf', key: 'scoring', url: '' },
+      { name: '参赛指南.pdf', key: 'guide', url: '' }
+    ];
+  };
+
+  // 生成模拟竞赛数据
+  const getMockCompetitionData = (): Competition => {
+    return {
+      id: parseInt(competitionId || '0'),
+      name: '2025年福州大学服务外包校赛',
+      type: 'Competition',
+      description: '福州大学服务外包与软件设计实验室举办的校内软件设计大赛，旨在提高学生的实际项目开发能力、创新思维和团队协作精神。比赛模拟真实企业项目需求，参赛者将在有限时间内完成从需求分析到系统实现的全过程。',
+      data: {
+        competitionStages: [
+          {
+            startAt: '2024-04-10',
+            endAt: '2024-04-30',
+            description: '报名阶段',
+            status: 'finish'
+          },
+          {
+            startAt: '2024-05-01',
+            endAt: '2024-05-20',
+            description: '初赛阶段',
+            status: 'process'
+          },
+          {
+            startAt: '2024-05-25',
+            endAt: '2024-06-10',
+            description: '决赛阶段',
+            status: 'wait'
+          }
+        ],
+        teamMembers: 120,
+        type: 'school',
+        url: ''
+      },
+      userId: 'user-001',
+      managerId: 'manager-001',
+      startDate: '2024-04-10',
+      endDate: '2024-06-15',
+      createdAt: '2024-03-01'
     };
   };
 
@@ -184,12 +251,18 @@ const CompPage = React.memo(() => {
     );
   }
 
+  // 获取竞赛状态
+  const competitionStatus = getCompetitionStatus(competition);
+  
+  // 生成时间轴数据
+  const timelineItems = generateTimelineItems(competition);
+
   return (
     <div className="py-8 px-6 sm:px-12 md:px-24">
       {/* 赛事标题 */}
       <div className="text-center mb-8">
         <Title level={2} style={{ fontWeight: 600 }}>
-          {competition.title}
+          {competition.name}
         </Title>
         <div className="flex justify-center items-center">
           <CalendarOutlined style={{ color: '#3e97ff' }} />
@@ -205,8 +278,8 @@ const CompPage = React.memo(() => {
         <Col xs={24} md={12}>
           <div className="rounded-xl overflow-hidden shadow-lg">
             <img 
-              src={competition.coverImage || sadaharu} 
-              alt={competition.title} 
+              src={competition.data?.url || sadaharu} 
+              alt={competition.name} 
               className="w-full h-auto"
               onError={(e) => {
                 // 图片加载失败时使用默认图片
@@ -227,7 +300,7 @@ const CompPage = React.memo(() => {
             参赛对象
           </Title>
           <Paragraph style={{ fontSize: '16px', lineHeight: '1.8' }}>
-            {competition.participantRequirements}
+            面向福州大学全日制在校学生，不限年级和专业。每队3-5人，鼓励跨专业组队。
           </Paragraph>
 
           <div className="flex flex-wrap gap-6 mt-6">
@@ -235,14 +308,14 @@ const CompPage = React.memo(() => {
               <TrophyOutlined style={{ fontSize: '24px', color: '#3e97ff' }} />
               <div className="ml-3">
                 <div className="text-base font-medium">丰厚奖金</div>
-                <div className="text-sm text-gray-500">{competition.prizeInfo}</div>
+                <div className="text-sm text-gray-500">总奖金池超过1万元</div>
               </div>
             </div>
             <div className="flex items-center">
               <TeamOutlined style={{ fontSize: '24px', color: '#3e97ff' }} />
               <div className="ml-3">
                 <div className="text-base font-medium">企业导师</div>
-                <div className="text-sm text-gray-500">{competition.mentorInfo}</div>
+                <div className="text-sm text-gray-500">行业专家一对一指导</div>
               </div>
             </div>
           </div>
@@ -262,7 +335,7 @@ const CompPage = React.memo(() => {
           >
             <List
               itemLayout="horizontal"
-              dataSource={competition.files}
+              dataSource={getMockFiles()}
               renderItem={(item) => (
                 <List.Item
                   actions={[
@@ -304,7 +377,7 @@ const CompPage = React.memo(() => {
                 icon={<FormOutlined />}
                 className="px-8 h-12 text-lg font-medium"
                 onClick={() => setShowRegisterModal(true)}
-                disabled={competition.status === 'ended'}
+                disabled={competitionStatus === 'ended'}
               >
                 立即报名
               </Button>
@@ -332,7 +405,7 @@ const CompPage = React.memo(() => {
           <div className="horizontal-timeline">
             <Timeline
               mode="alternate"
-              items={competition.timelineItems.map((item, index) => ({
+              items={timelineItems.map((item, index) => ({
                 color: item.status === 'wait' ? 'gray' : '#3e97ff',
                 children: (
                   <div
@@ -360,7 +433,7 @@ const CompPage = React.memo(() => {
       <RegisterModal 
         visible={showRegisterModal} 
         onCancel={() => setShowRegisterModal(false)} 
-        competitionId={competition.id}
+        competitionId={competition.id.toString()}
       />
       
       {/* 队伍弹窗 */}

@@ -23,24 +23,9 @@ import axios from 'axios';
 import './comp_list.css';
 import schoolcomp2025 from '@/assets/2025schoolcomp.png'
 import { API_BASE_URL } from '@/constant/web';
+import { Competition } from './type';
 
 const { Title, Text, Paragraph } = Typography;
-
-// 竞赛接口定义
-interface Competition {
-  id: string;
-  title: string;
-  description: string;
-  coverImage: string;
-  startDate: string;
-  endDate: string;
-  status: 'upcoming' | 'ongoing' | 'ended';
-  participantsCount: number;
-  level: string; // 校级、省级、国家级等
-}
-
-// API基础URL
-
 
 const CompetitionListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -69,8 +54,38 @@ const CompetitionListPage: React.FC = () => {
     }
   };
 
+  // 获取竞赛当前状态
+  const getCompetitionStatus = (comp: Competition) => {
+    // 如果有竞赛阶段数据，尝试从中确定状态
+    if (comp.data?.competitionStages?.length > 0) {
+      // 查找进行中的阶段
+      const ongoingStage = comp.data.competitionStages.find(
+        stage => stage.status === 'process' || stage.status === 'ongoing'
+      );
+      if (ongoingStage) return 'ongoing';
+      
+      // 检查时间判断是否已结束
+      const now = new Date();
+      const endDate = new Date(comp.endDate);
+      if (endDate < now) return 'ended';
+      
+      // 否则为即将开始
+      return 'upcoming';
+    } else {
+      // 根据开始和结束日期判断
+      const now = new Date();
+      const startDate = new Date(comp.startDate);
+      const endDate = new Date(comp.endDate);
+      
+      if (now < startDate) return 'upcoming';
+      if (now > endDate) return 'ended';
+      return 'ongoing';
+    }
+  };
+
   // 生成竞赛状态标签
-  const getStatusTag = (status: string) => {
+  const getStatusTag = (comp: Competition) => {
+    const status = getCompetitionStatus(comp);
     switch(status) {
       case 'upcoming':
         return <Tag color="blue">即将开始</Tag>;
@@ -84,8 +99,10 @@ const CompetitionListPage: React.FC = () => {
   };
   
   // 生成竞赛级别标签
-  const getLevelTag = (level: string) => {
-    switch(level) {
+  const getLevelTag = (comp: Competition) => {
+    // 从data.type获取竞赛级别
+    const level = comp.data?.type || 'unknown';
+    switch(level.toLowerCase()) {
       case 'school':
         return <Tag color="purple">校级</Tag>;
       case 'province':
@@ -95,61 +112,143 @@ const CompetitionListPage: React.FC = () => {
       case 'international':
         return <Tag color="volcano">国际级</Tag>;
       default:
-        return null;
+        return <Tag>{level}</Tag>;
     }
   };
 
   // 跳转到竞赛详情页
-  const navigateToCompetition = (compId: string) => {
+  const navigateToCompetition = (compId: number) => {
     navigate(`/competition/${compId}`);
+  };
+
+  // 获取竞赛封面图片
+  const getCoverImage = (comp: Competition) => {
+    // 如果有URL就使用，否则使用默认图片
+    return comp.data?.url || schoolcomp2025;
+  };
+
+  // 获取参与人数
+  const getParticipantsCount = (comp: Competition) => {
+    // 使用data.teamMembers或默认值
+    return comp.data?.teamMembers || 0;
   };
 
   // 生成模拟数据（仅开发环境使用）
   const generateMockCompetitions = (): Competition[] => {
     return [
       {
-        id: 'comp-1',
-        title: '2025年福州大学服务外包与软件设计校赛',
+        id: 1,
+        name: '2025年福州大学服务外包与软件设计校赛',
+        type: 'Competition',
         description: '以"创新驱动发展，软件定义未来"为主题，面向全校学生，培养创新能力和团队协作精神的校级软件设计竞赛。',
-        coverImage: schoolcomp2025,
+        data: {
+          competitionStages: [
+            {
+              startAt: '2024-04-10',
+              endAt: '2024-04-30',
+              description: '报名阶段',
+              status: 'finish'
+            },
+            {
+              startAt: '2024-05-01',
+              endAt: '2024-05-20',
+              description: '初赛阶段',
+              status: 'process'
+            },
+            {
+              startAt: '2024-05-25',
+              endAt: '2024-06-10',
+              description: '决赛阶段',
+              status: 'wait'
+            }
+          ],
+          teamMembers: 120,
+          type: 'school',
+          url: schoolcomp2025
+        },
+        userId: 'user-001',
+        managerId: 'manager-001',
         startDate: '2024-04-10',
         endDate: '2024-06-15',
-        status: 'ongoing',
-        participantsCount: 120,
-        level: 'school'
+        createdAt: '2024-03-01'
       },
       {
-        id: 'comp-2',
-        title: '2024年中国大学生计算机设计大赛(福建赛区)',
+        id: 2,
+        name: '2024年中国大学生计算机设计大赛(福建赛区)',
+        type: 'Competition',
         description: '旨在培养大学生创新能力和团队协作精神，提升专业综合素质，鼓励学生运用信息技术解决实际问题。',
-        coverImage: 'https://placehold.co/800x450/36cfc9/ffffff?text=计算机设计大赛',
+        data: {
+          competitionStages: [
+            {
+              startAt: '2024-05-20',
+              endAt: '2024-06-10',
+              description: '报名阶段',
+              status: 'wait'
+            }
+          ],
+          teamMembers: 350,
+          type: 'province',
+          url: schoolcomp2025
+        },
+        userId: 'user-002',
+        managerId: 'manager-002',
         startDate: '2024-05-20',
         endDate: '2024-07-30',
-        status: 'upcoming',
-        participantsCount: 350,
-        level: 'province'
+        createdAt: '2024-03-10'
       },
       {
-        id: 'comp-3',
-        title: '2024年全国大学生软件创新大赛',
+        id: 3,
+        name: '2024年全国大学生软件创新大赛',
+        type: 'Competition',
         description: '以推动软件技术创新与应用为主题，激发大学生创新思维和实践能力，推动产学研合作的全国性赛事。',
-        coverImage: 'https://placehold.co/800x450/722ed1/ffffff?text=软件创新大赛',
+        data: {
+          competitionStages: [
+            {
+              startAt: '2024-03-01',
+              endAt: '2024-04-15',
+              description: '报名阶段',
+              status: 'finish'
+            },
+            {
+              startAt: '2024-04-16',
+              endAt: '2024-09-30',
+              description: '比赛阶段',
+              status: 'process'
+            }
+          ],
+          teamMembers: 560,
+          type: 'national',
+          url: schoolcomp2025
+        },
+        userId: 'user-003',
+        managerId: 'manager-003',
         startDate: '2024-03-01',
         endDate: '2024-09-30',
-        status: 'ongoing',
-        participantsCount: 560,
-        level: 'national'
+        createdAt: '2024-01-15'
       },
       {
-        id: 'comp-4',
-        title: '2023年ACM程序设计大赛',
+        id: 4,
+        name: '2023年ACM程序设计大赛',
+        type: 'Competition',
         description: '面向大学生的国际性程序设计竞赛，旨在考察参赛者的算法设计与实现能力，提高编程技能和团队协作能力。',
-        coverImage: 'https://placehold.co/800x450/ff4d4f/ffffff?text=ACM大赛',
+        data: {
+          competitionStages: [
+            {
+              startAt: '2023-10-15',
+              endAt: '2023-12-20',
+              description: '比赛阶段',
+              status: 'finish'
+            }
+          ],
+          teamMembers: 210,
+          type: 'international',
+          url: schoolcomp2025
+        },
+        userId: 'user-004',
+        managerId: 'manager-004',
         startDate: '2023-10-15',
         endDate: '2023-12-20',
-        status: 'ended',
-        participantsCount: 210,
-        level: 'international'
+        createdAt: '2023-09-01'
       }
     ];
   };
@@ -193,12 +292,15 @@ const CompetitionListPage: React.FC = () => {
                 <Col xs={24} md={8}>
                   <div className="comp-image-container">
                     <img 
-                      src={comp.coverImage} 
-                      alt={comp.title} 
+                      src={getCoverImage(comp)} 
+                      alt={comp.name} 
                       className="comp-cover-image"
+                      onError={(e) => {
+                        e.currentTarget.src = schoolcomp2025;
+                      }}
                     />
                     <div className="comp-status-tag">
-                      {getStatusTag(comp.status)}
+                      {getStatusTag(comp)}
                     </div>
                   </div>
                 </Col>
@@ -206,10 +308,10 @@ const CompetitionListPage: React.FC = () => {
                   <div className="comp-content">
                     <div className="comp-header">
                       <Title level={4} className="comp-title">
-                        {comp.title}
+                        {comp.name}
                       </Title>
                       <Space size={4}>
-                        {getLevelTag(comp.level)}
+                        {getLevelTag(comp)}
                       </Space>
                     </div>
                     
@@ -227,7 +329,7 @@ const CompetitionListPage: React.FC = () => {
                       </div>
                       <div className="comp-meta-item">
                         <TeamOutlined /> 
-                        <span>{comp.participantsCount} 人已参与</span>
+                        <span>{getParticipantsCount(comp)} 人已参与</span>
                       </div>
                     </div>
                     
