@@ -7,11 +7,11 @@ import './assets/font/iconfont.css'
 
 // 直接导入页面组件
 import LoginPage from './views/login'
-import RegisterPage from './views/register'
 import HomePage from './views/home'
 import CompPage from './views/comp/competition'
 import MainLayout from './components/main-layout'
 import ProfilePage from './views/profile'
+import CompetitionListPage from './views/comp/comp_list'
 // import PersonPage from './views/personal'
 
 const App = () => {
@@ -20,7 +20,7 @@ const App = () => {
       <Routes>
         {/* 登录/注册页面，没有HeaderBar */}
         <Route path={RoutePath.Login} element={<LoginPage />} />
-        <Route path={RoutePath.Register} element={<RegisterPage />} />
+        <Route path={RoutePath.Register} element={<LoginPage />} />
 
         {/* 使用MainLayout的页面 */}
         <Route element={<MainLayout />}>
@@ -29,6 +29,7 @@ const App = () => {
           <Route path={RoutePath.Home} element={<HomePage />} />
           <Route path={RoutePath.Competition} element={<CompPage />} />
           <Route path={RoutePath.Profile} element={<ProfilePage />} />
+          <Route path={RoutePath.CompetitionList} element={<CompetitionListPage/>}> </Route>
           {/* 404页面 */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>

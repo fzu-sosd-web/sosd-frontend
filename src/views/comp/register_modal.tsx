@@ -26,9 +26,10 @@ const { TextArea } = Input;
 interface RegisterModalProps {
   visible: boolean;
   onCancel: () => void;
+  competitionId: string;
 }
 
-const RegisterModal: React.FC<RegisterModalProps> = ({ visible, onCancel }) => {
+const RegisterModal: React.FC<RegisterModalProps> = ({ visible, onCancel, competitionId }) => {
   const [form] = Form.useForm();
 
   const handleSubmit = (values: any) => {

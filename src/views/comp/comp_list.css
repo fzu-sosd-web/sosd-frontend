@@ -1,0 +1,123 @@
+.comp-list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 16px;
+  }
+  
+  .comp-list-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  
+  .header-description {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.65);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+  }
+  
+  .comp-cards {
+    margin-top: 24px;
+  }
+  
+  .comp-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .comp-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  }
+  
+  .comp-image-container {
+    position: relative;
+    height: 100%;
+    min-height: 180px;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  
+  .comp-cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .comp-card:hover .comp-cover-image {
+    transform: scale(1.05);
+  }
+  
+  .comp-status-tag {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1;
+  }
+  
+  .comp-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+  }
+  
+  .comp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  
+  .comp-title {
+    margin: 0;
+    margin-right: 12px;
+  }
+  
+  .comp-description {
+    color: rgba(0, 0, 0, 0.65);
+    margin-bottom: 16px;
+    flex-grow: 1;
+  }
+  
+  .comp-meta {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+  }
+  
+  .comp-meta-item {
+    margin-right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .comp-action {
+    margin-top: auto;
+  }
+  
+  @media (max-width: 768px) {
+    .comp-image-container {
+      margin-bottom: 16px;
+    }
+    
+    .comp-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .comp-title {
+      margin-right: 0;
+      margin-bottom: 8px;
+    }
+  }

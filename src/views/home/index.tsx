@@ -25,6 +25,8 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { routes } from '@/routes'
 import { RoutePath } from '@/constant/routes'
 
+import schoolcomp2025 from '@/assets/2025schoolcomp.png'
+
 const { Title, Paragraph, Text } = Typography
 
 const HomePage = React.memo(() => {
@@ -227,7 +229,7 @@ const HomePage = React.memo(() => {
                   >
                     <img
                       alt="校赛封面"
-                      src={sosd}
+                      src={schoolcomp2025}
                       style={{
                         width: '100%',
                         objectFit: 'cover',
@@ -269,7 +271,7 @@ const HomePage = React.memo(() => {
                   <div style={{ textAlign: 'right' }}>
                     <Button
                       type="primary"
-                      onClick={() => navigate(RoutePath.Competition)}
+                      onClick={() => navigate(RoutePath.CompetitionList)}
                       size="middle"
                     >
                       立即参加
