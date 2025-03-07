@@ -29,6 +29,7 @@ import type { UploadProps } from 'antd'
 import type { RcFile, UploadFile } from 'antd/es/upload/interface'
 
 import './index.css' // 创建新的CSS文件
+import { useLoginStore } from '@/store/login'
 
 const { Title, Text } = Typography
 const { Option } = Select
@@ -49,6 +50,7 @@ interface UserData {
 const ProfilePage: React.FC = () => {
   const [form] = Form.useForm()
   const [editing, setEditing] = useState(false)
+  const userInfo = useLoginStore((state) => state.userInfo)
   const [userData, setUserData] = useState<UserData>({
     id: 'usr123456789',
     email: 'student@fzu.edu.cn',
@@ -67,16 +69,29 @@ const ProfilePage: React.FC = () => {
     // 重置表单以消除潜在的自动填充影响
     form.resetFields()
 
-    // 这里可以添加API调用来获取用户数据
-    form.setFieldsValue({
-      name: userData.name,
-      email: userData.email,
-      gender: userData.gender,
-      qq: userData.qq,
-      mobile: userData.mobile,
-      major: userData.major,
-      studentId: userData.studentId,
-    })
+    console.log(userInfo)
+    if (userInfo) {
+      form.setFieldsValue({
+        name: userInfo.name,
+        email: userInfo.email,
+        gender: userInfo.gender,
+        qq: userInfo.qq,
+        mobile: userInfo.mobile,
+        major: userInfo.major,
+        studentId: userInfo.studentId,
+      })
+    } else {
+      // 这里可以添加API调用来获取用户数据
+      form.setFieldsValue({
+        name: userData.name,
+        email: userData.email,
+        gender: userData.gender,
+        qq: userData.qq,
+        mobile: userData.mobile,
+        major: userData.major,
+        studentId: userData.studentId,
+      })
+    }
   }, [userData, form])
 
   const handleSubmit = (values: any) => {

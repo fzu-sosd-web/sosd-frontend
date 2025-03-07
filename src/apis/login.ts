@@ -1,9 +1,9 @@
 import { request } from '@/request'
-import { IUserInfo } from '@/types'
+import { IUserInfo, ILoginInfo } from '@/types'
 
 const baseURL = '/user'
-export const login = () => {
-  return request.get<IUserInfo>(`${baseURL}/login`)
+export const login = (form: any) => {
+  return request.post<ILoginInfo>(`${baseURL}/login`, form)
 }
 
 export const fetchIUserInfo = () => {

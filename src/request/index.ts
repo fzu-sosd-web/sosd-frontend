@@ -34,10 +34,8 @@ export const request = createRequest({
   },
   onResponse: async (res) => {
     const { code } = res.data || {}
-    const msg = ERROR_CODE_MAP[code] || res.data.msg || ERROR_CODE_MAP.default
     const result: IResult = {
-      success: code == ResponseResultCode.Success,
-      message: msg,
+      success: res.status == 200,
       ...res.data,
     }
     if (code == ResponseResultCode.NotPermission) {

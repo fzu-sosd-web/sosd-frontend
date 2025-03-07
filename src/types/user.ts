@@ -46,6 +46,12 @@ export type IUserInfo = {
   token: string
 }
 
+/**登录信息 */
+export interface ILoginInfo {
+  userInfo: IUserInfo
+  token: string
+}
+
 /** 用户登录表单 */
 export interface ILoginForm {
   id: string

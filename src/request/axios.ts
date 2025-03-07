@@ -29,7 +29,6 @@ const defaultOnResponseError = async (error: any): Promise<any> => {
   return {
     success: false,
     data,
-    message: data?.message ?? '系统错误',
   } as IResult
 }
 

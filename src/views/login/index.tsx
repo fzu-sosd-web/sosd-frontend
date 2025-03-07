@@ -32,6 +32,9 @@ import type { RcFile } from 'antd/es/upload/interface'
 import sosd from '@/assets/logo.png'
 
 import './index.css'
+import { login } from '@/apis/login'
+import { useLoginStore } from '@/store/login'
+import { setToken } from '@/utils/token'
 
 const { Title, Text, Paragraph } = Typography
 const { Option } = Select
@@ -62,24 +65,18 @@ const LoginPage: React.FC = () => {
   const [registerForm] = Form.useForm()
   const [avatarBase64, setAvatarBase64] = useState<string>('')
   const [loading, setLoading] = useState(false)
+  const { setUserInfo } = useLoginStore()
 
   // 处理登录提交
-  const handleLoginSubmit = async (values: any) => {
-    try {
-      setLoading(true)
-      console.log('登录信息:', values)
-      // 这里调用登录API
-
-      // 模拟登录成功
-      setTimeout(() => {
-        message.success('登录成功')
-        localStorage.setItem('token', 'mock-token')
-        navigate(RoutePath.Home)
-        setLoading(false)
-      }, 800)
-    } catch (error) {
-      setLoading(false)
-      message.error('登录失败，请检查用户名和密码')
+  const handleLoginSubmit = async () => {
+    const data = await loginForm.validateFields()
+    const res = await login(data)
+    if (res.success) {
+      setUserInfo(res.user)
+      setToken(res.token)
+      navigate(RoutePath.Home)
+    } else {
+      message.error(res.message)
     }
   }
 
@@ -175,7 +172,7 @@ const LoginPage: React.FC = () => {
                   initialValues={{}} // 明确设置为空对象
                 >
                   <Form.Item
-                    name="email"
+                    name="id"
                     rules={[{ required: true, message: '请输入邮箱或学号' }]}
                   >
                     <Input
