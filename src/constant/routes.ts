@@ -14,6 +14,8 @@ export const RoutePath = {
   Profile: `/profile`,
   /**管理端 */
   Admin: `/admin`,
-  /**服创校赛 */
-  Competition: `/competition`,
+  /**服创校赛详情 */
+  Competition: `/competition/:competitionId`,
+  /**竞赛列表 */
+  CompetitionList: `/comp_list`,
 }

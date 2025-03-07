@@ -26,7 +26,7 @@ const navItems: MenuItem[] = [
   },
   {
     label: '服创校赛',
-    key: RoutePath.Competition,
+    key: RoutePath.CompetitionList,
   },
   {
     label: '纳新活动',
