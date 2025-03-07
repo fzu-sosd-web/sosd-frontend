@@ -102,12 +102,6 @@ const HeaderBar = React.memo(() => {
         {/* 右侧操作区 */}
         <div className="flex items-center">
           <Space size={16}>
-            <Button type="default" shape="round" size="middle">
-              联系我们
-            </Button>
-            <Button type="primary" shape="round" size="middle">
-              开始使用
-            </Button>
             <Dropdown
               menu={{ items: dropDownItems, onClick: handleClick }}
               trigger={['click']}
