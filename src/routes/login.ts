@@ -8,5 +8,5 @@ export const loginRoutes = [
     name: '登录',
     path: RoutePath.Login,
     element: LoginPage,
-  }
+  },
 ]

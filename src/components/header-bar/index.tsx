@@ -147,7 +147,7 @@ const HeaderBar = React.memo(() => {
 
           <Space size={16}>
             <Dropdown
-              menu={{ items: dropDownItems}}
+              menu={{ items: dropDownItems }}
               trigger={['click']}
               placement="bottomRight"
             >

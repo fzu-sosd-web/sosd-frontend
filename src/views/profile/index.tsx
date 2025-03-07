@@ -30,47 +30,27 @@ import type { RcFile, UploadFile } from 'antd/es/upload/interface'
 
 import './index.css' // 创建新的CSS文件
 import { useLoginStore } from '@/store/login'
+import { updateUser, UpdateUserForm } from './api'
 
 const { Title, Text } = Typography
 const { Option } = Select
 
-// 模拟用户数据，实际应用中应该从API获取
-interface UserData {
-  id: string
-  email: string
-  name: string
-  avatar: string
-  gender: string
-  qq: string
-  mobile: string
-  major: string
-  studentId: string
-}
-
 const ProfilePage: React.FC = () => {
   const [form] = Form.useForm()
   const [editing, setEditing] = useState(false)
-  const userInfo = useLoginStore((state) => state.userInfo)
-  const [userData, setUserData] = useState<UserData>({
-    id: 'usr123456789',
-    email: 'student@fzu.edu.cn',
-    name: '张三',
-    avatar: 'https://placehold.co/200x200/3e97ff/ffffff?text=User',
-    gender: 'MALE',
-    qq: '123456789',
-    mobile: '13800138000',
-    major: '计算机科学与技术',
-    studentId: '031902123',
-  })
+  const [submitting, setSubmitting] = useState(false)
 
-  const [avatarUrl, setAvatarUrl] = useState<string>(userData.avatar)
+  // 从全局状态获取用户信息
+  const userInfo = useLoginStore((state) => state.userInfo)
+
+  const [avatarUrl, setAvatarUrl] = useState<string>('')
 
   useEffect(() => {
-    // 重置表单以消除潜在的自动填充影响
+    // 页面加载时重置表单
     form.resetFields()
 
-    console.log(userInfo)
     if (userInfo) {
+      // 设置表单初始值
       form.setFieldsValue({
         name: userInfo.name,
         email: userInfo.email,
@@ -78,35 +58,47 @@ const ProfilePage: React.FC = () => {
         qq: userInfo.qq,
         mobile: userInfo.mobile,
         major: userInfo.major,
-        studentId: userInfo.studentId,
+        studentId: userInfo.studentId, // 根据实际情况调整
       })
-    } else {
-      // 这里可以添加API调用来获取用户数据
-      form.setFieldsValue({
-        name: userData.name,
-        email: userData.email,
-        gender: userData.gender,
-        qq: userData.qq,
-        mobile: userData.mobile,
-        major: userData.major,
-        studentId: userData.studentId,
-      })
+
+      // 设置头像
+      if (userInfo.avatarBase64) {
+        setAvatarUrl(userInfo.avatarBase64)
+      }
     }
-  }, [userData, form])
+  }, [userInfo, form])
 
-  const handleSubmit = (values: any) => {
-    // 这里处理表单提交，调用API更新用户信息
-    console.log('提交的数据:', values)
+  const handleSubmit = async (values: UpdateUserForm) => {
+    if (!userInfo) return
 
-    // 模拟API调用成功
-    setUserData({
-      ...userData,
-      ...values,
-      avatar: avatarUrl,
-    })
+    setSubmitting(true)
 
-    message.success('个人信息更新成功')
-    setEditing(false)
+    try {
+      // 将头像URL添加到提交数据中
+      const updatedData: UpdateUserForm = {
+        name: values.name,
+        gender: values.gender,
+        qq: values.qq,
+        mobile: values.mobile,
+        major: values.major,
+        avatarBase64: avatarUrl || userInfo.avatarBase64,
+      }
+
+      // 调用API更新用户信息
+      const response = await updateUser(updatedData)
+
+      if (response.success) {
+        message.success('个人信息更新成功')
+        setEditing(false)
+      } else {
+        message.error('个人信息更新失败，请重试')
+      }
+    } catch (error) {
+      console.error('更新个人信息失败:', error)
+      message.error('更新个人信息失败，请重试')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const beforeUpload = (file: RcFile) => {
@@ -147,6 +139,19 @@ const ProfilePage: React.FC = () => {
     </div>
   )
 
+  // 如果没有用户信息，显示加载状态或提示
+  if (!userInfo) {
+    return (
+      <div className="profile-container">
+        <Card bordered={false} className="profile-card">
+          <div className="flex justify-center items-center py-12">
+            <Text type="secondary">用户信息加载中或请先登录...</Text>
+          </div>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="profile-container">
       <Card bordered={false} className="profile-card">
@@ -165,26 +170,37 @@ const ProfilePage: React.FC = () => {
                     <Avatar
                       size={128}
                       src={avatarUrl}
-                      alt={userData.name}
+                      alt={userInfo.name}
                       className="profile-avatar"
                     />
                   ) : (
-                    uploadButton
+                    <Avatar
+                      size={128}
+                      icon={<UserOutlined />}
+                      alt={userInfo.name}
+                      className="profile-avatar"
+                    />
                   )}
+                  <div className="avatar-upload-overlay">
+                    <UploadOutlined /> 更换头像
+                  </div>
                 </Upload>
               ) : (
                 <Avatar
                   size={128}
-                  src={avatarUrl}
-                  alt={userData.name}
+                  src={avatarUrl || userInfo.avatar}
+                  icon={
+                    !avatarUrl && !userInfo.avatar ? <UserOutlined /> : null
+                  }
+                  alt={userInfo.name}
                   className="profile-avatar"
                 />
               )}
               <Title level={4} className="profile-name">
-                {userData.name}
+                {userInfo.name}
               </Title>
               <Text type="secondary" className="profile-major">
-                {userData.major}
+                {userInfo.major}
               </Text>
             </div>
           </Col>
@@ -207,7 +223,20 @@ const ProfilePage: React.FC = () => {
               ) : (
                 <Space>
                   <Button
-                    onClick={() => setEditing(false)}
+                    onClick={() => {
+                      setEditing(false)
+                      // 重置表单和头像为用户当前信息
+                      form.setFieldsValue({
+                        name: userInfo.name,
+                        email: userInfo.email,
+                        gender: userInfo.gender,
+                        qq: userInfo.qq,
+                        mobile: userInfo.mobile,
+                        major: userInfo.major,
+                        studentId: userInfo.studentId || userInfo.id,
+                      })
+                      setAvatarUrl(userInfo.avatar || '')
+                    }}
                     className="cancel-button"
                   >
                     取消
@@ -216,6 +245,7 @@ const ProfilePage: React.FC = () => {
                     type="primary"
                     icon={<SaveOutlined />}
                     onClick={() => form.submit()}
+                    loading={submitting}
                     className="save-button"
                   >
                     保存
@@ -230,7 +260,7 @@ const ProfilePage: React.FC = () => {
               form={form}
               layout="vertical"
               onFinish={handleSubmit}
-              disabled={!editing}
+              disabled={!editing || submitting}
               className="profile-form"
               autoComplete="off"
             >
@@ -317,6 +347,7 @@ const ProfilePage: React.FC = () => {
                       prefix={<IdcardOutlined className="form-icon" />}
                       placeholder="请输入学号"
                       className="profile-input"
+                      disabled
                       autoComplete="off"
                     />
                   </Form.Item>

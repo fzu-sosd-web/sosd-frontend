@@ -1,26 +1,37 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Modal,
   Form,
   Input,
   Button,
-  Select,
-  Row,
-  Col,
   Typography,
   Space,
   message,
+  Divider,
+  Card,
+  Row,
+  Col,
+  Tag,
+  Tooltip,
 } from 'antd'
 import {
   TeamOutlined,
+  FileTextOutlined,
   UserOutlined,
-  IdcardOutlined,
-  PhoneOutlined,
   MailOutlined,
+  LinkOutlined,
+  BookOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+  IdcardOutlined,
+  ReadOutlined,
+  CrownOutlined,
 } from '@ant-design/icons'
+import { CompetitionRegisterForm, TeamMember } from './type'
+import { registerCompetition } from './api'
+import { useLoginStore } from '@/store/login'
 
-const { Title, Paragraph } = Typography
-const { Option } = Select
+const { Title, Text } = Typography
 const { TextArea } = Input
 
 interface RegisterModalProps {
@@ -29,161 +40,422 @@ interface RegisterModalProps {
   competitionId: string
 }
 
+const MAX_MEMBERS = 3
+
 const RegisterModal: React.FC<RegisterModalProps> = ({
   visible,
   onCancel,
   competitionId,
 }) => {
+  const userInfo = useLoginStore((state) => state.userInfo)
   const [form] = Form.useForm()
+  const [submitting, setSubmitting] = React.useState(false)
 
-  const handleSubmit = (values: any) => {
-    console.log('报名信息:', values)
-    message.success('报名成功！请等待审核')
-    onCancel()
-    form.resetFields()
+  // 团队成员状态管理
+  const [members, setMembers] = useState<TeamMember[]>([])
+
+  // 初始化队长信息 (当前登录用户)
+  useEffect(() => {
+    if (userInfo) {
+      // 使用当前登录用户的信息作为队长
+      const captain: TeamMember = {
+        userId: userInfo.id || '',
+        userName: userInfo.name || '',
+        major: userInfo.major || '',
+      }
+
+      // 初始化成员列表，第一个成员就是队长
+      setMembers([captain])
+    }
+  }, [userInfo, visible])
+
+  // 添加成员
+  const addMember = () => {
+    if (members.length < MAX_MEMBERS) {
+      setMembers([...members, { userId: '', userName: '', major: '' }])
+    } else {
+      message.warning(`团队成员不能超过${MAX_MEMBERS}人`)
+    }
+  }
+
+  // 删除成员（不能删除队长）
+  const removeMember = (index: number) => {
+    if (index === 0) {
+      message.warning('队长信息不能删除')
+      return
+    }
+
+    const newMembers = [...members]
+    newMembers.splice(index, 1)
+    setMembers(newMembers)
+  }
+
+  // 更新成员信息（队长信息不能修改）
+  const updateMember = (
+    index: number,
+    field: keyof TeamMember,
+    value: string,
+  ) => {
+    if (index === 0) return // 队长信息不能修改
+
+    const newMembers = [...members]
+    newMembers[index] = { ...newMembers[index], [field]: value }
+    setMembers(newMembers)
+  }
+
+  // 处理表单提交
+  const handleSubmit = async (values: CompetitionRegisterForm) => {
+    // 检查队员信息完整性（跳过队长，因为队长信息已经确保完整）
+    const hasOtherMembers = members.length > 1
+    const isTeamValid =
+      !hasOtherMembers ||
+      members
+        .slice(1)
+        .every(
+          (member) =>
+            member.userId.trim() &&
+            member.userName.trim() &&
+            member.major.trim(),
+        )
+
+    if (!isTeamValid) {
+      message.error('请完整填写所有队员信息')
+      return
+    }
+
+    setSubmitting(true)
+
+    try {
+      // 整合表单数据
+      const submitData = {
+        ...values,
+        teamMembers: JSON.stringify(members),
+      }
+
+      // 调用API提交报名信息
+      const resp = await registerCompetition(Number(competitionId), submitData)
+      if (resp && resp.code === 200) {
+        message.success('报名成功！')
+        form.resetFields()
+        // 重置成员列表只保留队长
+        if (userInfo) {
+          setMembers([
+            {
+              userId: userInfo.id || '',
+              userName: userInfo.name || '',
+              major: userInfo.major || '',
+            },
+          ])
+        }
+        onCancel()
+        return
+      }
+      message.error(resp.data || '报名提交失败')
+    } catch (error) {
+      console.error('报名提交失败:', error)
+      message.error(`报名提交失败, 请稍后再试`)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (!userInfo) {
+    return (
+      <Modal
+        open={visible}
+        onCancel={onCancel}
+        title="提示"
+        footer={[
+          <Button key="ok" type="primary" onClick={onCancel}>
+            确定
+          </Button>,
+        ]}
+      >
+        <div className="py-6 text-center">请先登录后再进行报名</div>
+      </Modal>
+    )
   }
 
   return (
     <Modal
-      title="参赛报名"
+      title={
+        <div className="flex items-center">
+          <TeamOutlined
+            style={{ fontSize: '22px', color: '#1890ff', marginRight: '12px' }}
+          />
+          <span style={{ fontSize: '18px', fontWeight: 500 }}>参赛报名</span>
+        </div>
+      }
       open={visible}
       onCancel={onCancel}
       footer={null}
-      width={600}
+      width={800}
       destroyOnClose
+      maskClosable={false}
+      bodyStyle={{ padding: '20px 24px' }}
+      style={{ top: 20 }}
     >
       <Form
         form={form}
         layout="vertical"
         onFinish={handleSubmit}
-        requiredMark={false}
-        className="pt-4"
+        requiredMark="optional"
+        initialValues={{
+          name: '',
+          projectName: '',
+          topic: '',
+          advisor: '',
+          email: userInfo.email || '',
+          docUrl: '',
+        }}
+        className="register-form"
       >
-        <Title level={5}>团队信息</Title>
-        <Row gutter={16}>
-          <Col span={24}>
+        <Row gutter={24}>
+          <Col span={12}>
             <Form.Item
-              name="teamName"
+              name="name"
               label="团队名称"
               rules={[{ required: true, message: '请输入团队名称' }]}
             >
               <Input
                 placeholder="给你的团队起个名字"
                 prefix={<TeamOutlined />}
+                allowClear
+                autoFocus
+                style={{ borderRadius: '6px' }}
               />
             </Form.Item>
           </Col>
-        </Row>
 
-        <Row gutter={16}>
-          <Col span={24}>
+          <Col span={12}>
             <Form.Item
-              name="projectTitle"
+              name="projectName"
               label="项目名称"
               rules={[{ required: true, message: '请输入项目名称' }]}
             >
-              <Input placeholder="你的参赛项目名称" />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item
-              name="projectDesc"
-              label="项目简介"
-              rules={[{ required: true, message: '请输入项目简介' }]}
-            >
-              <TextArea
-                placeholder="简要描述你的项目定位和创新点（不超过300字）"
-                rows={4}
-                maxLength={300}
-                showCount
+              <Input
+                placeholder="你的参赛项目/作品名称"
+                prefix={<FileTextOutlined />}
+                allowClear
+                style={{ borderRadius: '6px' }}
               />
             </Form.Item>
           </Col>
         </Row>
 
-        <Title level={5} className="mt-4">
-          队长信息
-        </Title>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              name="leaderName"
-              label="姓名"
-              rules={[{ required: true, message: '请输入队长姓名' }]}
-            >
-              <Input placeholder="队长姓名" prefix={<UserOutlined />} />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="leaderStudentId"
-              label="学号"
-              rules={[{ required: true, message: '请输入队长学号' }]}
-            >
-              <Input placeholder="学号" prefix={<IdcardOutlined />} />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item
+          name="topic"
+          label="参赛选题"
+          rules={[{ required: true, message: '请输入参赛选题' }]}
+        >
+          <Input
+            placeholder="你选择的赛题"
+            prefix={<BookOutlined />}
+            allowClear
+            style={{ borderRadius: '6px' }}
+          />
+        </Form.Item>
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              name="leaderMajor"
-              label="专业"
-              rules={[{ required: true, message: '请选择专业' }]}
-            >
-              <Select placeholder="选择专业">
-                <Option value="计算机科学与技术">计算机科学与技术</Option>
-                <Option value="软件工程">软件工程</Option>
-                <Option value="人工智能">人工智能</Option>
-                <Option value="数据科学">数据科学</Option>
-                <Option value="其他">其他</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="leaderPhone"
-              label="联系电话"
-              rules={[{ required: true, message: '请输入联系电话' }]}
-            >
-              <Input placeholder="联系电话" prefix={<PhoneOutlined />} />
-            </Form.Item>
-          </Col>
-        </Row>
+        {/* 团队成员列表 */}
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <Text strong style={{ fontSize: '14px' }}>
+              团队成员 <span className="text-red-500">*</span>
+            </Text>
+            <Text type="secondary" style={{ fontSize: '13px' }}>
+              最多 {MAX_MEMBERS} 人
+            </Text>
+          </div>
 
-        <Row gutter={16}>
-          <Col span={24}>
+          {/* 队长信息（当前用户） */}
+          <div
+            className="p-4 mb-4 bg-blue-50 rounded-lg border border-blue-100 flex items-center"
+            style={{ borderRadius: '8px' }}
+          >
+            <div className="bg-blue-500 text-white p-2 rounded-full mr-3">
+              <CrownOutlined style={{ fontSize: '16px' }} />
+            </div>
+            <div className="flex-grow">
+              <div className="flex items-center mb-1">
+                <Text strong style={{ fontSize: '15px' }}>
+                  {members[0]?.userName}
+                </Text>
+                <Tag color="blue" style={{ marginLeft: '8px' }}>
+                  队长(您)
+                </Tag>
+              </div>
+              <div className="flex text-gray-600">
+                <div className="mr-8">
+                  <UserOutlined className="mr-1" /> 学号: {members[0]?.userId}
+                </div>
+                <div>
+                  <BookOutlined className="mr-1" /> 专业:{' '}
+                  {members[0]?.major || '未设置'}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 其他队员 */}
+          {members.slice(1).map((member, idx) => {
+            const index = idx + 1 // 真实索引（考虑队长）
+            return (
+              <div
+                key={index}
+                className="p-4 mb-3 bg-white rounded-lg border border-gray-200 relative hover:border-blue-200 transition-colors"
+                style={{ borderRadius: '8px' }}
+              >
+                <Row gutter={24}>
+                  <Col span={7}>
+                    <div className="mb-3">
+                      <div className="text-sm text-gray-500 mb-1">姓名</div>
+                      <Input
+                        value={member.userName}
+                        onChange={(e) =>
+                          updateMember(index, 'userName', e.target.value)
+                        }
+                        placeholder="队员姓名"
+                        prefix={<UserOutlined className="text-gray-400" />}
+                        style={{ borderRadius: '6px' }}
+                      />
+                    </div>
+                  </Col>
+
+                  <Col span={7}>
+                    <div className="mb-3">
+                      <div className="text-sm text-gray-500 mb-1">学号</div>
+                      <Input
+                        value={member.userId}
+                        onChange={(e) =>
+                          updateMember(index, 'userId', e.target.value)
+                        }
+                        placeholder="队员学号"
+                        prefix={<IdcardOutlined className="text-gray-400" />}
+                        style={{ borderRadius: '6px' }}
+                      />
+                    </div>
+                  </Col>
+
+                  <Col span={7}>
+                    <div className="mb-3">
+                      <div className="text-sm text-gray-500 mb-1">专业</div>
+                      <Input
+                        value={member.major}
+                        onChange={(e) =>
+                          updateMember(index, 'major', e.target.value)
+                        }
+                        placeholder="队员专业"
+                        prefix={<ReadOutlined className="text-gray-400" />}
+                        style={{ borderRadius: '6px' }}
+                      />
+                    </div>
+                  </Col>
+
+                  <Col span={2}>
+                    <div className="mb-3">
+                      <div className="text-sm text-gray-500 mb-1">移除</div>
+                      <Button
+                        type="text"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={() => removeMember(index)}
+                        size="small"
+                      />
+                    </div>
+                  </Col>
+                </Row>
+
+                <div className="absolute -top-2 -left-1">
+                  <Tag color="green">队员 {index}</Tag>
+                </div>
+              </div>
+            )
+          })}
+
+          {members.length < MAX_MEMBERS && (
+            <Button
+              type="dashed"
+              block
+              icon={<PlusOutlined />}
+              onClick={addMember}
+              className="mt-3"
+              style={{ borderRadius: '6px', height: '40px' }}
+            >
+              添加团队成员
+            </Button>
+          )}
+        </div>
+
+        <Row gutter={24}>
+          <Col span={12}>
+            <Form.Item name="advisor" label="指导教师">
+              <Input
+                placeholder="指导教师姓名 (可选)"
+                prefix={<UserOutlined />}
+                allowClear
+                style={{ borderRadius: '6px' }}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
             <Form.Item
-              name="leaderEmail"
-              label="邮箱"
+              name="email"
+              label="联系邮箱"
               rules={[
-                { required: true, message: '请输入邮箱' },
+                { required: true, message: '请输入联系邮箱' },
                 { type: 'email', message: '请输入有效的邮箱地址' },
               ]}
             >
-              <Input placeholder="电子邮箱" prefix={<MailOutlined />} />
+              <Input
+                placeholder="团队联系邮箱"
+                prefix={<MailOutlined />}
+                allowClear
+                style={{ borderRadius: '6px' }}
+              />
             </Form.Item>
           </Col>
         </Row>
 
-        <Title level={5} className="mt-4">
-          其他队员
-        </Title>
-        <Paragraph type="secondary" className="mb-4">
-          每支队伍至少3人，最多5人。每位队员信息将在报名后添加。
-        </Paragraph>
+        {/* <Form.Item
+          name="docUrl"
+          label="文档链接"
+        >
+          <Input 
+            placeholder="项目文档或作品链接 (可选)" 
+            prefix={<LinkOutlined />}
+            allowClear
+            style={{ borderRadius: '6px' }}
+          />
+        </Form.Item> */}
 
-        <Form.Item className="mt-6">
+        <Divider style={{ margin: '8px 0 16px' }} />
+
+        <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
           <Space>
-            <Button type="primary" htmlType="submit" size="large">
-              提交报名
-            </Button>
-            <Button onClick={onCancel} size="large">
+            <Button
+              onClick={onCancel}
+              style={{
+                borderRadius: '6px',
+                height: '38px',
+                paddingLeft: '16px',
+                paddingRight: '16px',
+              }}
+            >
               取消
+            </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={submitting}
+              style={{
+                borderRadius: '6px',
+                height: '38px',
+                paddingLeft: '16px',
+                paddingRight: '16px',
+              }}
+            >
+              提交报名
             </Button>
           </Space>
         </Form.Item>

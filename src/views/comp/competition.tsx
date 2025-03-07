@@ -2,7 +2,6 @@ import {
   Typography,
   Button,
   Space,
-  Card,
   Row,
   Col,
   Divider,
@@ -13,7 +12,6 @@ import {
   Empty,
 } from 'antd'
 import {
-  DownloadOutlined,
   TeamOutlined,
   FormOutlined,
   CalendarOutlined,
@@ -30,6 +28,10 @@ import TeamModal from './teaminfo_modal'
 import { API_BASE_URL } from '@/constant/web'
 import { Competition, CompetitionFile } from './type'
 
+import schoolcomp2025 from '@/assets/2025schoolcomp.png'
+import { useLoginStore } from '@/store/login'
+import { fetchCompetitionById } from './api'
+
 const { Title, Paragraph, Text } = Typography
 
 const CompPage = React.memo(() => {
@@ -42,6 +44,8 @@ const CompPage = React.memo(() => {
   const [loading, setLoading] = useState(true)
   const [competition, setCompetition] = useState<Competition | null>(null)
 
+  const isLogin = useLoginStore((state) => state.isLogin)
+
   // 获取竞赛详情数据
   const fetchCompetitionDetails = async () => {
     if (!competitionId) return
@@ -49,43 +53,41 @@ const CompPage = React.memo(() => {
     setLoading(true)
     try {
       // 调用API获取竞赛详情
-      const response = await axios.get(
-        `${API_BASE_URL}/user/competition/getOne/${competitionId}`,
-      )
+      const response = await fetchCompetitionById(Number(competitionId))
 
-      if (response.data && response.data.code === 200) {
-        setCompetition(response.data.data)
+      if (response && response.code === 200) {
+        setCompetition(response.data || null)
       } else {
-        message.error(
-          '获取竞赛信息失败: ' + (response.data?.message || '未知错误'),
-        )
-        // 使用模拟数据作为后备
-        setCompetition(getMockCompetitionData())
+        message.error('获取竞赛信息失败: ' + (response?.message || '未知错误'))
       }
     } catch (error) {
       console.error('获取竞赛详情出错:', error)
       message.error('获取竞赛信息失败，请稍后再试')
-      // 使用模拟数据作为后备
-      setCompetition(getMockCompetitionData())
     } finally {
       setLoading(false)
     }
   }
 
-  // 文件下载处理函数
-  const handleFileDownload = (file: CompetitionFile) => {
-    // 实际项目中应该处理文件下载
-    message.info(`开始下载: ${file.name}`)
+  // 文件查看处理函数 - 在新标签页打开PDF
+  const handleFileView = (file: CompetitionFile) => {
+    // 通知用户正在打开文件
+    message.info(`正在打开: ${file.name}`)
 
     if (file.url) {
-      // 如果有URL，创建一个隐藏的a标签并触发下载
-      const link = document.createElement('a')
-      link.href = file.url
-      link.target = '_blank'
-      link.download = file.name
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      try {
+        // 构建完整URL (public文件夹中的文件可以直接通过相对路径访问)
+        const fileUrl = file.url.startsWith('http')
+          ? file.url
+          : window.location.origin + file.url
+
+        // 在新标签页打开PDF
+        window.open(fileUrl, '_blank', 'noopener,noreferrer')
+      } catch (error) {
+        console.error('打开文件时出错:', error)
+        message.error('打开文件失败，请稍后再试')
+      }
+    } else {
+      message.error('文件链接不可用')
     }
   }
 
@@ -122,29 +124,6 @@ const CompPage = React.memo(() => {
 
   // 从竞赛阶段数据生成时间轴项
   const generateTimelineItems = (comp: Competition) => {
-    if (!comp.data?.competitionStages?.length) {
-      return [
-        {
-          title: '报名阶段',
-          time: formatTimeRange(
-            comp.startDate,
-            addDays(new Date(comp.startDate), 20),
-          ),
-          description: '组建团队并完成报名手续',
-          status: 'process' as 'finish' | 'process' | 'wait',
-        },
-        {
-          title: '比赛阶段',
-          time: formatTimeRange(
-            addDays(new Date(comp.startDate), 21),
-            new Date(comp.endDate),
-          ),
-          description: '完成项目开发和提交',
-          status: 'wait' as 'finish' | 'process' | 'wait',
-        },
-      ]
-    }
-
     return comp.data.competitionStages.map((stage) => {
       // 将API返回的状态映射到Timeline需要的状态
       let timelineStatus: 'finish' | 'process' | 'wait'
@@ -185,54 +164,20 @@ const CompPage = React.memo(() => {
     return result
   }
 
-  // 生成模拟文件列表
-  const getMockFiles = (): CompetitionFile[] => {
+  // 生成文件列表
+  const getPdfFiles = (): CompetitionFile[] => {
     return [
-      { name: '赛事规则.pdf', key: 'rules', url: '' },
-      { name: '评分标准.pdf', key: 'scoring', url: '' },
-      { name: '参赛指南.pdf', key: 'guide', url: '' },
-    ]
-  }
-
-  // 生成模拟竞赛数据
-  const getMockCompetitionData = (): Competition => {
-    return {
-      id: parseInt(competitionId || '0'),
-      name: '2025年福州大学服务外包校赛',
-      type: 'Competition',
-      description:
-        '福州大学服务外包与软件设计实验室举办的校内软件设计大赛，旨在提高学生的实际项目开发能力、创新思维和团队协作精神。比赛模拟真实企业项目需求，参赛者将在有限时间内完成从需求分析到系统实现的全过程。',
-      data: {
-        competitionStages: [
-          {
-            startAt: '2024-04-10',
-            endAt: '2024-04-30',
-            description: '报名阶段',
-            status: 'finish',
-          },
-          {
-            startAt: '2024-05-01',
-            endAt: '2024-05-20',
-            description: '初赛阶段',
-            status: 'process',
-          },
-          {
-            startAt: '2024-05-25',
-            endAt: '2024-06-10',
-            description: '决赛阶段',
-            status: 'wait',
-          },
-        ],
-        teamMembers: 120,
-        type: 'school',
-        url: '',
+      {
+        name: '赛事通知文件',
+        key: 'notification',
+        url: '/schoolcomp2025/notification.pdf',
       },
-      userId: 'user-001',
-      managerId: 'manager-001',
-      startDate: '2024-04-10',
-      endDate: '2024-06-15',
-      createdAt: '2024-03-01',
-    }
+      {
+        name: '赛题汇总',
+        key: 'subjects',
+        url: '/schoolcomp2025/comp_subjects.pdf',
+      },
+    ]
   }
 
   // 在组件挂载时和competitionId变化时获取数据
@@ -268,174 +213,340 @@ const CompPage = React.memo(() => {
   const timelineItems = generateTimelineItems(competition)
 
   return (
-    <div className="py-8 px-6 sm:px-12 md:px-24">
-      {/* 赛事标题 */}
-      <div className="text-center mb-8">
-        <Title level={2} style={{ fontWeight: 600 }}>
+    <div className="max-w-6xl mx-auto py-12 px-5 sm:px-8">
+      {/* 赛事标题区 - 简约大气 */}
+      <div className="mb-10">
+        <Title
+          level={1}
+          style={{
+            fontWeight: 600,
+            fontSize: '2.5rem',
+            marginBottom: '0.5rem',
+            color: '#1a1a1a',
+          }}
+        >
           {competition.name}
         </Title>
-        <div className="flex justify-center items-center">
+        <div className="flex items-center text-gray-500 mt-2">
           <CalendarOutlined style={{ color: '#3e97ff' }} />
-          <Text type="secondary" className="ml-2">
+          <Text className="ml-2 text-base">
             {competition.startDate} - {competition.endDate}
           </Text>
         </div>
       </div>
 
-      {/* 赛事主要介绍区域 - 左图右文 */}
-      <Row gutter={[48, 32]} className="my-12" align="middle">
-        {/* 左侧赛事图片 */}
-        <Col xs={24} md={12}>
-          <div className="rounded-xl overflow-hidden shadow-lg">
-            <img
-              src={competition.data?.url || sadaharu}
-              alt={competition.name}
-              className="w-full h-auto"
-              onError={(e) => {
-                // 图片加载失败时使用默认图片
-                e.currentTarget.src = sadaharu
-              }}
-            />
-          </div>
-        </Col>
+      {/* 顶部赛事图片 - 完整显示 */}
+      <div className="mb-16">
+        <div className="rounded-2xl overflow-hidden">
+          <img
+            src={competition.data?.url || schoolcomp2025}
+            alt={competition.name}
+            className="w-full h-auto"
+            style={{
+              maxWidth: '100%',
+              objectFit: 'contain',
+            }}
+            onError={(e) => {
+              e.currentTarget.src = schoolcomp2025
+            }}
+          />
+        </div>
+      </div>
 
-        {/* 右侧赛事介绍 */}
-        <Col xs={24} md={12}>
-          <Title level={3}>关于比赛</Title>
-          <Paragraph style={{ fontSize: '16px', lineHeight: '1.8' }}>
-            {competition.description}
-          </Paragraph>
-
-          <Title level={4} className="mt-6">
-            参赛对象
-          </Title>
-          <Paragraph style={{ fontSize: '16px', lineHeight: '1.8' }}>
-            面向福州大学全日制在校学生，不限年级和专业。每队3-5人，鼓励跨专业组队。
-          </Paragraph>
-
-          <div className="flex flex-wrap gap-6 mt-6">
-            <div className="flex items-center">
-              <TrophyOutlined style={{ fontSize: '24px', color: '#3e97ff' }} />
-              <div className="ml-3">
-                <div className="text-base font-medium">丰厚奖金</div>
-                <div className="text-sm text-gray-500">总奖金池超过1万元</div>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <TeamOutlined style={{ fontSize: '24px', color: '#3e97ff' }} />
-              <div className="ml-3">
-                <div className="text-base font-medium">企业导师</div>
-                <div className="text-sm text-gray-500">行业专家一对一指导</div>
-              </div>
-            </div>
-          </div>
-        </Col>
-      </Row>
-
-      <Divider />
-
-      {/* 赛事文件和操作按钮区域 */}
-      <Row gutter={[32, 32]} className="my-8">
-        {/* 左侧赛事文件列表 */}
-        <Col xs={24} md={12}>
-          <Card
-            title="赛事资料"
-            bordered={false}
-            className="shadow-md rounded-xl"
+      {/* 中部内容区 - 左边比赛介绍，右边比赛流程 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
+        {/* 左侧赛事介绍 */}
+        <div>
+          <Title
+            level={2}
+            style={{
+              fontSize: '1.75rem',
+              fontWeight: 600,
+              marginBottom: '1.5rem',
+              color: '#1a1a1a',
+            }}
           >
-            <List
-              itemLayout="horizontal"
-              dataSource={getMockFiles()}
-              renderItem={(item) => (
-                <List.Item
-                  actions={[
-                    <Button
-                      type="text"
-                      icon={<DownloadOutlined />}
-                      key={item.key}
-                      onClick={() => handleFileDownload(item)}
-                    >
-                      下载
-                    </Button>,
-                  ]}
-                >
-                  <List.Item.Meta
-                    avatar={
-                      <FileTextOutlined
-                        style={{ fontSize: '20px', color: '#3e97ff' }}
-                      />
-                    }
-                    title={item.name}
-                  />
-                </List.Item>
-              )}
-            />
-          </Card>
-        </Col>
+            关于比赛
+          </Title>
 
-        {/* 右侧操作按钮 */}
-        <Col xs={24} md={12}>
-          <Card bordered={false} className="shadow-md rounded-xl">
-            <Title level={4}>即刻参与</Title>
-            <Paragraph className="mb-6">
-              比赛报名已开放，截止日期为2024年4月30日。组队完成后请点击下方"立即报名"按钮。
+          <div className="mb-8">
+            <Title
+              level={3}
+              style={{
+                fontSize: '1.35rem',
+                fontWeight: 600,
+                marginBottom: '1rem',
+                color: '#333',
+              }}
+            >
+              竞赛形式
+            </Title>
+            <Paragraph
+              style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#444' }}
+            >
+              公开选拔和现场答辩与演示相结合。
             </Paragraph>
-            <Space size="large" className="mt-4">
-              <Button
-                type="primary"
-                size="large"
-                icon={<FormOutlined />}
-                className="px-8 h-12 text-lg font-medium"
-                onClick={() => setShowRegisterModal(true)}
-                disabled={competitionStatus === 'ended'}
-              >
-                立即报名
-              </Button>
-              <Button
-                type="default"
-                size="large"
-                icon={<TeamOutlined />}
-                className="px-8 h-12 text-lg font-medium"
-                onClick={() => setShowTeamModal(true)}
-              >
-                我的队伍
-              </Button>
-            </Space>
-          </Card>
-        </Col>
-      </Row>
+          </div>
 
-      {/* 比赛流程时间轴 */}
-      <div className="my-12">
-        <Title level={3} className="text-center mb-8">
-          比赛流程
-        </Title>
-        <div className="bg-gray-50 p-8 rounded-xl">
-          {/* 时间轴 */}
-          <div className="horizontal-timeline">
+          <div className="mb-8">
+            <Title
+              level={3}
+              style={{
+                fontSize: '1.35rem',
+                fontWeight: 600,
+                marginBottom: '1rem',
+                color: '#333',
+              }}
+            >
+              参赛对象
+            </Title>
+            <Paragraph
+              style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#444' }}
+            >
+              各学院全日制本一批学生均可参加。
+            </Paragraph>
+          </div>
+
+          <div className="space-y-8">
+            <div className="flex items-start">
+              <div className="p-3 bg-blue-50 rounded-lg">
+                <TrophyOutlined
+                  style={{ fontSize: '24px', color: '#3e97ff' }}
+                />
+              </div>
+              <div className="ml-4">
+                <Title
+                  level={4}
+                  style={{
+                    fontSize: '1.15rem',
+                    fontWeight: 600,
+                    marginBottom: '0.5rem',
+                    color: '#333',
+                  }}
+                >
+                  奖项设置
+                </Title>
+                <div
+                  style={{ fontSize: '1rem', color: '#666', lineHeight: '1.6' }}
+                >
+                  比赛将评出一等奖、二等奖、三等奖各若干项，
+                  奖项名额由竞赛组委会根据参赛的作品数来确定，并颁发证书和奖金。
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-start">
+              <div className="p-3 bg-blue-50 rounded-lg">
+                <FileTextOutlined
+                  style={{ fontSize: '24px', color: '#3e97ff' }}
+                />
+              </div>
+              <div className="ml-4">
+                <Title
+                  level={4}
+                  style={{
+                    fontSize: '1.15rem',
+                    fontWeight: 600,
+                    marginBottom: '0.5rem',
+                    color: '#333',
+                  }}
+                >
+                  奖励学分政策
+                </Title>
+                <div
+                  style={{ fontSize: '1rem', color: '#666', lineHeight: '1.6' }}
+                >
+                  获得二等奖以上的学生可根据《福州大学本科生奖励学分管理实施办法》申请奖励学分。
+                  同时根据个人意愿，成绩优秀的同学可加入福州大学服务外包与软件设计实验室，学校将对其进行提高训练，为参加全国赛做准备。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 右侧比赛流程时间轴 */}
+        <div>
+          <Title
+            level={2}
+            style={{
+              fontSize: '1.75rem',
+              fontWeight: 600,
+              marginBottom: '1.5rem',
+              color: '#1a1a1a',
+            }}
+          >
+            比赛流程
+          </Title>
+
+          <div className="bg-gray-50 rounded-2xl p-8">
             <Timeline
-              mode="alternate"
-              items={timelineItems.map((item, index) => ({
-                color: item.status === 'wait' ? 'gray' : '#3e97ff',
+              mode="left"
+              items={timelineItems.map((item) => ({
+                color: item.status === 'wait' ? '#aaa' : '#3e97ff',
                 children: (
                   <div
-                    className={`timeline-item ${item.status === 'process' ? 'timeline-active' : ''}`}
+                    className={`timeline-item ${item.status === 'process' ? 'font-medium' : ''}`}
                   >
                     <div
-                      className="text-xl font-semibold"
+                      className="text-lg mb-1"
                       style={{
-                        color: item.status === 'wait' ? 'gray' : '#3e97ff',
+                        color: item.status === 'wait' ? '#999' : '#3e97ff',
+                        fontWeight: item.status === 'process' ? 600 : 500,
                       }}
                     >
                       {item.title}
                     </div>
-                    <div className="text-base text-gray-600">{item.time}</div>
-                    <div className="text-sm text-gray-500 mt-2">
+                    <div className="text-gray-500 mb-1">{item.time}</div>
+                    <div className="text-gray-600 text-sm">
                       {item.description}
                     </div>
                   </div>
                 ),
               }))}
+            />
+          </div>
+        </div>
+      </div>
+
+      <Divider style={{ margin: '3rem 0', borderColor: '#eee' }} />
+
+      {/* 底部内容区 - 左边立即参与，右边赛事资料 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+        {/* 左侧操作按钮 */}
+        <div>
+          <Title
+            level={2}
+            style={{
+              fontSize: '1.75rem',
+              fontWeight: 600,
+              marginBottom: '1.5rem',
+              color: '#1a1a1a',
+            }}
+          >
+            即刻参与
+          </Title>
+
+          <Paragraph
+            style={{
+              fontSize: '1.05rem',
+              lineHeight: '1.8',
+              color: '#444',
+              marginBottom: '2rem',
+            }}
+          >
+            比赛报名已开放，截止日期为2024年4月30日。组队完成后请点击下方"立即报名"按钮。
+          </Paragraph>
+
+          <div className="flex flex-wrap gap-4">
+            <Button
+              type="primary"
+              size="large"
+              icon={<FormOutlined />}
+              onClick={() => {
+                if (!isLogin) {
+                  message.error('请先登录后再报名')
+                  return
+                }
+                setShowRegisterModal(true)
+              }}
+              disabled={competitionStatus === 'ended'}
+              style={{
+                height: '3rem',
+                borderRadius: '0.5rem',
+                paddingLeft: '1.5rem',
+                paddingRight: '1.5rem',
+                fontSize: '1rem',
+                fontWeight: 500,
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              立即报名
+            </Button>
+            <Button
+              type="default"
+              size="large"
+              icon={<TeamOutlined />}
+              onClick={() => {
+                if (!isLogin) {
+                  message.error('请先登录后再查看队伍')
+                  return
+                }
+                setShowTeamModal(true)
+              }}
+              style={{
+                height: '3rem',
+                borderRadius: '0.5rem',
+                paddingLeft: '1.5rem',
+                paddingRight: '1.5rem',
+                fontSize: '1rem',
+                fontWeight: 500,
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              我的队伍
+            </Button>
+          </div>
+        </div>
+
+        {/* 右侧赛事文件列表 */}
+        <div>
+          <Title
+            level={2}
+            style={{
+              fontSize: '1.75rem',
+              fontWeight: 600,
+              marginBottom: '1.5rem',
+              color: '#1a1a1a',
+            }}
+          >
+            赛事资料
+          </Title>
+
+          <div className="rounded-2xl bg-gray-50 p-6">
+            <List
+              itemLayout="horizontal"
+              dataSource={getPdfFiles()}
+              renderItem={(item) => (
+                <List.Item
+                  style={{
+                    padding: '1rem',
+                    borderRadius: '0.5rem',
+                    marginBottom: '0.5rem',
+                    border: 'none',
+                    backgroundColor: 'white',
+                  }}
+                  actions={[
+                    <Button
+                      type="link"
+                      icon={<FileTextOutlined />}
+                      key={item.key}
+                      onClick={() => handleFileView(item)}
+                      style={{ color: '#3e97ff' }}
+                    >
+                      查看
+                    </Button>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={
+                      <div className="p-2 bg-blue-50 rounded-md">
+                        <FileTextOutlined
+                          style={{ fontSize: '20px', color: '#3e97ff' }}
+                        />
+                      </div>
+                    }
+                    title={
+                      <span style={{ fontWeight: 500, fontSize: '1rem' }}>
+                        {item.name + '.pdf'}
+                      </span>
+                    }
+                    style={{ alignItems: 'center' }}
+                  />
+                </List.Item>
+              )}
+              style={{ backgroundColor: 'transparent' }}
             />
           </div>
         </div>
@@ -452,6 +563,7 @@ const CompPage = React.memo(() => {
       <TeamModal
         visible={showTeamModal}
         onCancel={() => setShowTeamModal(false)}
+        competitionId={competition.id.toString()}
       />
     </div>
   )

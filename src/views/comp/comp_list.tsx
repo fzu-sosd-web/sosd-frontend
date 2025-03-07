@@ -24,6 +24,7 @@ import './comp_list.css'
 import schoolcomp2025 from '@/assets/2025schoolcomp.png'
 import { API_BASE_URL } from '@/constant/web'
 import { Competition } from './type'
+import { fetchAllCompetitions } from './api'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -37,12 +38,10 @@ const CompetitionListPage: React.FC = () => {
   const fetchCompetitions = async () => {
     try {
       // API请求竞赛列表
-      const response = await axios.get(
-        `${API_BASE_URL}/user/competition/getAll`,
-      )
+      const response = await fetchAllCompetitions()
 
-      if (response.data && response.data.code === 200) {
-        setCompetitions(response.data.data || [])
+      if (response && response.code === 200) {
+        setCompetitions(response.data || [])
       } else {
         message.error('获取竞赛列表失败')
       }
@@ -207,8 +206,7 @@ const CompetitionListPage: React.FC = () => {
                         </span>
                       </div>
                       <div className="comp-meta-item">
-                        <TeamOutlined />
-                        <span>{getParticipantsCount(comp)} 人已参与</span>
+                        {/* <TeamOutlined /><span>{getParticipantsCount(comp)} 人已参与</span> */}
                       </div>
                     </div>
 
