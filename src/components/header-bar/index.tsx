@@ -1,12 +1,21 @@
 import { RoutePath } from '@/constant/routes'
-import { Avatar, Button, ConfigProvider, Dropdown, Space, Menu, MenuProps, Typography } from 'antd'
+import {
+  Avatar,
+  Button,
+  ConfigProvider,
+  Dropdown,
+  Space,
+  Menu,
+  MenuProps,
+  Typography,
+} from 'antd'
 import { UserOutlined, DownOutlined } from '@ant-design/icons'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import sosd from '@/assets/logo.png'
 
-const { Text } = Typography;
+const { Text } = Typography
 
 type MenuItem = Required<MenuProps>['items'][number]
 
@@ -17,7 +26,7 @@ const navItems: MenuItem[] = [
   },
   {
     label: '服创校赛',
-    key: RoutePath.Competition
+    key: RoutePath.Competition,
   },
   {
     label: '纳新活动',
@@ -44,13 +53,13 @@ const dropDownItems: MenuProps['items'] = [
 ]
 
 const HeaderBar = React.memo(() => {
-  const [current, setCurrent] = useState(RoutePath.Home);
-  const navigate = useNavigate();
-  
+  const [current, setCurrent] = useState(RoutePath.Home)
+  const navigate = useNavigate()
+
   const handleClick = (e: { key: string }) => {
-    setCurrent(e.key);
-    navigate(e.key);
-  };
+    setCurrent(e.key)
+    navigate(e.key)
+  }
 
   return (
     <ConfigProvider
@@ -73,16 +82,14 @@ const HeaderBar = React.memo(() => {
         {/* Logo 区域 */}
         <div className="flex items-center">
           <div className="flex items-center mr-8">
-            <img 
-              src={sosd}
-              alt="Logo" 
-              className="h-10 w-10"
-            />
-            <Text strong style={{ fontSize: '1.2rem', marginLeft: '0.7rem' }}>福州大学服务外包与软件设计实验室</Text>
+            <img src={sosd} alt="Logo" className="h-10 w-10" />
+            <Text strong style={{ fontSize: '1.2rem', marginLeft: '0.7rem' }}>
+              福州大学服务外包与软件设计实验室
+            </Text>
           </div>
-          
+
           {/* 导航菜单 */}
-          <Menu 
+          <Menu
             items={navItems}
             mode="horizontal"
             className="border-b-0"
@@ -95,20 +102,26 @@ const HeaderBar = React.memo(() => {
         {/* 右侧操作区 */}
         <div className="flex items-center">
           <Space size={16}>
-            <Button type="default" shape="round" size="middle">联系我们</Button>
-            <Button type="primary" shape="round" size="middle">开始使用</Button>
+            <Button type="default" shape="round" size="middle">
+              联系我们
+            </Button>
+            <Button type="primary" shape="round" size="middle">
+              开始使用
+            </Button>
             <Dropdown
               menu={{ items: dropDownItems, onClick: handleClick }}
               trigger={['click']}
               placement="bottomRight"
             >
               <div className="flex items-center cursor-pointer ml-4">
-                <Avatar 
-                  size={36} 
-                  icon={<UserOutlined />} 
+                <Avatar
+                  size={36}
+                  icon={<UserOutlined />}
                   style={{ backgroundColor: '#3e97ff' }}
                 />
-                <DownOutlined style={{ fontSize: '12px', marginLeft: '8px', color: '#666' }} />
+                <DownOutlined
+                  style={{ fontSize: '12px', marginLeft: '8px', color: '#666' }}
+                />
               </div>
             </Dropdown>
           </Space>

@@ -1,70 +1,69 @@
 .login-container {
-    min-height: 100vh;  /* 改为min-height而不是固定height */
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f0f7ff;
-    background-image: linear-gradient(135deg, #f0f7ff 0%, #e0f0ff 100%);
-    padding: 40px 20px;  /* 增加上下内边距 */
-    overflow-y: auto;    /* 允许垂直滚动 */
-  }
-  
-  .login-overlay {
-    max-width: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;     /* 添加上下内边距 */
-  }
-  
-  .login-content {
-    width: 100%;
-    max-width: 480px;
-  }
-  
-  .login-card {
-    border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    padding: 20px;
-    overflow: visible;   /* 确保内容不会被剪裁 */
-  }
-  
-  /* 添加滚动条样式 */
-  .auth-tabs .ant-tabs-content {
-    max-height: 70vh;    /* 限制标签页内容的最大高度 */
+  min-height: 100vh; /* 改为min-height而不是固定height */
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f7ff;
+  background-image: linear-gradient(135deg, #f0f7ff 0%, #e0f0ff 100%);
+  padding: 40px 20px; /* 增加上下内边距 */
+  overflow-y: auto; /* 允许垂直滚动 */
+}
 
-  }
-  
-  /* 美化滚动条 */
-  .auth-tabs .ant-tabs-content::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  .auth-tabs .ant-tabs-content::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-  }
-  
-  .auth-tabs .ant-tabs-content::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 4px;
-  }
-  
-  .auth-tabs .ant-tabs-content::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-  }
-  
-  /* 让表单项间距更紧凑 */
-  .ant-form-item {
-    margin-bottom: 16px;  /* 减少表单项之间的间距 */
-  }
-  
-  /* 其他CSS保持不变 */
+.login-overlay {
+  max-width: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px 0; /* 添加上下内边距 */
+}
 
-  /* 覆盖Chrome浏览器的自动填充样式 */
+.login-content {
+  width: 100%;
+  max-width: 480px;
+}
+
+.login-card {
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  overflow: visible; /* 确保内容不会被剪裁 */
+}
+
+/* 添加滚动条样式 */
+.auth-tabs .ant-tabs-content {
+  max-height: 70vh; /* 限制标签页内容的最大高度 */
+}
+
+/* 美化滚动条 */
+.auth-tabs .ant-tabs-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.auth-tabs .ant-tabs-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.auth-tabs .ant-tabs-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.auth-tabs .ant-tabs-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 让表单项间距更紧凑 */
+.ant-form-item {
+  margin-bottom: 16px; /* 减少表单项之间的间距 */
+}
+
+/* 其他CSS保持不变 */
+
+/* 覆盖Chrome浏览器的自动填充样式 */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
+input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px white inset !important; /* 将背景强制设为白色 */

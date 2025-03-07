@@ -1,6 +1,29 @@
 import React, { useState } from 'react'
-import { Card, Form, Input, Button, Typography, Tabs, Select, Upload, message, Divider, Space, Row, Col } from 'antd'
-import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, IdcardOutlined, QqOutlined, BookOutlined, UploadOutlined } from '@ant-design/icons'
+import {
+  Card,
+  Form,
+  Input,
+  Button,
+  Typography,
+  Tabs,
+  Select,
+  Upload,
+  message,
+  Divider,
+  Space,
+  Row,
+  Col,
+} from 'antd'
+import {
+  UserOutlined,
+  LockOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  IdcardOutlined,
+  QqOutlined,
+  BookOutlined,
+  UploadOutlined,
+} from '@ant-design/icons'
 import { useNavigate, Link } from 'react-router-dom'
 import { RoutePath } from '@/constant/routes'
 import type { UploadProps } from 'antd'
@@ -46,7 +69,7 @@ const LoginPage: React.FC = () => {
       setLoading(true)
       console.log('登录信息:', values)
       // 这里调用登录API
-      
+
       // 模拟登录成功
       setTimeout(() => {
         message.success('登录成功')
@@ -64,15 +87,15 @@ const LoginPage: React.FC = () => {
   const handleRegisterSubmit = async (values: any) => {
     try {
       setLoading(true)
-      
+
       const registerData: RegisterData = {
         ...values,
-        avatarBase64: avatarBase64
+        avatarBase64: avatarBase64,
       }
-      
+
       console.log('注册信息:', registerData)
       // 这里调用注册API
-      
+
       // 模拟注册成功
       setTimeout(() => {
         message.success('注册成功，请登录')
@@ -91,12 +114,12 @@ const LoginPage: React.FC = () => {
     if (!isJpgOrPng) {
       message.error('只能上传JPG/PNG格式的图片!')
     }
-    
+
     const isLt2M = file.size / 1024 / 1024 < 2
     if (!isLt2M) {
       message.error('图片大小不能超过2MB!')
     }
-    
+
     return isJpgOrPng && isLt2M
   }
 
@@ -110,9 +133,14 @@ const LoginPage: React.FC = () => {
   }
 
   // 将图片转为Base64
-  const getBase64 = (file: RcFile, callback: (base64String: string) => void) => {
+  const getBase64 = (
+    file: RcFile,
+    callback: (base64String: string) => void,
+  ) => {
     const reader = new FileReader()
-    reader.addEventListener('load', () => callback(reader.result?.toString() || ''))
+    reader.addEventListener('load', () =>
+      callback(reader.result?.toString() || ''),
+    )
     reader.readAsDataURL(file)
   }
 
@@ -122,17 +150,17 @@ const LoginPage: React.FC = () => {
         <div className="login-content">
           <Card className="login-card" bordered={false}>
             <div className="text-center mb-6">
-              <img 
-                src={sosd}
-                alt="Logo" 
-                className="mb-4 mx-auto"
-              />
-              <Title level={3} className="mb-1">福州大学服务外包与软件设计实验室</Title>
-              <Text type="secondary">Service Outsourcing & Software Design Laboratory</Text>
+              <img src={sosd} alt="Logo" className="mb-4 mx-auto" />
+              <Title level={3} className="mb-1">
+                福州大学服务外包与软件设计实验室
+              </Title>
+              <Text type="secondary">
+                Service Outsourcing & Software Design Laboratory
+              </Text>
             </div>
-            
-            <Tabs 
-              activeKey={activeTab} 
+
+            <Tabs
+              activeKey={activeTab}
               onChange={setActiveTab}
               centered
               className="auth-tabs"
@@ -148,39 +176,37 @@ const LoginPage: React.FC = () => {
                 >
                   <Form.Item
                     name="email"
-                    rules={[
-                      { required: true, message: '请输入邮箱或学号' },
-                    ]}
+                    rules={[{ required: true, message: '请输入邮箱或学号' }]}
                   >
-                    <Input 
+                    <Input
                       size="large"
-                      placeholder="邮箱或学号" 
-                      prefix={<UserOutlined />} 
+                      placeholder="邮箱或学号"
+                      prefix={<UserOutlined />}
                       autoComplete="off"
                     />
                   </Form.Item>
-                  
+
                   <Form.Item
                     name="password"
                     rules={[{ required: true, message: '请输入密码' }]}
                   >
-                    <Input.Password 
+                    <Input.Password
                       size="large"
-                      placeholder="密码" 
+                      placeholder="密码"
                       prefix={<LockOutlined />}
                     />
                   </Form.Item>
-                  
+
                   <Form.Item>
                     <div className="flex justify-between items-center mb-4">
                       <Link to="/forgot-password" className="text-blue-500">
                         忘记密码?
                       </Link>
                     </div>
-                    <Button 
-                      type="primary" 
-                      htmlType="submit" 
-                      block 
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      block
                       size="large"
                       loading={loading}
                     >
@@ -188,20 +214,20 @@ const LoginPage: React.FC = () => {
                     </Button>
                   </Form.Item>
                 </Form>
-                
+
                 <Divider plain>
                   <Text type="secondary">还没有账号?</Text>
                 </Divider>
-                
-                <Button 
-                  block 
+
+                <Button
+                  block
                   onClick={() => setActiveTab('register')}
                   className="register-button"
                 >
                   创建新账号
                 </Button>
               </TabPane>
-              
+
               <TabPane tab="注册" key="register">
                 <Form
                   form={registerForm}
@@ -218,13 +244,13 @@ const LoginPage: React.FC = () => {
                         name="email"
                         rules={[
                           { required: true, message: '请输入邮箱' },
-                          { type: 'email', message: '请输入有效的邮箱地址' }
+                          { type: 'email', message: '请输入有效的邮箱地址' },
                         ]}
                       >
-                        <Input 
+                        <Input
                           size="middle" // 中等大小而不是large
-                          placeholder="邮箱" 
-                          prefix={<MailOutlined />} 
+                          placeholder="邮箱"
+                          prefix={<MailOutlined />}
                         />
                       </Form.Item>
                     </Col>
@@ -233,15 +259,15 @@ const LoginPage: React.FC = () => {
                         name="name"
                         rules={[{ required: true, message: '请输入姓名' }]}
                       >
-                        <Input 
+                        <Input
                           size="middle"
-                          placeholder="姓名" 
-                          prefix={<UserOutlined />} 
+                          placeholder="姓名"
+                          prefix={<UserOutlined />}
                         />
                       </Form.Item>
                     </Col>
                   </Row>
-                  
+
                   {/* 第二行 */}
                   <Row gutter={16}>
                     <Col span={12}>
@@ -249,10 +275,10 @@ const LoginPage: React.FC = () => {
                         name="studentId"
                         rules={[{ required: true, message: '请输入学号' }]}
                       >
-                        <Input 
+                        <Input
                           size="middle"
-                          placeholder="学号" 
-                          prefix={<IdcardOutlined />} 
+                          placeholder="学号"
+                          prefix={<IdcardOutlined />}
                         />
                       </Form.Item>
                     </Col>
@@ -266,47 +292,50 @@ const LoginPage: React.FC = () => {
                       </Form.Item>
                     </Col>
                   </Row>
-                  
+
                   {/* 第三行 */}
                   <Row gutter={16}>
                     <Col span={12}>
                       <Form.Item name="mobile">
-                        <Input 
+                        <Input
                           size="middle"
-                          placeholder="手机号" 
-                          prefix={<PhoneOutlined />} 
+                          placeholder="手机号"
+                          prefix={<PhoneOutlined />}
                         />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
                       <Form.Item name="qq">
-                        <Input 
+                        <Input
                           size="middle"
-                          placeholder="QQ号" 
-                          prefix={<QqOutlined />} 
+                          placeholder="QQ号"
+                          prefix={<QqOutlined />}
                         />
                       </Form.Item>
                     </Col>
                   </Row>
-                  
-                  <Form.Item name="major" rules={[{ required: true, message: '请输入专业' }]}>
-                    <Input 
+
+                  <Form.Item
+                    name="major"
+                    rules={[{ required: true, message: '请输入专业' }]}
+                  >
+                    <Input
                       size="middle"
-                      placeholder="专业" 
-                      prefix={<BookOutlined />} 
+                      placeholder="专业"
+                      prefix={<BookOutlined />}
                     />
                   </Form.Item>
-                
+
                   <Form.Item
                     name="password"
                     rules={[
                       { required: true, message: '请输入密码' },
-                      { min: 6, message: '密码至少为6个字符' }
+                      { min: 6, message: '密码至少为6个字符' },
                     ]}
                   >
-                    <Input.Password 
+                    <Input.Password
                       size="middle"
-                      placeholder="密码" 
+                      placeholder="密码"
                       prefix={<LockOutlined />}
                     />
                   </Form.Item>
@@ -318,20 +347,22 @@ const LoginPage: React.FC = () => {
                       ({ getFieldValue }) => ({
                         validator(_, value) {
                           if (!value || getFieldValue('password') === value) {
-                            return Promise.resolve();
+                            return Promise.resolve()
                           }
-                          return Promise.reject(new Error('两次输入的密码不匹配'));
+                          return Promise.reject(
+                            new Error('两次输入的密码不匹配'),
+                          )
                         },
                       }),
                     ]}
                   >
-                    <Input.Password 
+                    <Input.Password
                       size="middle"
-                      placeholder="确认密码" 
+                      placeholder="确认密码"
                       prefix={<LockOutlined />}
                     />
                   </Form.Item>
-                  
+
                   {/* 减小头像上传的视觉权重 */}
                   <Form.Item name="avatar">
                     <Upload
@@ -344,24 +375,26 @@ const LoginPage: React.FC = () => {
                     >
                       <div className="upload-button">
                         {avatarBase64 ? (
-                          <img 
-                            src={avatarBase64} 
-                            alt="avatar" 
-                            className="uploaded-avatar" 
+                          <img
+                            src={avatarBase64}
+                            alt="avatar"
+                            className="uploaded-avatar"
                             style={{ width: '60px', height: '60px' }} // 减小头像尺寸
                           />
                         ) : (
-                          <Button size="small" icon={<UploadOutlined />}>上传头像</Button>
+                          <Button size="small" icon={<UploadOutlined />}>
+                            上传头像
+                          </Button>
                         )}
                       </div>
                     </Upload>
                   </Form.Item>
-                  
+
                   <Form.Item>
-                    <Button 
-                      type="primary" 
-                      htmlType="submit" 
-                      block 
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      block
                       size="middle" // 中等大小按钮
                       loading={loading}
                     >
@@ -369,15 +402,21 @@ const LoginPage: React.FC = () => {
                     </Button>
                   </Form.Item>
                 </Form>
-                
+
                 <div className="text-center">
                   <Text type="secondary">
-                    已有账号? <a onClick={() => setActiveTab('login')} className="text-blue-500">登录</a>
+                    已有账号?{' '}
+                    <a
+                      onClick={() => setActiveTab('login')}
+                      className="text-blue-500"
+                    >
+                      登录
+                    </a>
                   </Text>
                 </div>
               </TabPane>
             </Tabs>
-            
+
             <Paragraph className="text-center text-gray-400 text-xs mt-8">
               © {new Date().getFullYear()} 福州大学SOSD实验室. 保留所有权利.
             </Paragraph>
