@@ -5,10 +5,14 @@ import { ArrowRightOutlined, RocketOutlined, BulbOutlined, SafetyCertificateOutl
 import React from 'react'
 
 import sadaharu from '@/assets/sadaharu.png' 
+import { Navigate, useNavigate } from 'react-router-dom'
+import { routes } from '@/routes'
+import { RoutePath } from '@/constant/routes'
 
 const { Title, Paragraph, Text } = Typography;
 
 const HomePage = React.memo(() => {
+  const navigate = useNavigate();
   return <>
     <ConfigProvider
       theme={{
@@ -123,7 +127,8 @@ const HomePage = React.memo(() => {
         <Paragraph style={{ fontSize: '1.1rem', maxWidth: '700px', margin: '0 auto 2rem' }}>
           2025年福州大学服务外包与软件设计校赛
         </Paragraph>
-        <Button type="primary" size="large" className="px-10 h-12 text-lg font-medium">
+        <Button type="primary" size="large" className="px-10 h-12 text-lg font-medium"
+          onClick={() => navigate(RoutePath.Competition)}>
           立即参加！
         </Button>
       </section>

@@ -2,6 +2,8 @@ import { Typography, Button, Space, Card, Row, Col, Divider, List, Timeline } fr
 import { DownloadOutlined, TeamOutlined, FormOutlined, CalendarOutlined, TrophyOutlined, FileTextOutlined } from '@ant-design/icons'
 import React from 'react'
 
+import sadaharu from '@/assets/sadaharu.png'
+
 const { Title, Paragraph, Text } = Typography;
 
 const CompPage = React.memo(() => {
@@ -61,7 +63,7 @@ const CompPage = React.memo(() => {
         <Col xs={24} md={12}>
           <div className="rounded-xl overflow-hidden shadow-lg">
             <img 
-              src="https://placehold.co/800x500/3e97ff/ffffff?text=服创校赛" 
+              src={sadaharu} 
               alt="服务外包校赛" 
               className="w-full h-auto"
             />
