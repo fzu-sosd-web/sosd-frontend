@@ -17,13 +17,19 @@ import {
   TrophyOutlined,
   FileTextOutlined,
 } from '@ant-design/icons'
-import React from 'react'
+import React, { useState } from 'react'
 
 import sadaharu from '@/assets/sadaharu.png'
+import RegisterModal from './register_modal'
+import TeamModal from './teaminfo_modal'
 
 const { Title, Paragraph, Text } = Typography
 
 const CompPage = React.memo(() => {
+  // 状态管理
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showTeamModal, setShowTeamModal] = useState(false);
+
   // 赛事文件列表数据
   const competitionFiles = [
     { name: '赛事规则.pdf', key: 'rules' },
@@ -173,6 +179,7 @@ const CompPage = React.memo(() => {
                 size="large"
                 icon={<FormOutlined />}
                 className="px-8 h-12 text-lg font-medium"
+                onClick={() => setShowRegisterModal(true)}
               >
                 立即报名
               </Button>
@@ -181,6 +188,7 @@ const CompPage = React.memo(() => {
                 size="large"
                 icon={<TeamOutlined />}
                 className="px-8 h-12 text-lg font-medium"
+                onClick={() => setShowTeamModal(true)}
               >
                 我的队伍
               </Button>
@@ -220,10 +228,20 @@ const CompPage = React.memo(() => {
               }))}
             />
           </div>
-
-          {/* 添加一些CSS样式让Timeline水平显示 */}
         </div>
       </div>
+
+      {/* 报名弹窗 */}
+      <RegisterModal 
+        visible={showRegisterModal} 
+        onCancel={() => setShowRegisterModal(false)} 
+      />
+      
+      {/* 队伍弹窗 */}
+      <TeamModal 
+        visible={showTeamModal} 
+        onCancel={() => setShowTeamModal(false)} 
+      />
     </div>
   )
 })

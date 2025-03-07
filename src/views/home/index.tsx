@@ -18,6 +18,7 @@ import {
   SafetyCertificateOutlined,
 } from '@ant-design/icons'
 import React from 'react'
+import sosd from '@/assets/logo.png'
 
 import sadaharu from '@/assets/sadaharu.png'
 import { Navigate, useNavigate } from 'react-router-dom'
@@ -188,27 +189,178 @@ const HomePage = React.memo(() => {
           </Row>
         </section>
 
-        <section className="py-20 px-6 sm:px-12 md:px-24 bg-[#f0f7ff] text-center">
-          <Title level={2} style={{ marginBottom: '1.5rem' }}>
-            最新资讯
-          </Title>
-          <Paragraph
-            style={{
-              fontSize: '1.1rem',
-              maxWidth: '700px',
-              margin: '0 auto 2rem',
-            }}
-          >
-            2025年福州大学服务外包与软件设计校赛
-          </Paragraph>
-          <Button
-            type="primary"
-            size="large"
-            className="px-10 h-12 text-lg font-medium"
-            onClick={() => navigate(RoutePath.Competition)}
-          >
-            立即参加！
-          </Button>
+        <section className="py-20 px-6 sm:px-12 md:px-24 bg-[#f0f7ff]">
+          <div className="text-center mb-12">
+            <Title level={2} style={{ marginBottom: '1.5rem' }}>
+              最新资讯
+            </Title>
+            <Paragraph
+              style={{
+                fontSize: '1.1rem',
+                maxWidth: '700px',
+                margin: '0 auto',
+              }}
+            >
+              关注我们的最新活动与通知，公众号：ACM协同创新团队
+            </Paragraph>
+          </div>
+
+          <Row gutter={[24, 24]} justify="center">
+            {/* 校赛活动卡片 */}
+            <Col xs={24} md={12} lg={10}>
+              <Card
+                className="event-card"
+                bordered={false}
+                style={{
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.08)',
+                  height: '100%',
+                }}
+                cover={
+                  <div
+                    style={{
+                      height: '200px',
+                      overflow: 'hidden',
+                      position: 'relative',
+                    }}
+                  >
+                    <img
+                      alt="校赛封面"
+                      src={sosd}
+                      style={{
+                        width: '100%',
+                        objectFit: 'cover',
+                        height: '100%',
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        background: '#ff4d4f',
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '16px',
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                      }}
+                    >
+                      进行中
+                    </div>
+                  </div>
+                }
+              >
+                <div style={{ padding: '8px 8px 16px' }}>
+                  <Title level={4} style={{ marginBottom: '8px' }}>
+                    2025年福州大学服务外包与软件设计校赛
+                  </Title>
+                  <Paragraph type="secondary" style={{ marginBottom: '16px' }}>
+                    <div>时间：2024年3月1日 - 2024年4月20日</div>
+                    <div>地点：福州大学</div>
+                  </Paragraph>
+                  <Paragraph
+                    ellipsis={{ rows: 2 }}
+                    style={{ marginBottom: '20px' }}
+                  >
+                    参与校内最具影响力的软件设计赛事，展示你的创意和技术实力，优胜者将代表学校参加全国大赛！
+                  </Paragraph>
+                  <div style={{ textAlign: 'right' }}>
+                    <Button
+                      type="primary"
+                      onClick={() => navigate(RoutePath.Competition)}
+                      size="middle"
+                    >
+                      立即参加
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </Col>
+
+            {/* 纳新活动卡片 */}
+            <Col xs={24} md={12} lg={10}>
+              <Card
+                className="event-card"
+                bordered={false}
+                style={{
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.08)',
+                  height: '100%',
+                }}
+                cover={
+                  <div
+                    style={{
+                      height: '200px',
+                      overflow: 'hidden',
+                      position: 'relative',
+                    }}
+                  >
+                    <img
+                      alt="纳新封面"
+                      src={sosd}
+                      style={{
+                        width: '100%',
+                        objectFit: 'cover',
+                        height: '100%',
+                        filter: 'grayscale(0.4)',
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        background: '#8c8c8c',
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '16px',
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                      }}
+                    >
+                      即将开始
+                    </div>
+                  </div>
+                }
+              >
+                <div style={{ padding: '8px 8px 16px' }}>
+                  <Title level={4} style={{ marginBottom: '8px' }}>
+                    2025年服务外包与软件设计实验室春季纳新
+                  </Title>
+                  <Paragraph type="secondary" style={{ marginBottom: '16px' }}>
+                    <div>时间：2025年9月10日 - 2025年10月10日</div>
+                    <div>地点：福州大学</div>
+                  </Paragraph>
+                  <Paragraph
+                    ellipsis={{ rows: 2 }}
+                    style={{ marginBottom: '20px' }}
+                  >
+                    加入我们的团队，提升技术能力，参与各类比赛，结交志同道合的伙伴！我们期待着你的加入！
+                  </Paragraph>
+                  <div style={{ textAlign: 'right' }}>
+                    <Button type="primary" disabled size="middle">
+                      即将开始
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </Col>
+          </Row>
+
+          {/* 底部的查看更多按钮 */}
+          {/* <div style={{ textAlign: 'center', marginTop: '32px' }}>
+    <Button 
+      type="default"
+      icon={<ArrowRightOutlined />}
+      size="large"
+      className="px-8"
+    >
+      查看全部公告
+    </Button>
+  </div> */}
         </section>
       </ConfigProvider>
     </>
