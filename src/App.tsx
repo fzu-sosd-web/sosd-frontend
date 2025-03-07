@@ -12,6 +12,7 @@ import CompPage from './views/comp/competition'
 import MainLayout from './components/main-layout'
 import ProfilePage from './views/profile'
 import CompetitionListPage from './views/comp/comp_list'
+import AuthWrap from './components/auth-wrap'
 // import PersonPage from './views/personal'
 
 const App = () => {
@@ -28,8 +29,18 @@ const App = () => {
           <Route index element={<Navigate to={RoutePath.Home} />} />
           <Route path={RoutePath.Home} element={<HomePage />} />
           <Route path={RoutePath.Competition} element={<CompPage />} />
-          <Route path={RoutePath.Profile} element={<ProfilePage />} />
-          <Route path={RoutePath.CompetitionList} element={<CompetitionListPage/>}> </Route>
+          <Route
+            path={RoutePath.Profile}
+            element={
+              <AuthWrap>
+                <ProfilePage />
+              </AuthWrap>
+            }
+          />
+          <Route
+            path={RoutePath.CompetitionList}
+            element={<CompetitionListPage />}
+          ></Route>
           {/* 404页面 */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>
