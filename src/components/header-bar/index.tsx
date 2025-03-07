@@ -14,6 +14,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import sosd from '@/assets/logo.png'
+import { useLoginStore } from '@/store/login'
 
 const { Text } = Typography
 
@@ -38,19 +39,7 @@ const navItems: MenuItem[] = [
   },
 ]
 
-const dropDownItems: MenuProps['items'] = [
-  {
-    label: '个人中心',
-    key: RoutePath.Profile,
-  },
-  {
-    type: 'divider',
-  },
-  {
-    label: '退出登录',
-    key: RoutePath.Login,
-  },
-]
+//const isLogin, userInfo = useLoginStore((state) => [state.isLogin, state.userInfo])
 
 const HeaderBar = React.memo(() => {
   const [current, setCurrent] = useState(RoutePath.Home)
@@ -60,6 +49,42 @@ const HeaderBar = React.memo(() => {
     setCurrent(e.key)
     navigate(e.key)
   }
+
+  const userInfo = useLoginStore((state) => state.userInfo)
+  const isLogin = useLoginStore((state) => state.isLogin)
+
+  const dropDownItems: MenuProps['items'] = [
+    {
+      label: '个人中心',
+      key: 'profile',
+      disabled: !isLogin,
+      onClick: () => {
+        navigate(RoutePath.Profile)
+      },
+    },
+    {
+      type: 'divider',
+    },
+    {
+      label: '登录',
+      key: 'login',
+      disabled: isLogin,
+      onClick: () => {
+        navigate(RoutePath.Login)
+      },
+    },
+    {
+      type: 'divider',
+    },
+    {
+      label: '退出登录',
+      key: 'logout',
+
+      onClick: () => {
+        useLoginStore.setState({ isLogin: false, userInfo: null })
+      },
+    },
+  ]
 
   return (
     <ConfigProvider
@@ -101,9 +126,28 @@ const HeaderBar = React.memo(() => {
 
         {/* 右侧操作区 */}
         <div className="flex items-center">
+          {/* 用户问候 */}
+          <div className="mr-4">
+            {isLogin ? (
+              <Text
+                strong
+                style={{ backgroundColor: 'transparent', fontWeight: 500 }}
+              >
+                你好，{userInfo?.name}
+              </Text>
+            ) : (
+              <Text
+                strong
+                style={{ backgroundColor: 'transparent', fontWeight: 500 }}
+              >
+                你好，游客
+              </Text>
+            )}
+          </div>
+
           <Space size={16}>
             <Dropdown
-              menu={{ items: dropDownItems, onClick: handleClick }}
+              menu={{ items: dropDownItems}}
               trigger={['click']}
               placement="bottomRight"
             >

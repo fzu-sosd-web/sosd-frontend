@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   Modal,
   Form,
@@ -9,35 +9,39 @@ import {
   Col,
   Typography,
   Space,
-  message
-} from 'antd';
+  message,
+} from 'antd'
 import {
   TeamOutlined,
   UserOutlined,
   IdcardOutlined,
   PhoneOutlined,
-  MailOutlined
-} from '@ant-design/icons';
+  MailOutlined,
+} from '@ant-design/icons'
 
-const { Title, Paragraph } = Typography;
-const { Option } = Select;
-const { TextArea } = Input;
+const { Title, Paragraph } = Typography
+const { Option } = Select
+const { TextArea } = Input
 
 interface RegisterModalProps {
-  visible: boolean;
-  onCancel: () => void;
-  competitionId: string;
+  visible: boolean
+  onCancel: () => void
+  competitionId: string
 }
 
-const RegisterModal: React.FC<RegisterModalProps> = ({ visible, onCancel, competitionId }) => {
-  const [form] = Form.useForm();
+const RegisterModal: React.FC<RegisterModalProps> = ({
+  visible,
+  onCancel,
+  competitionId,
+}) => {
+  const [form] = Form.useForm()
 
   const handleSubmit = (values: any) => {
-    console.log('报名信息:', values);
-    message.success('报名成功！请等待审核');
-    onCancel();
-    form.resetFields();
-  };
+    console.log('报名信息:', values)
+    message.success('报名成功！请等待审核')
+    onCancel()
+    form.resetFields()
+  }
 
   return (
     <Modal
@@ -63,11 +67,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ visible, onCancel, compet
               label="团队名称"
               rules={[{ required: true, message: '请输入团队名称' }]}
             >
-              <Input placeholder="给你的团队起个名字" prefix={<TeamOutlined />} />
+              <Input
+                placeholder="给你的团队起个名字"
+                prefix={<TeamOutlined />}
+              />
             </Form.Item>
           </Col>
         </Row>
-        
+
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item
@@ -79,7 +86,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ visible, onCancel, compet
             </Form.Item>
           </Col>
         </Row>
-        
+
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item
@@ -87,8 +94,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ visible, onCancel, compet
               label="项目简介"
               rules={[{ required: true, message: '请输入项目简介' }]}
             >
-              <TextArea 
-                placeholder="简要描述你的项目定位和创新点（不超过300字）" 
+              <TextArea
+                placeholder="简要描述你的项目定位和创新点（不超过300字）"
                 rows={4}
                 maxLength={300}
                 showCount
@@ -96,8 +103,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ visible, onCancel, compet
             </Form.Item>
           </Col>
         </Row>
-        
-        <Title level={5} className="mt-4">队长信息</Title>
+
+        <Title level={5} className="mt-4">
+          队长信息
+        </Title>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
@@ -118,7 +127,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ visible, onCancel, compet
             </Form.Item>
           </Col>
         </Row>
-        
+
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
@@ -145,7 +154,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ visible, onCancel, compet
             </Form.Item>
           </Col>
         </Row>
-        
+
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item
@@ -153,39 +162,34 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ visible, onCancel, compet
               label="邮箱"
               rules={[
                 { required: true, message: '请输入邮箱' },
-                { type: 'email', message: '请输入有效的邮箱地址' }
+                { type: 'email', message: '请输入有效的邮箱地址' },
               ]}
             >
               <Input placeholder="电子邮箱" prefix={<MailOutlined />} />
             </Form.Item>
           </Col>
         </Row>
-        
-        <Title level={5} className="mt-4">其他队员</Title>
+
+        <Title level={5} className="mt-4">
+          其他队员
+        </Title>
         <Paragraph type="secondary" className="mb-4">
           每支队伍至少3人，最多5人。每位队员信息将在报名后添加。
         </Paragraph>
-        
+
         <Form.Item className="mt-6">
           <Space>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
-              size="large"
-            >
+            <Button type="primary" htmlType="submit" size="large">
               提交报名
             </Button>
-            <Button 
-              onClick={onCancel}
-              size="large"
-            >
+            <Button onClick={onCancel} size="large">
               取消
             </Button>
           </Space>
         </Form.Item>
       </Form>
     </Modal>
-  );
-};
+  )
+}
 
-export default RegisterModal;
+export default RegisterModal

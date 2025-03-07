@@ -10,7 +10,7 @@ import {
   Timeline,
   Spin,
   message,
-  Empty
+  Empty,
 } from 'antd'
 import {
   DownloadOutlined,
@@ -27,95 +27,98 @@ import axios from 'axios'
 import sadaharu from '@/assets/sadaharu.png'
 import RegisterModal from './register_modal'
 import TeamModal from './teaminfo_modal'
-import { API_BASE_URL } from '@/constant/web';
+import { API_BASE_URL } from '@/constant/web'
 import { Competition, CompetitionFile } from './type'
 
 const { Title, Paragraph, Text } = Typography
 
-
-
-
 const CompPage = React.memo(() => {
   // 获取URL参数
-  const { competitionId } = useParams<{ competitionId: string }>();
-  
+  const { competitionId } = useParams<{ competitionId: string }>()
+
   // 状态管理
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [showTeamModal, setShowTeamModal] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [competition, setCompetition] = useState<Competition | null>(null);
+  const [showRegisterModal, setShowRegisterModal] = useState(false)
+  const [showTeamModal, setShowTeamModal] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [competition, setCompetition] = useState<Competition | null>(null)
 
   // 获取竞赛详情数据
   const fetchCompetitionDetails = async () => {
-    if (!competitionId) return;
-    
-    setLoading(true);
+    if (!competitionId) return
+
+    setLoading(true)
     try {
       // 调用API获取竞赛详情
-      const response = await axios.get(`${API_BASE_URL}/api/competitions/${competitionId}`);
-      
+      const response = await axios.get(
+        `${API_BASE_URL}/user/competition/getOne/${competitionId}`,
+      )
+
       if (response.data && response.data.code === 200) {
-        setCompetition(response.data.data);
+        setCompetition(response.data.data)
       } else {
-        message.error('获取竞赛信息失败: ' + (response.data?.message || '未知错误'));
+        message.error(
+          '获取竞赛信息失败: ' + (response.data?.message || '未知错误'),
+        )
         // 使用模拟数据作为后备
-        setCompetition(getMockCompetitionData());
+        setCompetition(getMockCompetitionData())
       }
     } catch (error) {
-      console.error('获取竞赛详情出错:', error);
-      message.error('获取竞赛信息失败，请稍后再试');
+      console.error('获取竞赛详情出错:', error)
+      message.error('获取竞赛信息失败，请稍后再试')
       // 使用模拟数据作为后备
-      setCompetition(getMockCompetitionData());
+      setCompetition(getMockCompetitionData())
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   // 文件下载处理函数
   const handleFileDownload = (file: CompetitionFile) => {
     // 实际项目中应该处理文件下载
-    message.info(`开始下载: ${file.name}`);
-    
+    message.info(`开始下载: ${file.name}`)
+
     if (file.url) {
       // 如果有URL，创建一个隐藏的a标签并触发下载
-      const link = document.createElement('a');
-      link.href = file.url;
-      link.target = '_blank';
-      link.download = file.name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const link = document.createElement('a')
+      link.href = file.url
+      link.target = '_blank'
+      link.download = file.name
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     }
-  };
+  }
 
   // 获取竞赛状态
-  const getCompetitionStatus = (comp: Competition): 'upcoming' | 'ongoing' | 'ended' => {
+  const getCompetitionStatus = (
+    comp: Competition,
+  ): 'upcoming' | 'ongoing' | 'ended' => {
     // 如果有竞赛阶段数据，尝试从中确定状态
     if (comp.data?.competitionStages?.length > 0) {
       // 查找进行中的阶段
       const ongoingStage = comp.data.competitionStages.find(
-        stage => stage.status === 'process' || stage.status === 'ongoing'
-      );
-      if (ongoingStage) return 'ongoing';
-      
+        (stage) => stage.status === 'process' || stage.status === 'ongoing',
+      )
+      if (ongoingStage) return 'ongoing'
+
       // 检查时间判断是否已结束
-      const now = new Date();
-      const endDate = new Date(comp.endDate);
-      if (endDate < now) return 'ended';
-      
+      const now = new Date()
+      const endDate = new Date(comp.endDate)
+      if (endDate < now) return 'ended'
+
       // 否则为即将开始
-      return 'upcoming';
+      return 'upcoming'
     } else {
       // 根据开始和结束日期判断
-      const now = new Date();
-      const startDate = new Date(comp.startDate);
-      const endDate = new Date(comp.endDate);
-      
-      if (now < startDate) return 'upcoming';
-      if (now > endDate) return 'ended';
-      return 'ongoing';
+      const now = new Date()
+      const startDate = new Date(comp.startDate)
+      const endDate = new Date(comp.endDate)
+
+      if (now < startDate) return 'upcoming'
+      if (now > endDate) return 'ended'
+      return 'ongoing'
     }
-  };
+  }
 
   // 从竞赛阶段数据生成时间轴项
   const generateTimelineItems = (comp: Competition) => {
@@ -123,67 +126,73 @@ const CompPage = React.memo(() => {
       return [
         {
           title: '报名阶段',
-          time: formatTimeRange(comp.startDate, addDays(new Date(comp.startDate), 20)),
+          time: formatTimeRange(
+            comp.startDate,
+            addDays(new Date(comp.startDate), 20),
+          ),
           description: '组建团队并完成报名手续',
-          status: 'process' as 'finish' | 'process' | 'wait'
+          status: 'process' as 'finish' | 'process' | 'wait',
         },
         {
           title: '比赛阶段',
-          time: formatTimeRange(addDays(new Date(comp.startDate), 21), new Date(comp.endDate)),
+          time: formatTimeRange(
+            addDays(new Date(comp.startDate), 21),
+            new Date(comp.endDate),
+          ),
           description: '完成项目开发和提交',
-          status: 'wait' as 'finish' | 'process' | 'wait'
-        }
-      ];
+          status: 'wait' as 'finish' | 'process' | 'wait',
+        },
+      ]
     }
-    
-    return comp.data.competitionStages.map(stage => {
+
+    return comp.data.competitionStages.map((stage) => {
       // 将API返回的状态映射到Timeline需要的状态
-      let timelineStatus: 'finish' | 'process' | 'wait';
-      switch(stage.status) {
+      let timelineStatus: 'finish' | 'process' | 'wait'
+      switch (stage.status) {
         case 'finish':
         case 'finished':
-          timelineStatus = 'finish';
-          break;
+          timelineStatus = 'finish'
+          break
         case 'process':
         case 'ongoing':
-          timelineStatus = 'process';
-          break;
+          timelineStatus = 'process'
+          break
         default:
-          timelineStatus = 'wait';
+          timelineStatus = 'wait'
       }
-      
+
       return {
-        title: stage.description,
+        title: stage.status,
         time: formatTimeRange(new Date(stage.startAt), new Date(stage.endAt)),
         description: stage.description,
-        status: timelineStatus
-      };
-    });
-  };
+        status: timelineStatus,
+      }
+    })
+  }
 
   // 格式化时间范围
   const formatTimeRange = (start: Date | string, end: Date | string) => {
-    const startDate = typeof start === 'string' ? new Date(start) : start;
-    const endDate = typeof end === 'string' ? new Date(end) : end;
-    
-    return `${startDate.getMonth() + 1}月${startDate.getDate()}日-${endDate.getMonth() + 1}月${endDate.getDate()}日`;
-  };
+    const startDate = typeof start === 'string' ? new Date(start) : start
+    const endDate = typeof end === 'string' ? new Date(end) : end
+
+    return `${startDate.getMonth() + 1}月${startDate.getDate()}日-${endDate.getMonth() + 1}月${endDate.getDate()}日`
+  }
 
   // 日期工具：添加天数
   const addDays = (date: Date, days: number) => {
-    const result = new Date(date);
-    result.setDate(date.getDate() + days);
-    return result;
-  };
+    const result = new Date(date)
+    result.setDate(date.getDate() + days)
+    return result
+  }
 
   // 生成模拟文件列表
   const getMockFiles = (): CompetitionFile[] => {
     return [
       { name: '赛事规则.pdf', key: 'rules', url: '' },
       { name: '评分标准.pdf', key: 'scoring', url: '' },
-      { name: '参赛指南.pdf', key: 'guide', url: '' }
-    ];
-  };
+      { name: '参赛指南.pdf', key: 'guide', url: '' },
+    ]
+  }
 
   // 生成模拟竞赛数据
   const getMockCompetitionData = (): Competition => {
@@ -191,44 +200,45 @@ const CompPage = React.memo(() => {
       id: parseInt(competitionId || '0'),
       name: '2025年福州大学服务外包校赛',
       type: 'Competition',
-      description: '福州大学服务外包与软件设计实验室举办的校内软件设计大赛，旨在提高学生的实际项目开发能力、创新思维和团队协作精神。比赛模拟真实企业项目需求，参赛者将在有限时间内完成从需求分析到系统实现的全过程。',
+      description:
+        '福州大学服务外包与软件设计实验室举办的校内软件设计大赛，旨在提高学生的实际项目开发能力、创新思维和团队协作精神。比赛模拟真实企业项目需求，参赛者将在有限时间内完成从需求分析到系统实现的全过程。',
       data: {
         competitionStages: [
           {
             startAt: '2024-04-10',
             endAt: '2024-04-30',
             description: '报名阶段',
-            status: 'finish'
+            status: 'finish',
           },
           {
             startAt: '2024-05-01',
             endAt: '2024-05-20',
             description: '初赛阶段',
-            status: 'process'
+            status: 'process',
           },
           {
             startAt: '2024-05-25',
             endAt: '2024-06-10',
             description: '决赛阶段',
-            status: 'wait'
-          }
+            status: 'wait',
+          },
         ],
         teamMembers: 120,
         type: 'school',
-        url: ''
+        url: '',
       },
       userId: 'user-001',
       managerId: 'manager-001',
       startDate: '2024-04-10',
       endDate: '2024-06-15',
-      createdAt: '2024-03-01'
-    };
-  };
+      createdAt: '2024-03-01',
+    }
+  }
 
   // 在组件挂载时和competitionId变化时获取数据
   useEffect(() => {
-    fetchCompetitionDetails();
-  }, [competitionId]);
+    fetchCompetitionDetails()
+  }, [competitionId])
 
   // 加载中显示加载状态
   if (loading) {
@@ -236,26 +246,26 @@ const CompPage = React.memo(() => {
       <div className="py-24 flex justify-center items-center">
         <Spin size="large" tip="加载竞赛信息..." />
       </div>
-    );
+    )
   }
 
   // 如果没有找到竞赛数据
   if (!competition) {
     return (
       <div className="py-24">
-        <Empty 
-          description="未找到竞赛信息" 
+        <Empty
+          description="未找到竞赛信息"
           image={Empty.PRESENTED_IMAGE_DEFAULT}
         />
       </div>
-    );
+    )
   }
 
   // 获取竞赛状态
-  const competitionStatus = getCompetitionStatus(competition);
-  
+  const competitionStatus = getCompetitionStatus(competition)
+
   // 生成时间轴数据
-  const timelineItems = generateTimelineItems(competition);
+  const timelineItems = generateTimelineItems(competition)
 
   return (
     <div className="py-8 px-6 sm:px-12 md:px-24">
@@ -277,14 +287,14 @@ const CompPage = React.memo(() => {
         {/* 左侧赛事图片 */}
         <Col xs={24} md={12}>
           <div className="rounded-xl overflow-hidden shadow-lg">
-            <img 
-              src={competition.data?.url || sadaharu} 
-              alt={competition.name} 
+            <img
+              src={competition.data?.url || sadaharu}
+              alt={competition.name}
               className="w-full h-auto"
               onError={(e) => {
                 // 图片加载失败时使用默认图片
-                e.currentTarget.src = sadaharu;
-              }} 
+                e.currentTarget.src = sadaharu
+              }}
             />
           </div>
         </Col>
@@ -401,7 +411,7 @@ const CompPage = React.memo(() => {
           比赛流程
         </Title>
         <div className="bg-gray-50 p-8 rounded-xl">
-          {/* 横向时间轴 */}
+          {/* 时间轴 */}
           <div className="horizontal-timeline">
             <Timeline
               mode="alternate"
@@ -413,7 +423,9 @@ const CompPage = React.memo(() => {
                   >
                     <div
                       className="text-xl font-semibold"
-                      style={{ color: item.status === 'wait' ? 'gray' : '#3e97ff' }}
+                      style={{
+                        color: item.status === 'wait' ? 'gray' : '#3e97ff',
+                      }}
                     >
                       {item.title}
                     </div>
@@ -430,16 +442,16 @@ const CompPage = React.memo(() => {
       </div>
 
       {/* 报名弹窗 */}
-      <RegisterModal 
-        visible={showRegisterModal} 
-        onCancel={() => setShowRegisterModal(false)} 
+      <RegisterModal
+        visible={showRegisterModal}
+        onCancel={() => setShowRegisterModal(false)}
         competitionId={competition.id.toString()}
       />
-      
+
       {/* 队伍弹窗 */}
-      <TeamModal 
-        visible={showTeamModal} 
-        onCancel={() => setShowTeamModal(false)} 
+      <TeamModal
+        visible={showTeamModal}
+        onCancel={() => setShowTeamModal(false)}
       />
     </div>
   )
