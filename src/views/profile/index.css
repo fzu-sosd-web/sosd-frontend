@@ -1,0 +1,170 @@
+/* 整体容器 */
+.profile-container {
+    padding: 24px 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* 卡片样式 */
+  .profile-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+  
+  /* 左侧头像区域 */
+  .profile-avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0;
+  }
+  
+  .profile-avatar {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 4px solid #fff;
+    transition: all 0.3s ease;
+  }
+  
+  .profile-avatar:hover {
+    transform: scale(1.02);
+  }
+  
+  .upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #8c8c8c;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .upload-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  
+  .profile-name {
+    margin-top: 16px !important;
+    margin-bottom: 4px !important;
+    font-weight: 600 !important;
+  }
+  
+  .profile-major {
+    color: #8c8c8c;
+  }
+  
+  /* 右侧信息区域 */
+  .profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .profile-title {
+    margin: 0 !important;
+    font-weight: 600 !important;
+  }
+  
+  .profile-divider {
+    margin: 12px 0 24px !important;
+  }
+  
+  /* 表单样式 */
+  .profile-form .ant-form-item {
+    margin-bottom: 20px;
+  }
+  
+  .profile-form .ant-form-item-label > label {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  /* 输入框样式修复与美化 */
+  .profile-input {
+    height: 40px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    /* 覆盖可能的自动填充样式 */
+    box-shadow: 0 0 0 1000px white inset !important;
+    background-color: white !important;
+  }
+  
+  .profile-input:hover, 
+  .profile-input:focus {
+    border-color: #3e97ff;
+    box-shadow: 0 0 0 1000px white inset !important;
+    background-color: white !important;
+  }
+  
+  /* 解决自动填充的问题 */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    -webkit-text-fill-color: rgba(0, 0, 0, 0.88) !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+  
+  /* 禁用输入框样式 */
+  .profile-input-disabled {
+    color: rgba(0, 0, 0, 0.6) !important;
+    background-color: #f5f5f5 !important;
+  }
+  
+  /* 图标样式 */
+  .form-icon {
+    color: #3e97ff;
+  }
+  
+  /* 按钮样式 */
+  .edit-button, .save-button {
+    background-color: #3e97ff;
+    border-color: #3e97ff;
+    transition: all 0.3s ease;
+  }
+  
+  .edit-button:hover, .save-button:hover {
+    background-color: #2486f9;
+    border-color: #2486f9;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(62, 151, 255, 0.3);
+  }
+  
+  .cancel-button {
+    transition: all 0.3s ease;
+  }
+  
+  .cancel-button:hover {
+    color: #3e97ff;
+    border-color: #3e97ff;
+  }
+  
+  /* 下拉选择框样式 */
+  .profile-select {
+    border-radius: 8px;
+    height: 40px;
+  }
+  
+  .profile-select .ant-select-selector {
+    height: 40px !important;
+    padding-top: 4px !important;
+  }
+  
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    .profile-avatar-col {
+      border-bottom: 1px solid #f0f0f0;
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .profile-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+  }

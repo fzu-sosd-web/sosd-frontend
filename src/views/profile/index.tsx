@@ -28,6 +28,8 @@ import {
 import type { UploadProps } from 'antd';
 import type { RcFile, UploadFile } from 'antd/es/upload/interface';
 
+import './index.css'; // 创建新的CSS文件
+
 const { Title, Text } = Typography;
 const { Option } = Select;
 
@@ -62,6 +64,9 @@ const ProfilePage: React.FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string>(userData.avatar);
   
   useEffect(() => {
+    // 重置表单以消除潜在的自动填充影响
+    form.resetFields();
+    
     // 这里可以添加API调用来获取用户数据
     form.setFieldsValue({
       name: userData.name,
@@ -104,15 +109,10 @@ const ProfilePage: React.FC = () => {
   };
   
   const handleChange: UploadProps['onChange'] = (info) => {
-    if (info.file.status === 'done') {
-      // 实际应用中，这里应该从上传响应中获取URL
-      // 这里仅模拟
+    if (info.file.originFileObj) {
       getBase64(info.file.originFileObj as RcFile, (url) => {
         setAvatarUrl(url);
       });
-      message.success('头像上传成功');
-    } else if (info.file.status === 'error') {
-      message.error('头像上传失败');
     }
   };
   
@@ -124,24 +124,24 @@ const ProfilePage: React.FC = () => {
   };
   
   const uploadButton = (
-    <div>
-      <UploadOutlined />
-      <div style={{ marginTop: 8 }}>更换头像</div>
+    <div className="upload-placeholder">
+      <div className="upload-icon">
+        <UploadOutlined />
+      </div>
+      <div>更换头像</div>
     </div>
   );
 
   return (
-    <div className="py-8 px-6 sm:px-12 md:px-24">
-      <Card bordered={false} className="shadow-sm rounded-lg">
+    <div className="profile-container">
+      <Card bordered={false} className="profile-card">
         <Row gutter={[32, 24]} align="middle">
-          <Col xs={24} md={6} className="text-center">
-            <div className="flex flex-col items-center">
+          <Col xs={24} md={6} className="profile-avatar-col">
+            <div className="profile-avatar-container">
               {editing ? (
                 <Upload
                   name="avatar"
-                  listType="picture-card"
                   showUploadList={false}
-                  action="/api/upload" // 实际应用中，替换为你的上传API
                   beforeUpload={beforeUpload}
                   onChange={handleChange}
                   className="avatar-uploader"
@@ -150,7 +150,8 @@ const ProfilePage: React.FC = () => {
                     <Avatar 
                       size={128} 
                       src={avatarUrl} 
-                      alt={userData.name} 
+                      alt={userData.name}
+                      className="profile-avatar"
                     />
                   ) : (
                     uploadButton
@@ -161,34 +162,37 @@ const ProfilePage: React.FC = () => {
                   size={128} 
                   src={avatarUrl} 
                   alt={userData.name}
+                  className="profile-avatar"
                 />
               )}
-              <Title level={4} style={{ marginTop: 16, marginBottom: 4 }}>{userData.name}</Title>
-              <Text type="secondary">{userData.major}</Text>
+              <Title level={4} className="profile-name">{userData.name}</Title>
+              <Text type="secondary" className="profile-major">{userData.major}</Text>
             </div>
           </Col>
           
           <Col xs={24} md={18}>
-            <div className="flex justify-between items-center mb-6">
-              <Title level={3} style={{ margin: 0 }}>个人信息</Title>
+            <div className="profile-header">
+              <Title level={3} className="profile-title">个人信息</Title>
               
               {!editing ? (
                 <Button 
                   type="primary" 
                   icon={<EditOutlined />} 
                   onClick={() => setEditing(true)}
+                  className="edit-button"
                 >
                   编辑资料
                 </Button>
               ) : (
                 <Space>
-                  <Button onClick={() => setEditing(false)}>
+                  <Button onClick={() => setEditing(false)} className="cancel-button">
                     取消
                   </Button>
                   <Button 
                     type="primary" 
                     icon={<SaveOutlined />} 
                     onClick={() => form.submit()}
+                    className="save-button"
                   >
                     保存
                   </Button>
@@ -196,13 +200,15 @@ const ProfilePage: React.FC = () => {
               )}
             </div>
             
-            <Divider style={{ margin: '12px 0 24px' }} />
+            <Divider className="profile-divider" />
             
             <Form
               form={form}
               layout="vertical"
               onFinish={handleSubmit}
               disabled={!editing}
+              className="profile-form"
+              autoComplete="off"
             >
               <Row gutter={[24, 16]}>
                 <Col xs={24} md={12}>
@@ -211,7 +217,12 @@ const ProfilePage: React.FC = () => {
                     label="姓名"
                     rules={[{ required: true, message: '请输入姓名' }]}
                   >
-                    <Input prefix={<UserOutlined />} placeholder="请输入姓名" />
+                    <Input 
+                      prefix={<UserOutlined className="form-icon" />} 
+                      placeholder="请输入姓名"
+                      className="profile-input"
+                      autoComplete="off"
+                    />
                   </Form.Item>
                 </Col>
                 
@@ -224,7 +235,12 @@ const ProfilePage: React.FC = () => {
                       { type: 'email', message: '请输入有效的邮箱地址' }
                     ]}
                   >
-                    <Input prefix={<MailOutlined />} placeholder="请输入邮箱" disabled />
+                    <Input 
+                      prefix={<MailOutlined className="form-icon" />} 
+                      placeholder="请输入邮箱" 
+                      disabled 
+                      className="profile-input profile-input-disabled"
+                    />
                   </Form.Item>
                 </Col>
                 
@@ -233,7 +249,7 @@ const ProfilePage: React.FC = () => {
                     name="gender" 
                     label="性别"
                   >
-                    <Select placeholder="选择性别">
+                    <Select placeholder="选择性别" className="profile-select">
                       <Option value="MALE">男</Option>
                       <Option value="FEMALE">女</Option>
                       <Option value="SECRET">保密</Option>
@@ -246,7 +262,12 @@ const ProfilePage: React.FC = () => {
                     name="mobile" 
                     label="手机号码"
                   >
-                    <Input prefix={<PhoneOutlined />} placeholder="请输入手机号" />
+                    <Input 
+                      prefix={<PhoneOutlined className="form-icon" />} 
+                      placeholder="请输入手机号"
+                      className="profile-input"
+                      autoComplete="off"
+                    />
                   </Form.Item>
                 </Col>
                 
@@ -255,7 +276,12 @@ const ProfilePage: React.FC = () => {
                     name="qq" 
                     label="QQ"
                   >
-                    <Input prefix={<QqOutlined />} placeholder="请输入QQ号" />
+                    <Input 
+                      prefix={<QqOutlined className="form-icon" />} 
+                      placeholder="请输入QQ号"
+                      className="profile-input"
+                      autoComplete="off" 
+                    />
                   </Form.Item>
                 </Col>
                 
@@ -264,7 +290,12 @@ const ProfilePage: React.FC = () => {
                     name="major" 
                     label="专业"
                   >
-                    <Input prefix={<BookOutlined />} placeholder="请输入专业" />
+                    <Input 
+                      prefix={<BookOutlined className="form-icon" />} 
+                      placeholder="请输入专业"
+                      className="profile-input"
+                      autoComplete="off"
+                    />
                   </Form.Item>
                 </Col>
                 
@@ -273,7 +304,12 @@ const ProfilePage: React.FC = () => {
                     name="studentId" 
                     label="学号"
                   >
-                    <Input prefix={<IdcardOutlined />} placeholder="请输入学号" />
+                    <Input 
+                      prefix={<IdcardOutlined className="form-icon" />} 
+                      placeholder="请输入学号"
+                      className="profile-input"
+                      autoComplete="off"
+                    />
                   </Form.Item>
                 </Col>
               </Row>

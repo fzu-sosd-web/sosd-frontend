@@ -118,10 +118,10 @@ const HomePage = React.memo(() => {
 
       <section className="py-20 px-6 sm:px-12 md:px-24 bg-[#f0f7ff] text-center">
         <Title level={2} style={{ marginBottom: '1.5rem' }}>
-          我们最近在干什么？
+          最新资讯
         </Title>
         <Paragraph style={{ fontSize: '1.1rem', maxWidth: '700px', margin: '0 auto 2rem' }}>
-          1. 2025年福州大学服务外包与软件设计校赛
+          2025年福州大学服务外包与软件设计校赛
         </Paragraph>
         <Button type="primary" size="large" className="px-10 h-12 text-lg font-medium">
           立即参加！
