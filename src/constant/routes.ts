@@ -1,4 +1,4 @@
-import RecruitDetail from "@/views/recruit/detail"
+import RecruitDetail from '@/views/recruit/detail'
 
 const BASE_ROUTE_PATH = 'SOSD'
 export const RoutePath = {

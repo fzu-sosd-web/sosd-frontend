@@ -21,11 +21,11 @@ export const loginBySso = (form: LoginRes) => {
   return request.post<LoginResp>(`${baseURL}/login/sso`, form)
 }
 
-export const fetchIUserInfo = () => {
-  return request.get<IUserInfo>(`${baseURL}/info`, {
-    headers: {
-      'sosd-last-modify-time': formatCurrentTime(),
-    },
+export const fetchIUserInfo = (withAvatar: boolean) => {
+  return request.get<IUserInfo>(`${baseURL}/info?withAvatar=${withAvatar}`, {
+    // headers: {
+    //   'sosd-last-modify-time': formatCurrentTime(),
+    // },
   })
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   Typography,
   Row,
@@ -31,6 +31,7 @@ import type { RcFile, UploadFile } from 'antd/es/upload/interface'
 import './index.css' // 创建新的CSS文件
 import { useLoginStore } from '@/store/login'
 import { updateUser, UpdateUserForm } from './api'
+import { token } from '@/utils'
 
 const { Title, Text } = Typography
 const { Option } = Select
@@ -45,29 +46,43 @@ const ProfilePage: React.FC = () => {
   const refreshUserInfo = useLoginStore((state) => state.refreshUserInfo)
 
   const [avatarUrl, setAvatarUrl] = useState<string>('')
+  const initializedRef = useRef(false)
 
   useEffect(() => {
-    // 页面加载时重置表单
+    // 只有在组件首次渲染时初始化表单
+    if (!initializedRef.current && userInfo) {
+      initializeForm()
+      initializedRef.current = true
+    }
+  }, [])
+
+  // 将初始化表单的逻辑提取到一个函数中
+  const initializeForm = () => {
+    if (!userInfo) return
+
+    // 重置表单
     form.resetFields()
 
-    if (userInfo) {
-      // 设置表单初始值
-      form.setFieldsValue({
-        name: userInfo.name,
-        email: userInfo.email,
-        gender: userInfo.gender,
-        qq: userInfo.qq,
-        mobile: userInfo.mobile,
-        major: userInfo.major,
-        studentId: userInfo.studentId, // 根据实际情况调整
-      })
+    // 设置表单初始值
+    form.setFieldsValue({
+      name: userInfo.name,
+      email: userInfo.email,
+      gender: userInfo.gender,
+      qq: userInfo.qq,
+      mobile: userInfo.mobile,
+      major: userInfo.major,
+      studentId: userInfo.studentId, // 根据实际情况调整
+    })
 
-      // 设置头像
-      if (userInfo.avatarBase64) {
-        setAvatarUrl(userInfo.avatarBase64)
-      }
+    // 设置头像
+    if (userInfo.avatarBase64) {
+      setAvatarUrl(userInfo.avatarBase64)
+    } else if (token.getAvatar()) {
+      setAvatarUrl(token.getAvatar() || '')
+    } else if (userInfo.avatar) {
+      setAvatarUrl(userInfo.avatar)
     }
-  }, [userInfo, form])
+  }
 
   const handleSubmit = async (values: UpdateUserForm) => {
     if (!userInfo) return
@@ -91,6 +106,15 @@ const ProfilePage: React.FC = () => {
       if (response.success) {
         message.success('个人信息更新成功')
         setEditing(false)
+
+        // 刷新用户信息
+        await refreshUserInfo()
+        token.setAvatar(updatedData.avatarBase64)
+
+        // 定时刷新页面，确保头像更新
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000)
       } else {
         message.error('个人信息更新失败，请重试')
       }
@@ -99,7 +123,6 @@ const ProfilePage: React.FC = () => {
       message.error('更新个人信息失败，请重试')
     } finally {
       setSubmitting(false)
-      refreshUserInfo()
     }
   }
 
@@ -131,6 +154,37 @@ const ProfilePage: React.FC = () => {
     reader.addEventListener('load', () => callback(reader.result as string))
     reader.readAsDataURL(img)
   }
+
+  // 当用户点击取消按钮时重置表单
+  const handleCancel = () => {
+    setEditing(false)
+    // 重置表单和头像为用户当前信息
+    if (userInfo) {
+      form.setFieldsValue({
+        name: userInfo.name,
+        email: userInfo.email,
+        gender: userInfo.gender,
+        qq: userInfo.qq,
+        mobile: userInfo.mobile,
+        major: userInfo.major,
+        studentId: userInfo.studentId || userInfo.id,
+      })
+
+      // 重置头像
+      if (userInfo.avatarBase64) {
+        setAvatarUrl(userInfo.avatarBase64)
+      } else if (userInfo.avatar) {
+        setAvatarUrl(userInfo.avatar)
+      }
+    }
+  }
+
+  // 确保userInfo更新后表单也更新
+  useEffect(() => {
+    if (userInfo && !editing) {
+      initializeForm()
+    }
+  }, [userInfo]) // 只依赖用户ID，避免依赖整个userInfo对象
 
   // 如果没有用户信息，显示加载状态或提示
   if (!userInfo) {
@@ -212,23 +266,7 @@ const ProfilePage: React.FC = () => {
                 </Button>
               ) : (
                 <Space>
-                  <Button
-                    onClick={() => {
-                      setEditing(false)
-                      // 重置表单和头像为用户当前信息
-                      form.setFieldsValue({
-                        name: userInfo.name,
-                        email: userInfo.email,
-                        gender: userInfo.gender,
-                        qq: userInfo.qq,
-                        mobile: userInfo.mobile,
-                        major: userInfo.major,
-                        studentId: userInfo.studentId || userInfo.id,
-                      })
-                      setAvatarUrl(userInfo.avatar || '')
-                    }}
-                    className="cancel-button"
-                  >
+                  <Button onClick={handleCancel} className="cancel-button">
                     取消
                   </Button>
                   <Button

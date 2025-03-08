@@ -45,8 +45,8 @@ const App = () => {
             path={RoutePath.CompetitionList}
             element={<CompetitionListPage />}
           ></Route>
-          <Route path={RoutePath.Recruit} element={<RecruitListPage/>} />
-          <Route path={RoutePath.RecruitDetail} element={<RecruitDetail/>} />
+          <Route path={RoutePath.Recruit} element={<RecruitListPage />} />
+          <Route path={RoutePath.RecruitDetail} element={<RecruitDetail />} />
           {/* 404页面 */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>

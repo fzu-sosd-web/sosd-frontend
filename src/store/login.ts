@@ -13,7 +13,6 @@ interface LoginStore {
 
   // 方法
   setUserInfo: (data: IUserInfo | null) => void
-  updateUserInfo: (data: Partial<IUserInfo>) => void
   refreshUserInfo: () => Promise<IUserInfo | null>
   login: (credentials: any) => Promise<boolean>
   logout: () => void
@@ -42,16 +41,7 @@ export const useLoginStore = create<LoginStore>()(
           token.setIsLogin(false)
           token.removeToken()
         }
-      },
-
-      // 更新用户信息（部分更新）
-      updateUserInfo: (data: Partial<IUserInfo>) => {
-        const currentUser = get().userInfo
-        if (!currentUser) return
-
-        set({
-          userInfo: { ...currentUser, ...data },
-        })
+        token.setAvatar('')
       },
 
       // 刷新用户信息
@@ -65,7 +55,11 @@ export const useLoginStore = create<LoginStore>()(
         set({ loading: true })
 
         try {
-          const res = await loginApi.fetchIUserInfo()
+          let withAvatar = false
+          if (!token.getAvatar()) {
+            withAvatar = true
+          }
+          const res = await loginApi.fetchIUserInfo(withAvatar)
 
           if (res.code === 200 && res.data) {
             // 如果成功获取用户信息
@@ -80,7 +74,12 @@ export const useLoginStore = create<LoginStore>()(
 
             // 确保token状态与内存状态一致
             token.setIsLogin(true)
-
+            if (userData.avatarBase64) {
+              token.setAvatar(userData.avatarBase64 || '')
+            }
+            if (token.getAvatar()) {
+              userData.avatarBase64 = token.getAvatar() || ''
+            }
             return userData
           } else {
             // 获取失败，清除登录状态
@@ -128,6 +127,7 @@ export const useLoginStore = create<LoginStore>()(
             })
 
             token.setIsLogin(true)
+            token.setAvatar(userInfo.avatarBase64 || '')
 
             return true
           } else {
@@ -151,6 +151,7 @@ export const useLoginStore = create<LoginStore>()(
         // 清除本地存储
         token.setIsLogin(false)
         token.removeToken()
+        token.setAvatar('')
       },
     }),
     { name: 'login-store' },

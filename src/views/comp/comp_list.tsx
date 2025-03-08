@@ -58,7 +58,10 @@ const CompetitionListPage: React.FC = () => {
     if (comp.data?.competitionStages?.length > 0) {
       // 查找进行中的阶段
       const ongoingStage = comp.data.competitionStages.find(
-        (stage) => stage.status === 'process' || stage.status === 'ongoing',
+        (stage) =>
+          stage.status === '报名阶段' ||
+          stage.status === '初赛阶段' ||
+          stage.status === '决赛阶段',
       )
       if (ongoingStage) return 'ongoing'
 

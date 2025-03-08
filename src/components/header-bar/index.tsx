@@ -129,6 +129,29 @@ const HeaderBar: React.FC = () => {
         },
   ]
 
+  // 获取头像显示内容
+  const getAvatarContent = () => {
+    if (isLogin && userInfo) {
+      if (userInfo.avatarBase64) {
+        // 使用Base64头像
+        return (
+          <Avatar size={36} src={userInfo.avatarBase64} alt={userInfo.name} />
+        )
+      } else if (userInfo.avatar) {
+        // 使用头像URL
+        return <Avatar size={36} src={userInfo.avatar} alt={userInfo.name} />
+      }
+    }
+    // 默认显示图标头像
+    return (
+      <Avatar
+        size={36}
+        icon={<UserOutlined />}
+        style={{ backgroundColor: isLogin ? '#3e97ff' : '#ccc' }}
+      />
+    )
+  }
+
   return (
     <ConfigProvider
       theme={{
@@ -198,15 +221,7 @@ const HeaderBar: React.FC = () => {
               placement="bottomRight"
             >
               <div className="flex items-center cursor-pointer ml-4">
-                {isLogin && userInfo?.avatar ? (
-                  <Avatar size={36} src={userInfo.avatar} alt={userInfo.name} />
-                ) : (
-                  <Avatar
-                    size={36}
-                    icon={<UserOutlined />}
-                    style={{ backgroundColor: isLogin ? '#3e97ff' : '#ccc' }}
-                  />
-                )}
+                {getAvatarContent()}
                 <DownOutlined
                   style={{ fontSize: '12px', marginLeft: '8px', color: '#666' }}
                 />

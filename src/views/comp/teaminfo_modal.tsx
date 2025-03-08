@@ -16,6 +16,8 @@ import {
   Popconfirm,
   List,
   Tooltip,
+  Upload,
+  Badge,
 } from 'antd'
 import {
   UserOutlined,
@@ -32,8 +34,16 @@ import {
   ReadOutlined,
   EditOutlined,
   CrownOutlined,
+  UploadOutlined,
+  FileZipOutlined,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons'
-import { fetchCompetitionTeamInfo, delCompetitionTeam } from './api'
+import {
+  fetchCompetitionTeamInfo,
+  delCompetitionTeam,
+  getTeamMaterialsUploadUrl,
+  isTeamMaterialsUploaded,
+} from './api'
 import { TeamInfo, TeamMember } from './type'
 
 const { Title, Text, Paragraph } = Typography
@@ -58,6 +68,9 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
   const [loading, setLoading] = React.useState(true)
   const [deleting, setDeleting] = React.useState(false)
   const [teamInfo, setTeamInfo] = React.useState<TeamInfo | null>(null)
+  const [uploading, setUploading] = React.useState(false)
+  const [materialsUploaded, setMaterialsUploaded] = React.useState(false)
+  const [checkingMaterials, setCheckingMaterials] = React.useState(false)
 
   // 获取团队信息
   const fetchTeamInfo = async () => {
@@ -69,6 +82,8 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
 
       if (response && response.code === 200) {
         setTeamInfo(response.data)
+        // 获取材料上传状态
+        checkMaterialsStatus(response.data.id)
       } else {
         message.error(response?.message || '获取团队信息失败')
         setTeamInfo(null)
@@ -79,6 +94,24 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
       setTeamInfo(null)
     } finally {
       setLoading(false)
+    }
+  }
+
+  // 检查团队材料是否已上传
+  const checkMaterialsStatus = async (teamId: number) => {
+    setCheckingMaterials(true)
+    try {
+      const response = await isTeamMaterialsUploaded(teamId)
+      if (response && response.code === 200) {
+        setMaterialsUploaded(true)
+      } else {
+        setMaterialsUploaded(false)
+      }
+    } catch (error) {
+      console.error('检查材料上传状态出错:', error)
+      setMaterialsUploaded(false)
+    } finally {
+      setCheckingMaterials(false)
     }
   }
 
@@ -210,7 +243,11 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
       }
       open={visible}
       onCancel={onCancel}
-      footer={null}
+      footer={[
+        <Button key="close" onClick={onCancel}>
+          关闭
+        </Button>,
+      ]}
       width={820}
       bodyStyle={{ padding: '20px 28px 28px' }}
     >
@@ -237,6 +274,22 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
                 {teamInfo.rewardResult && (
                   <Tag color="gold" style={{ margin: 0, padding: '0 8px' }}>
                     <TrophyOutlined /> {teamInfo.rewardResult}
+                  </Tag>
+                )}
+                {checkingMaterials ? (
+                  <Tag
+                    color="processing"
+                    style={{ margin: 0, padding: '0 8px' }}
+                  >
+                    <Spin size="small" /> 检查材料
+                  </Tag>
+                ) : materialsUploaded ? (
+                  <Tag color="green" style={{ margin: 0, padding: '0 8px' }}>
+                    <FileZipOutlined /> 已提交材料
+                  </Tag>
+                ) : (
+                  <Tag color="warning" style={{ margin: 0, padding: '0 8px' }}>
+                    <ExclamationCircleOutlined /> 未提交材料
                   </Tag>
                 )}
               </Space>
@@ -434,15 +487,80 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
             </Button>
           </Popconfirm>
 
-          {/* <Button 
-            type="primary"
-            icon={<EditOutlined />} 
-            onClick={onEdit}
-            size="large"
-            style={{ borderRadius: '6px' }}
+          <Upload
+            accept=".zip"
+            showUploadList={false}
+            beforeUpload={async (file) => {
+              if (
+                file.type !== 'application/zip' &&
+                !file.name.endsWith('.zip')
+              ) {
+                message.error('只能上传ZIP格式的文件!')
+                return false
+              }
+              const isLt1000M = file.size / 1024 / 1024 < 1000
+              if (!isLt1000M) {
+                message.error('文件大小不能超过100MB!')
+                return false
+              }
+
+              setUploading(true)
+              try {
+                const response = await getTeamMaterialsUploadUrl(teamInfo.id)
+                if (response.code === 200 && response.data) {
+                  try {
+                    const formData = new FormData()
+                    formData.append('file', file)
+                    console.log('上传链接:', response.data)
+                    console.log('上传文件:', file)
+                    const uploadResponse = await fetch(response.data, {
+                      method: 'PUT',
+                      body: formData,
+                      redirect: 'follow',
+                    })
+
+                    console.log('上传响应:', uploadResponse)
+
+                    // 处理 HTTP 错误状态
+                    if (!uploadResponse.ok) {
+                      throw new Error(
+                        `上传失败: ${uploadResponse.status} ${uploadResponse.statusText}`,
+                      )
+                    }
+
+                    console.log('上传成功', uploadResponse)
+                    message.success('文件上传成功!')
+                    // 更新材料上传状态
+                    setMaterialsUploaded(true)
+                  } catch (error) {
+                    console.error('上传出错:', error)
+                    message.error('上传失败，请稍后重试')
+                  }
+                } else {
+                  console.error('获取上传链接失败:', response)
+                  message.error(
+                    response.message || '获取上传链接失败，请稍后重试',
+                  )
+                }
+              } catch (error) {
+                console.error('获取上传链接网络错误:', error)
+                message.error('网络连接异常，请检查网络后重试')
+              } finally {
+                setUploading(false)
+              }
+              return false
+            }}
           >
-            编辑队伍信息
-          </Button> */}
+            <Button
+              type="primary"
+              icon={<UploadOutlined />}
+              size="large"
+              loading={uploading}
+              style={{ borderRadius: '6px' }}
+            >
+              {uploading ? '正在上传...' : '提交竞赛文件'}
+            </Button>
+          </Upload>
         </div>
       </div>
     </Modal>

@@ -8,6 +8,9 @@
   --card-background: #ffffff;
   --border-radius: 8px;
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --error-color: #f5222d;
 }
 
 /* 整体页面布局 */
@@ -170,30 +173,61 @@
   margin-bottom: 8px;
 }
 
-/* 纳新进度占位 */
-.progress-section-placeholder {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 24px 48px;
+/* 已报名状态样式 */
+.registered-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
-.progress-container {
-  padding: 40px;
-  background-color: var(--card-background);
+.register-status-tag,
+.resume-status-tag {
+  padding: 0 10px;
+  height: 24px;
+  line-height: 24px;
+  border-radius: 12px;
+}
+
+.registered-detail {
+  background-color: #ffffff;
   border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #f0f0f0;
+}
+
+.registered-item {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.registered-item:last-child {
+  margin-bottom: 0;
+}
+
+/* 简历上传区域 */
+.resume-upload-section {
+  margin-top: 16px;
   text-align: center;
 }
 
-.progress-title {
-  font-size: 22px;
-  margin-bottom: 20px;
-  color: var(--text-primary);
+.resume-upload-button {
+  width: 100%;
+  height: 40px;
+  border-radius: 6px;
 }
 
-.progress-note {
-  font-size: 16px;
-  color: var(--text-secondary);
+/* 报名表单 */
+.register-form {
+  margin-top: 16px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
 }
 
 /* 响应式布局 */
@@ -201,12 +235,12 @@
   .detail-header-content {
     flex-direction: column;
   }
-  
+
   .detail-header-info {
     margin-bottom: 24px;
     padding-right: 0;
   }
-  
+
   .detail-actions {
     width: 100%;
     padding: 24px;
@@ -217,11 +251,11 @@
   .detail-image-container {
     margin: 0 auto 24px;
   }
-  
+
   .detail-header-info {
     text-align: center;
   }
-  
+
   .date-item {
     justify-content: center;
   }

@@ -34,3 +34,15 @@ export const registerCompetition = (
 export const delCompetitionTeam = (teamId: number): Promise<IResult<any>> => {
   return request.delete<any>(`${baseURL}/deleteTeam/${teamId}`)
 }
+
+export const getTeamMaterialsUploadUrl = (
+  teamId: number,
+): Promise<IResult<string>> => {
+  return request.post<string>(`${baseURL}/materials/upload/${teamId}`)
+}
+
+export const isTeamMaterialsUploaded = (
+  teamId: number,
+): Promise<IResult<string>> => {
+  return request.post<string>(`${baseURL}/materials/upload/${teamId}/success`)
+}
