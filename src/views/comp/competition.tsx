@@ -562,7 +562,9 @@ const CompPage = React.memo(() => {
       {/* 队伍弹窗 */}
       <TeamModal
         visible={showTeamModal}
-        onCancel={() => setShowTeamModal(false)}
+        setShowTeamModal={setShowTeamModal}
+        setShowRegisterModal={setShowRegisterModal}
+        onCancel={() => setShowTeamModal}
         competitionId={competition.id.toString()}
       />
     </div>

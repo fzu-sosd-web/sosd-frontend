@@ -132,15 +132,6 @@ const ProfilePage: React.FC = () => {
     reader.readAsDataURL(img)
   }
 
-  const uploadButton = (
-    <div className="upload-placeholder">
-      <div className="upload-icon">
-        <UploadOutlined />
-      </div>
-      <div>更换头像</div>
-    </div>
-  )
-
   // 如果没有用户信息，显示加载状态或提示
   if (!userInfo) {
     return (
@@ -183,9 +174,6 @@ const ProfilePage: React.FC = () => {
                       className="profile-avatar"
                     />
                   )}
-                  <div className="avatar-upload-overlay">
-                    <UploadOutlined /> 更换头像
-                  </div>
                 </Upload>
               ) : (
                 <Avatar

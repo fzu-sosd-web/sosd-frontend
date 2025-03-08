@@ -43,6 +43,8 @@ interface TeamModalProps {
   onCancel: () => void
   competitionId: string
   onEdit?: () => void
+  setShowTeamModal?: any
+  setShowRegisterModal?: any
 }
 
 const TeamInfoModal: React.FC<TeamModalProps> = ({
@@ -50,6 +52,8 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
   onCancel,
   competitionId,
   onEdit,
+  setShowTeamModal,
+  setShowRegisterModal,
 }) => {
   const [loading, setLoading] = React.useState(true)
   const [deleting, setDeleting] = React.useState(false)
@@ -179,6 +183,9 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
               <Button
                 type="primary"
                 style={{ marginTop: '16px', borderRadius: '6px' }}
+                onClick={() => {
+                  setShowTeamModal(false), setShowRegisterModal(true)
+                }}
               >
                 创建新队伍
               </Button>
