@@ -4,7 +4,7 @@ import HeaderBar from '../header-bar'
 import { Outlet } from 'react-router-dom'
 
 const { Header, Footer, Content } = Layout
-// 创建一个布局组件，包含HeaderBar和底部
+
 const MainLayout = () => {
   return (
     <ConfigProvider
@@ -29,16 +29,23 @@ const MainLayout = () => {
         },
       }}
     >
-      <Layout className="min-h-screen w-screen p-0">
-        <Header className="p-0 m-0 flex bg-[#ffffff] w-screen shadow-sm fixed z-10">
+      {/* 将 Layout 设置为 flex 容器，并使其占据整个视口高度 */}
+      <Layout
+        className="min-h-screen flex flex-col"
+        style={{ minHeight: '100vh' }}
+      >
+        {/* Header 固定在顶部 */}
+        <Header className="p-0 m-0 flex bg-[#ffffff] w-full shadow-sm fixed z-10">
           <HeaderBar />
         </Header>
 
-        <Content className="pt-16">
+        {/* Content 占据剩余空间 */}
+        <Content className="flex-1 pt-16">
           <Outlet /> {/* 这里渲染子路由 */}
         </Content>
 
-        <Footer style={{ textAlign: 'center', background: '#fff' }}>
+        {/* Footer 保持在页面底部 */}
+        <Footer className="text-center bg-white py-4">
           spaceluke ©{new Date().getFullYear()} 版权所有
           <a href="https://beian.miit.gov.cn/" rel="nofollow">
             闽ICP备2023001214号-1
