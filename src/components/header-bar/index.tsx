@@ -8,10 +8,11 @@ import {
   Menu,
   MenuProps,
   Typography,
+  message,
 } from 'antd'
-import { UserOutlined, DownOutlined } from '@ant-design/icons'
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { UserOutlined, DownOutlined, LogoutOutlined, UserSwitchOutlined, LoginOutlined } from '@ant-design/icons'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import sosd from '@/assets/logo.png'
 import { useLoginStore } from '@/store/login'
@@ -39,50 +40,78 @@ const navItems: MenuItem[] = [
   },
 ]
 
-//const isLogin, userInfo = useLoginStore((state) => [state.isLogin, state.userInfo])
-
-const HeaderBar = React.memo(() => {
-  const [current, setCurrent] = useState(RoutePath.Home)
+const HeaderBar: React.FC = () => {
   const navigate = useNavigate()
+  const location = useLocation()
 
-  const handleClick = (e: { key: string }) => {
+  // 从 store 中获取用户信息和方法
+  const userInfo = useLoginStore((state) => state.userInfo)
+  const isLogin = useLoginStore((state) => state.isLogin)
+  const logout = useLoginStore((state) => state.logout)
+  const refreshUserInfo = useLoginStore((state) => state.refreshUserInfo)
+
+  // 根据当前路径设置活动菜单项
+  const [current, setCurrent] = useState(RoutePath.Home)
+  
+  // 当路由变化时更新当前选中的菜单项
+  useEffect(() => {
+    // 找到匹配的导航项
+    const currentPath = location.pathname
+    refreshUserInfo()
+    console.log('userInfo:', userInfo)
+    console.log('isLogin:', isLogin)
+    const matchedItem = navItems.find(item => 
+      item && 'key' in item && typeof item.key === 'string' && 
+      (currentPath === item.key || currentPath.startsWith(`${item.key}/`))
+    )
+    
+    if (matchedItem && 'key' in matchedItem && typeof matchedItem.key === 'string') {
+      setCurrent(matchedItem.key)
+    }
+  }, [location.pathname])
+
+  // 菜单点击处理函数
+  const handleNavClick = (e: { key: string }) => {
     setCurrent(e.key)
     navigate(e.key)
   }
 
-  const userInfo = useLoginStore((state) => state.userInfo)
-  const isLogin = useLoginStore((state) => state.isLogin)
+  // 处理登出操作
+  const handleLogout = () => {
+    logout() // 使用 store 中提供的 logout 方法
+    message.success('已成功退出登录')
+    
+    // 如果当前在需要登录的页面，则重定向到首页
+    const protectedRoutes = [RoutePath.Profile]
+    if (protectedRoutes.includes(location.pathname as any)) {
+      navigate(RoutePath.Home)
+    }
+  }
 
+  // 用户下拉菜单
   const dropDownItems: MenuProps['items'] = [
     {
       label: '个人中心',
       key: 'profile',
+      icon: <UserSwitchOutlined />,
       disabled: !isLogin,
-      onClick: () => {
-        navigate(RoutePath.Profile)
-      },
+      onClick: () => navigate(RoutePath.Profile),
     },
     {
       type: 'divider',
     },
-    {
-      label: '登录',
-      key: 'login',
-      disabled: isLogin,
-      onClick: () => {
-        navigate(RoutePath.Login)
-      },
-    },
-    {
-      type: 'divider',
-    },
+    isLogin ? 
     {
       label: '退出登录',
       key: 'logout',
-
-      onClick: () => {
-        useLoginStore.setState({ isLogin: false, userInfo: null })
-      },
+      icon: <LogoutOutlined />,
+      onClick: handleLogout,
+    } :
+    {
+      label: '登录',
+      key: 'login',
+      icon: <LoginOutlined />,
+      onClick: () => navigate(RoutePath.Login),
     },
   ]
 
@@ -106,7 +135,10 @@ const HeaderBar = React.memo(() => {
       <div className="flex items-center justify-between w-full px-6 lg:px-12 py-2">
         {/* Logo 区域 */}
         <div className="flex items-center">
-          <div className="flex items-center mr-8">
+          <div 
+            className="flex items-center mr-8 cursor-pointer" 
+            onClick={() => navigate(RoutePath.Home)}
+          >
             <img src={sosd} alt="Logo" className="h-10 w-10" />
             <Text strong style={{ fontSize: '1.2rem', marginLeft: '0.7rem' }}>
               福州大学服务外包与软件设计实验室
@@ -119,7 +151,7 @@ const HeaderBar = React.memo(() => {
             mode="horizontal"
             className="border-b-0"
             selectedKeys={[current]}
-            onClick={handleClick}
+            onClick={handleNavClick}
             style={{ backgroundColor: 'transparent', fontWeight: 500 }}
           />
         </div>
@@ -128,16 +160,16 @@ const HeaderBar = React.memo(() => {
         <div className="flex items-center">
           {/* 用户问候 */}
           <div className="mr-4">
-            {isLogin ? (
+            {isLogin && userInfo ? (
               <Text
                 strong
                 style={{ backgroundColor: 'transparent', fontWeight: 500 }}
               >
-                你好，{userInfo?.name}
+                你好，{userInfo.name}
               </Text>
             ) : (
               <Text
-                strong
+                type="secondary"
                 style={{ backgroundColor: 'transparent', fontWeight: 500 }}
               >
                 你好，游客
@@ -152,11 +184,19 @@ const HeaderBar = React.memo(() => {
               placement="bottomRight"
             >
               <div className="flex items-center cursor-pointer ml-4">
-                <Avatar
-                  size={36}
-                  icon={<UserOutlined />}
-                  style={{ backgroundColor: '#3e97ff' }}
-                />
+                {isLogin && userInfo?.avatar ? (
+                  <Avatar
+                    size={36}
+                    src={userInfo.avatar}
+                    alt={userInfo.name}
+                  />
+                ) : (
+                  <Avatar
+                    size={36}
+                    icon={<UserOutlined />}
+                    style={{ backgroundColor: isLogin ? '#3e97ff' : '#ccc' }}
+                  />
+                )}
                 <DownOutlined
                   style={{ fontSize: '12px', marginLeft: '8px', color: '#666' }}
                 />
@@ -167,6 +207,6 @@ const HeaderBar = React.memo(() => {
       </div>
     </ConfigProvider>
   )
-})
+}
 
-export default HeaderBar
+export default React.memo(HeaderBar)

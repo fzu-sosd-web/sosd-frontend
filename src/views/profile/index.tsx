@@ -42,6 +42,7 @@ const ProfilePage: React.FC = () => {
 
   // 从全局状态获取用户信息
   const userInfo = useLoginStore((state) => state.userInfo)
+  const refreshUserInfo = useLoginStore((state) => state.refreshUserInfo)
 
   const [avatarUrl, setAvatarUrl] = useState<string>('')
 
@@ -98,6 +99,7 @@ const ProfilePage: React.FC = () => {
       message.error('更新个人信息失败，请重试')
     } finally {
       setSubmitting(false)
+      refreshUserInfo()
     }
   }
 

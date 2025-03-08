@@ -1,5 +1,5 @@
 import { request } from '@/request'
-import { IUserInfo, ILoginInfo } from '@/types'
+import { IUserInfo, IResult, LoginResp } from '@/types'
 import { API_BASE_URL } from '@/constant/web'
 
 const baseURL = API_BASE_URL + '/user'
@@ -18,7 +18,7 @@ const formatCurrentTime = (): string => {
 }
 
 export const login = (form: any) => {
-  return request.post<ILoginInfo>(`${baseURL}/login`, form)
+  return request.post<LoginResp>(`${baseURL}/login`, form)
 }
 
 export const fetchIUserInfo = () => {
@@ -27,4 +27,24 @@ export const fetchIUserInfo = () => {
       'sosd-last-modify-time': formatCurrentTime(),
     },
   })
+}
+
+export const sendEmailVerifyCode = (email: string) => {
+  return request.get(`${baseURL}/validCode?email=${email}`)
+}
+
+export interface RegisterData {
+  email: string
+  name: string
+  password: string
+  gender: string
+  qq: string
+  mobile: string
+  major: string
+  studentId: string
+  validCode: string // 新增验证码字段
+}
+
+export const register = (form: RegisterData) => {
+  return request.post(`${baseURL}/register`, form)
 }

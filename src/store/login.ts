@@ -1,92 +1,158 @@
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
-import { produce } from 'immer'
-import { LoginMethod, LoginStore, IUserInfo } from '@/types'
+import { devtools } from 'zustand/middleware'
+import { IUserInfo } from '@/types'
 import { loginApi } from '@/apis'
-import { token } from '@/utils'
+import { token } from '@/utils/'
 
-export const useLoginStore = create<LoginStore & LoginMethod>()(
-  persist(
-    (set, get) => {
-      const setUserInfo = (data: IUserInfo | null) => {
-        set(
-          produce((state: LoginStore) => {
-            state.userInfo = data
-            state.isLogin = !!data
-          }),
-        )
-        // 同步更新 token 工具类中的状态
-        token.setIsLogin(!!data)
-        if (data?.token) {
-          token.setToken(data.token)
+interface LoginStore {
+  // 状态
+  userInfo: IUserInfo | null
+  isLogin: boolean
+  loading: boolean
+  
+  // 方法
+  setUserInfo: (data: IUserInfo | null) => void
+  updateUserInfo: (data: Partial<IUserInfo>) => void
+  refreshUserInfo: () => Promise<IUserInfo | null>
+  login: (credentials: any) => Promise<boolean>
+  logout: () => void
+}
+
+export const useLoginStore = create<LoginStore>()(
+  devtools(
+    (set, get) => ({
+      // 初始状态
+      userInfo: null,
+      isLogin: token.getIsLogin(),
+      loading: false,
+      
+      // 设置用户信息
+      setUserInfo: (data: IUserInfo | null) => {
+        // 更新状态
+        set({ userInfo: data, isLogin: !!data });
+        
+        // 更新token状态
+        if (data) {
+          token.setIsLogin(true);
+          if (data.token) {
+            token.setToken(data.token);
+          }
+        } else {
+          token.setIsLogin(false);
+          token.removeToken();
         }
-      }
-
-      const refreshUserInfo = async (refresh?: boolean) => {
-        set(
-          produce((state: LoginStore) => {
-            state.loading = true
-          }),
-        )
-
-        const res = await loginApi.fetchIUserInfo()
-        if (!res.data) {
-          set(
-            produce((state: LoginStore) => {
-              state.userInfo = null
-              state.loading = false
-              state.isLogin = false
-            }),
-          )
-          token.setIsLogin(false)
-          token.removeToken()
-          return null
+      },
+      
+      // 更新用户信息（部分更新）
+      updateUserInfo: (data: Partial<IUserInfo>) => {
+        const currentUser = get().userInfo;
+        if (!currentUser) return;
+        
+        set({ 
+          userInfo: { ...currentUser, ...data } 
+        });
+      },
+      
+      // 刷新用户信息
+      refreshUserInfo: async () => {
+        // 如果没有token，则不请求
+        console.log('Token:', token.getToken());
+        if (!token.getToken()) {
+          set({ userInfo: null, isLogin: false });
+          return null;
         }
-
-        set(
-          produce((state: LoginStore) => {
-            state.userInfo = res.data as IUserInfo
-            state.loading = false
-            state.isLogin = true
-          }),
-        )
-        token.setIsLogin(true)
-        if (res.data.token) {
-          token.setToken(res.data.token)
+        
+        set({ loading: true });
+        
+        try {
+          const res = await loginApi.fetchIUserInfo();
+          
+          if (res.code === 200 && res.data) {
+            // 如果成功获取用户信息
+            const userData = res.data;
+            
+            // 更新状态
+            set({ 
+              userInfo: userData, 
+              isLogin: true, 
+              loading: false 
+            });
+            
+            // 确保token状态与内存状态一致
+            token.setIsLogin(true);
+            
+            return userData;
+          } else {
+            // 获取失败，清除登录状态
+            set({ 
+              userInfo: null, 
+              isLogin: false, 
+              loading: false 
+            });
+            
+            token.setIsLogin(false);
+            token.removeToken();
+            
+            return null;
+          }
+        } catch (error) {
+          console.error('获取用户信息失败:', error);
+          
+          // 发生错误时，保持当前状态，但标记加载完成
+          set({ loading: false });
+          return get().userInfo;
         }
+      },
+      
+      // 登录
+      login: async (credentials: any) => {
+        set({ loading: true });
+        
+        try {
+          const res = await loginApi.login(credentials);
 
-        return res.data
-      }
+          if (res.code === 200 && res.data) {
+            // 登录成功，设置用户信息
+            const { token: userToken, user: userInfo } = res.data;
+            console.log('登录成功:', userInfo);
+            // 保存token
+            if (userToken) {
+              token.setToken(userToken);
+            }
 
-      const logout = () => {
-        set(
-          produce((state: LoginStore) => {
-            state.userInfo = null
-            state.isLogin = false
-          }),
-        )
+            // 更新状态
+            set({ 
+              userInfo: userInfo, 
+              isLogin: true, 
+              loading: false 
+            });
+
+            token.setIsLogin(true);
+            
+            return true;
+          } else {
+            // 登录失败
+            set({ loading: false });
+            return false;
+          }
+        } catch (error) {
+          console.error('登录失败:', error);
+          set({ loading: false });
+          return false;
+        }
+      },
+      
+      // 登出
+      logout: () => {
+        // 清除内存中的状态
+        set({ userInfo: null, isLogin: false });
+        
         // 清除本地存储
-        token.setIsLogin(false)
-        token.removeToken()
-      }
+        token.setIsLogin(false);
+        token.removeToken();
+      },
+    }),
+    { name: 'login-store' }
+  )
+);
 
-      return {
-        userInfo: null,
-        isLogin: token.getIsLogin() || false, // 初始化时尝试从本地存储获取
-        loading: false,
-        setUserInfo,
-        refreshUserInfo,
-        logout,
-      }
-    },
-    {
-      name: 'user-login-storage', // localStorage 的键名
-      storage: createJSONStorage(() => localStorage),
-      // 只持久化这些字段
-      partialize: (state) => ({
-        userInfo: state.userInfo,
-        isLogin: state.isLogin,
-      }),
-    },
-  ),
-)
