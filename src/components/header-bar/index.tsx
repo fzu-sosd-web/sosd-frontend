@@ -38,7 +38,7 @@ const navItems: MenuItem[] = [
   },
   {
     label: '纳新活动',
-    key: RoutePath.JoinUs,
+    key: RoutePath.Recruit,
   },
   {
     label: '关于我们',
@@ -64,8 +64,6 @@ const HeaderBar: React.FC = () => {
     // 找到匹配的导航项
     const currentPath = location.pathname
     refreshUserInfo()
-    console.log('userInfo:', userInfo)
-    console.log('isLogin:', isLogin)
     const matchedItem = navItems.find(
       (item) =>
         item &&

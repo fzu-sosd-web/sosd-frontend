@@ -1,3 +1,5 @@
+import RecruitDetail from "@/views/recruit/detail"
+
 const BASE_ROUTE_PATH = 'SOSD'
 export const RoutePath = {
   /**登录 */
@@ -20,4 +22,8 @@ export const RoutePath = {
   CompetitionList: `/comp_list`,
   /**SSO登录 */
   SSOLogin: `/sso/session`,
+  /**纳新 */
+  Recruit: `/recruit`,
+  /**纳新详情 */
+  RecruitDetail: `/recruit/:recruitId`,
 }

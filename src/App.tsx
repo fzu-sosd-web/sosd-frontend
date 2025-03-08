@@ -14,6 +14,8 @@ import ProfilePage from './views/profile'
 import CompetitionListPage from './views/comp/comp_list'
 import AuthWrap from './components/auth-wrap'
 import SSOSession from './components/sso/SsoSession'
+import RecruitListPage from './views/recruit'
+import RecruitDetail from './views/recruit/detail'
 // import PersonPage from './views/personal'
 
 const App = () => {
@@ -43,6 +45,8 @@ const App = () => {
             path={RoutePath.CompetitionList}
             element={<CompetitionListPage />}
           ></Route>
+          <Route path={RoutePath.Recruit} element={<RecruitListPage/>} />
+          <Route path={RoutePath.RecruitDetail} element={<RecruitDetail/>} />
           {/* 404页面 */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>

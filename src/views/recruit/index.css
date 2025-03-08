@@ -1,0 +1,228 @@
+/* 全局变量 */
+:root {
+  --primary-blue: #e6f7ff;
+  --primary-blue-dark: #1890ff;
+  --primary-blue-light: #bae7ff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --background-color: #ffffff;
+  --border-radius: 8px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* 容器样式 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: var(--background-color);
+}
+
+/* 头部样式 */
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.pageTitle {
+  color: var(--text-primary);
+  margin-bottom: 8px !important;
+}
+
+.subtitle {
+  font-size: 16px;
+  margin-top: 8px;
+  color: var(--text-secondary);
+}
+
+.headerAccent {
+  width: 80px;
+  height: 4px;
+  background-color: var(--primary-blue-dark);
+  margin: 16px auto;
+  border-radius: 2px;
+}
+
+/* 活动容器 */
+.activitiesContainer {
+  margin-top: 32px;
+}
+
+/* 卡片样式 */
+.activityCardFullWidth {
+  width: 100%;
+  margin-bottom: 24px;
+  border-radius: var(--border-radius);
+  transition: all 0.3s;
+  box-shadow: var(--shadow);
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+}
+
+.activityCardFullWidth:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.09);
+  border-color: var(--primary-blue-light);
+}
+
+.cardLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.disabledCardLink {
+  cursor: not-allowed;
+}
+
+.disabledCard {
+  opacity: 0.8;
+  filter: grayscale(30%);
+}
+
+/* 卡片内容布局 */
+.cardContentRow {
+  display: flex;
+  align-items: center;
+}
+
+/* 活动图片 */
+.activityImage {
+  width: 120px;
+  height: 120px;
+  margin-right: 24px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.activityImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 活动主要信息 */
+.activityMainInfo {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.activityHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.activityName {
+  margin-bottom: 0 !important;
+  margin-right: 16px;
+}
+
+.activityStatus {
+  background-color: var(--primary-blue);
+  color: var(--primary-blue-dark);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.description {
+  color: var(--text-secondary);
+  margin-bottom: 8px !important;
+}
+
+/* 分隔线 */
+.verticalDivider {
+  height: 80px;
+  margin: 0 24px;
+}
+
+/* 日期信息 */
+.dateInfoHorizontal {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  gap: 12px;
+}
+
+.dateItem {
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+}
+
+.dateIcon {
+  color: var(--primary-blue-dark);
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+/* 查看详情按钮 */
+.viewMoreButton {
+  color: var(--primary-blue-dark);
+  font-weight: 500;
+}
+
+.viewMoreButtonDisabled {
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* 加载中状态 */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+/* 错误状态 */
+.errorContainer {
+  text-align: center;
+  padding: 40px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 空状态 */
+.emptyState {
+  margin-top: 40px;
+  background-color: var(--primary-blue);
+  padding: 40px;
+  border-radius: var(--border-radius);
+}
+
+/* 响应式布局 */
+@media screen and (max-width: 768px) {
+  .cardContentRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .activityImage {
+    width: 100%;
+    height: 180px;
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
+  
+  .activityMainInfo {
+    width: 100%;
+    padding-right: 0;
+    margin-bottom: 16px;
+  }
+  
+  .verticalDivider {
+    display: none;
+  }
+  
+  .dateInfoHorizontal {
+    width: 100%;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 16px;
+  }
+}

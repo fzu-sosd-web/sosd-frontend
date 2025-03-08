@@ -57,7 +57,6 @@ export const useLoginStore = create<LoginStore>()(
       // 刷新用户信息
       refreshUserInfo: async () => {
         // 如果没有token，则不请求
-        console.log('Token:', token.getToken())
         if (!token.getToken()) {
           set({ userInfo: null, isLogin: false })
           return null
