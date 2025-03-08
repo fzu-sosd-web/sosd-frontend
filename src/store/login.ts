@@ -9,7 +9,7 @@ interface LoginStore {
   userInfo: IUserInfo | null
   isLogin: boolean
   loading: boolean
-  
+
   // 方法
   setUserInfo: (data: IUserInfo | null) => void
   updateUserInfo: (data: Partial<IUserInfo>) => void
@@ -25,134 +25,133 @@ export const useLoginStore = create<LoginStore>()(
       userInfo: null,
       isLogin: token.getIsLogin(),
       loading: false,
-      
+
       // 设置用户信息
       setUserInfo: (data: IUserInfo | null) => {
         // 更新状态
-        set({ userInfo: data, isLogin: !!data });
-        
+        set({ userInfo: data, isLogin: !!data })
+
         // 更新token状态
         if (data) {
-          token.setIsLogin(true);
+          token.setIsLogin(true)
           if (data.token) {
-            token.setToken(data.token);
+            token.setToken(data.token)
           }
         } else {
-          token.setIsLogin(false);
-          token.removeToken();
+          token.setIsLogin(false)
+          token.removeToken()
         }
       },
-      
+
       // 更新用户信息（部分更新）
       updateUserInfo: (data: Partial<IUserInfo>) => {
-        const currentUser = get().userInfo;
-        if (!currentUser) return;
-        
-        set({ 
-          userInfo: { ...currentUser, ...data } 
-        });
+        const currentUser = get().userInfo
+        if (!currentUser) return
+
+        set({
+          userInfo: { ...currentUser, ...data },
+        })
       },
-      
+
       // 刷新用户信息
       refreshUserInfo: async () => {
         // 如果没有token，则不请求
-        console.log('Token:', token.getToken());
+        console.log('Token:', token.getToken())
         if (!token.getToken()) {
-          set({ userInfo: null, isLogin: false });
-          return null;
+          set({ userInfo: null, isLogin: false })
+          return null
         }
-        
-        set({ loading: true });
-        
+
+        set({ loading: true })
+
         try {
-          const res = await loginApi.fetchIUserInfo();
-          
+          const res = await loginApi.fetchIUserInfo()
+
           if (res.code === 200 && res.data) {
             // 如果成功获取用户信息
-            const userData = res.data;
-            
+            const userData = res.data
+
             // 更新状态
-            set({ 
-              userInfo: userData, 
-              isLogin: true, 
-              loading: false 
-            });
-            
+            set({
+              userInfo: userData,
+              isLogin: true,
+              loading: false,
+            })
+
             // 确保token状态与内存状态一致
-            token.setIsLogin(true);
-            
-            return userData;
+            token.setIsLogin(true)
+
+            return userData
           } else {
             // 获取失败，清除登录状态
-            set({ 
-              userInfo: null, 
-              isLogin: false, 
-              loading: false 
-            });
-            
-            token.setIsLogin(false);
-            token.removeToken();
-            
-            return null;
+            set({
+              userInfo: null,
+              isLogin: false,
+              loading: false,
+            })
+
+            token.setIsLogin(false)
+            token.removeToken()
+
+            return null
           }
         } catch (error) {
-          console.error('获取用户信息失败:', error);
-          
+          console.error('获取用户信息失败:', error)
+
           // 发生错误时，保持当前状态，但标记加载完成
-          set({ loading: false });
-          return get().userInfo;
+          set({ loading: false })
+          return get().userInfo
         }
       },
-      
+
       // 登录
       login: async (credentials: any) => {
-        set({ loading: true });
-        
+        set({ loading: true })
+
         try {
-          const res = await loginApi.login(credentials);
+          const res = await loginApi.login(credentials)
 
           if (res.code === 200 && res.data) {
             // 登录成功，设置用户信息
-            const { token: userToken, user: userInfo } = res.data;
-            console.log('登录成功:', userInfo);
+            const { token: userToken, user: userInfo } = res.data
+            console.log('登录成功:', userInfo)
             // 保存token
             if (userToken) {
-              token.setToken(userToken);
+              token.setToken(userToken)
             }
 
             // 更新状态
-            set({ 
-              userInfo: userInfo, 
-              isLogin: true, 
-              loading: false 
-            });
+            set({
+              userInfo: userInfo,
+              isLogin: true,
+              loading: false,
+            })
 
-            token.setIsLogin(true);
-            
-            return true;
+            token.setIsLogin(true)
+
+            return true
           } else {
             // 登录失败
-            set({ loading: false });
-            return false;
+            set({ loading: false })
+            return false
           }
         } catch (error) {
-          console.error('登录失败:', error);
-          set({ loading: false });
-          return false;
+          console.error('登录失败:', error)
+          set({ loading: false })
+          return false
         }
       },
-      
+
       // 登出
       logout: () => {
         // 清除内存中的状态
-        set({ userInfo: null, isLogin: false });
-        
+        set({ userInfo: null, isLogin: false })
+
         // 清除本地存储
-        token.setIsLogin(false);
-        token.removeToken();
+        token.setIsLogin(false)
+        token.removeToken()
       },
     }),
-    { name: 'login-store' }
-  )
-);
-
+    { name: 'login-store' },
+  ),
+)

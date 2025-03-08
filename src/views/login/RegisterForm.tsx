@@ -40,13 +40,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
   // 处理倒计时
   useEffect(() => {
     let timer: Timeout | null = null
-    
+
     if (countdown > 0) {
       timer = setTimeout(() => {
         setCountdown(countdown - 1)
       }, 1000)
     }
-    
+
     return () => {
       if (timer) clearTimeout(timer)
     }
@@ -63,18 +63,18 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
     )
     reader.readAsDataURL(file)
   }
-  
+
   // 发送验证码
   const handleSendVerifyCode = async () => {
     try {
       // 先验证邮箱字段
       await form.validateFields(['email'])
       const email = form.getFieldValue('email')
-      
+
       setSendingCode(true)
       // 调用发送验证码API
       const res = await sendEmailVerifyCode(email)
-      
+
       if (res.success) {
         message.success('验证码已发送至邮箱，请注意查收')
         setCountdown(60) // 60秒倒计时
@@ -95,17 +95,25 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
       setLoading(true)
 
       const registerData: RegisterData = {
-        ...values,
+        email: values.email,
+        password: values.password,
+        name: values.name,
+        studentId: values.studentId,
+        gender: values.gender,
+        qq: values.qq,
+        mobile: values.mobile,
+        major: values.major,
+        validCode: values.validCode,
       }
 
       console.log('注册信息:', registerData)
       // 这里调用注册API
       const resp = await register(registerData)
-        console.log('注册结果:', resp)
-        if (resp.success) {
-          message.success('注册成功')
-          onSwitchToLogin()
-        }
+      console.log('注册结果:', resp)
+      if (resp.success) {
+        message.success('注册成功')
+        onSwitchToLogin()
+      }
     } catch (error) {
       setLoading(false)
       message.error('注册失败，请稍后再试')
@@ -129,14 +137,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
             { type: 'email', message: '请输入有效的邮箱地址' },
           ]}
         >
-          <Input
-            size="middle"
-            placeholder="邮箱"
-            prefix={<MailOutlined />}
-          />
+          <Input size="middle" placeholder="邮箱" prefix={<MailOutlined />} />
         </Form.Item>
-        
-        
 
         {/* 个人信息字段 */}
         <Row gutter={16}>
@@ -201,11 +203,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
           </Col>
           <Col span={12}>
             <Form.Item name="qq">
-              <Input
-                size="middle"
-                placeholder="QQ号"
-                prefix={<QqOutlined />}
-              />
+              <Input size="middle" placeholder="QQ号" prefix={<QqOutlined />} />
             </Form.Item>
           </Col>
         </Row>
@@ -233,9 +231,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
                 if (!value || getFieldValue('password') === value) {
                   return Promise.resolve()
                 }
-                return Promise.reject(
-                  new Error('两次输入的密码不匹配'),
-                )
+                return Promise.reject(new Error('两次输入的密码不匹配'))
               },
             }),
           ]}
@@ -286,10 +282,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
       <div className="text-center">
         <Text type="secondary">
           已有账号?{' '}
-          <a
-            onClick={onSwitchToLogin}
-            className="text-blue-500"
-          >
+          <a onClick={onSwitchToLogin} className="text-blue-500">
             登录
           </a>
         </Text>

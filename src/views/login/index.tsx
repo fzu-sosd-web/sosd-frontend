@@ -1,9 +1,5 @@
 import React, { useState } from 'react'
-import {
-  Card,
-  Typography,
-  Tabs,
-} from 'antd'
+import { Card, Typography, Tabs } from 'antd'
 import sosd from '@/assets/logo.png'
 import './index.css'
 
@@ -33,7 +29,12 @@ const LoginPage: React.FC = () => {
         <div className="login-content">
           <Card className="login-card" bordered={false}>
             <div className="text-center mb-6">
-              <img src={sosd} alt="Logo" className="mb-4 mx-auto" style={{ height: "64px" }} />
+              <img
+                src={sosd}
+                alt="Logo"
+                className="mb-4 mx-auto"
+                style={{ height: '64px' }}
+              />
               <Title level={3} className="mb-1">
                 福州大学服务外包与软件设计实验室
               </Title>

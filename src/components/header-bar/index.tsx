@@ -10,7 +10,13 @@ import {
   Typography,
   message,
 } from 'antd'
-import { UserOutlined, DownOutlined, LogoutOutlined, UserSwitchOutlined, LoginOutlined } from '@ant-design/icons'
+import {
+  UserOutlined,
+  DownOutlined,
+  LogoutOutlined,
+  UserSwitchOutlined,
+  LoginOutlined,
+} from '@ant-design/icons'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -52,7 +58,7 @@ const HeaderBar: React.FC = () => {
 
   // 根据当前路径设置活动菜单项
   const [current, setCurrent] = useState(RoutePath.Home)
-  
+
   // 当路由变化时更新当前选中的菜单项
   useEffect(() => {
     // 找到匹配的导航项
@@ -60,12 +66,19 @@ const HeaderBar: React.FC = () => {
     refreshUserInfo()
     console.log('userInfo:', userInfo)
     console.log('isLogin:', isLogin)
-    const matchedItem = navItems.find(item => 
-      item && 'key' in item && typeof item.key === 'string' && 
-      (currentPath === item.key || currentPath.startsWith(`${item.key}/`))
+    const matchedItem = navItems.find(
+      (item) =>
+        item &&
+        'key' in item &&
+        typeof item.key === 'string' &&
+        (currentPath === item.key || currentPath.startsWith(`${item.key}/`)),
     )
-    
-    if (matchedItem && 'key' in matchedItem && typeof matchedItem.key === 'string') {
+
+    if (
+      matchedItem &&
+      'key' in matchedItem &&
+      typeof matchedItem.key === 'string'
+    ) {
       setCurrent(matchedItem.key)
     }
   }, [location.pathname])
@@ -80,7 +93,7 @@ const HeaderBar: React.FC = () => {
   const handleLogout = () => {
     logout() // 使用 store 中提供的 logout 方法
     message.success('已成功退出登录')
-    
+
     // 如果当前在需要登录的页面，则重定向到首页
     const protectedRoutes = [RoutePath.Profile]
     if (protectedRoutes.includes(location.pathname as any)) {
@@ -100,19 +113,19 @@ const HeaderBar: React.FC = () => {
     {
       type: 'divider',
     },
-    isLogin ? 
-    {
-      label: '退出登录',
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      onClick: handleLogout,
-    } :
-    {
-      label: '登录',
-      key: 'login',
-      icon: <LoginOutlined />,
-      onClick: () => navigate(RoutePath.Login),
-    },
+    isLogin
+      ? {
+          label: '退出登录',
+          key: 'logout',
+          icon: <LogoutOutlined />,
+          onClick: handleLogout,
+        }
+      : {
+          label: '登录',
+          key: 'login',
+          icon: <LoginOutlined />,
+          onClick: () => navigate(RoutePath.Login),
+        },
   ]
 
   return (
@@ -135,8 +148,8 @@ const HeaderBar: React.FC = () => {
       <div className="flex items-center justify-between w-full px-6 lg:px-12 py-2">
         {/* Logo 区域 */}
         <div className="flex items-center">
-          <div 
-            className="flex items-center mr-8 cursor-pointer" 
+          <div
+            className="flex items-center mr-8 cursor-pointer"
             onClick={() => navigate(RoutePath.Home)}
           >
             <img src={sosd} alt="Logo" className="h-10 w-10" />
@@ -185,11 +198,7 @@ const HeaderBar: React.FC = () => {
             >
               <div className="flex items-center cursor-pointer ml-4">
                 {isLogin && userInfo?.avatar ? (
-                  <Avatar
-                    size={36}
-                    src={userInfo.avatar}
-                    alt={userInfo.name}
-                  />
+                  <Avatar size={36} src={userInfo.avatar} alt={userInfo.name} />
                 ) : (
                   <Avatar
                     size={36}

@@ -26,29 +26,31 @@ import { Timeout } from 'ahooks/lib/useRequest/src/types'
 const { Text } = Typography
 
 interface LoginFormProps {
-    onSwitchToRegister: () => void
-  }
+  onSwitchToRegister: () => void
+}
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
   const navigate = useNavigate()
   const [form] = Form.useForm()
-  const [loginMethod, setLoginMethod] = useState<'password' | 'code'>('password')
+  const [loginMethod, setLoginMethod] = useState<'password' | 'code'>(
+    'password',
+  )
   const [sendingCode, setSendingCode] = useState(false)
   const [countdown, setCountdown] = useState(0)
-  
+
   // 从store获取状态和方法
   const { loading, login } = useLoginStore()
 
   // 处理倒计时
   useEffect(() => {
     let timer: Timeout | null = null
-    
+
     if (countdown > 0) {
       timer = setTimeout(() => {
         setCountdown(countdown - 1)
       }, 1000)
     }
-    
+
     return () => {
       if (timer) clearTimeout(timer)
     }
@@ -58,9 +60,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields()
-      
+
       let loginData: any = {}
-      
+
       if (loginMethod === 'password') {
         // 学号+密码登录
         loginData = {
@@ -77,7 +79,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
 
       // 调用登录
       const success = await login(loginData)
-      
+
       if (success) {
         message.success('登录成功')
         navigate(RoutePath.Home)
@@ -89,17 +91,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
       message.error('登录失败，请检查输入后重试')
     }
   }
-  
+
   // 发送验证码
   const handleSendVerifyCode = async () => {
     try {
       await form.validateFields(['email'])
       const email = form.getFieldValue('email')
-      
+
       setSendingCode(true)
       // 调用发送验证码API
       const res = await sendEmailVerifyCode(email)
-      
+
       if (res.success) {
         message.success('验证码已发送至邮箱，请注意查收')
         setCountdown(60) // 60秒倒计时
@@ -129,7 +131,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
             { label: '邮箱验证码登录', value: 'code' },
           ]}
           value={loginMethod}
-          onChange={(value) => handleLoginMethodChange(value as 'password' | 'code')}
+          onChange={(value) =>
+            handleLoginMethodChange(value as 'password' | 'code')
+          }
         />
       </div>
 
@@ -174,7 +178,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
               name="email"
               rules={[
                 { required: true, message: '请输入邮箱' },
-                { type: 'email', message: '请输入有效的邮箱地址' }
+                { type: 'email', message: '请输入有效的邮箱地址' },
               ]}
             >
               <Input
@@ -213,9 +217,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
         <Form.Item>
           <div className="flex justify-between items-center mb-4">
             <Tooltip title="切换登录方式">
-              <Button 
-                type="link" 
-                onClick={() => handleLoginMethodChange(loginMethod === 'password' ? 'code' : 'password')}
+              <Button
+                type="link"
+                onClick={() =>
+                  handleLoginMethodChange(
+                    loginMethod === 'password' ? 'code' : 'password',
+                  )
+                }
                 icon={<SwapOutlined />}
               >
                 {loginMethod === 'password' ? '使用验证码登录' : '使用密码登录'}
@@ -238,11 +246,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
         <Text type="secondary">还没有账号?</Text>
       </Divider>
 
-      <Button
-        block
-        onClick={onSwitchToRegister}
-        className="register-button"
-      >
+      <Button block onClick={onSwitchToRegister} className="register-button">
         创建新账号
       </Button>
     </div>
