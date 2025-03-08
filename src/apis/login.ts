@@ -1,5 +1,5 @@
 import { request } from '@/request'
-import { IUserInfo, IResult, LoginResp } from '@/types'
+import { IUserInfo, IResult, LoginResp, LoginRes } from '@/types'
 import { API_BASE_URL } from '@/constant/web'
 
 const baseURL = API_BASE_URL + '/user'
@@ -17,8 +17,8 @@ const formatCurrentTime = (): string => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
-export const login = (form: any) => {
-  return request.post<LoginResp>(`${baseURL}/login`, form)
+export const loginBySso = (form: LoginRes) => {
+  return request.post<LoginResp>(`${baseURL}/login/sso`, form)
 }
 
 export const fetchIUserInfo = () => {

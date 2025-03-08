@@ -52,10 +52,6 @@ export interface LoginResp {
   token: string
 }
 
-/** 用户登录表单 */
-export interface ILoginForm {
-  id: string
-  email: string
-  studentId: string
-  password: string
+export interface LoginRes {
+  ticket: string
 }

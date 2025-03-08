@@ -18,7 +18,7 @@ import {
 } from '@ant-design/icons'
 import { data, useNavigate } from 'react-router-dom'
 import { RoutePath } from '@/constant/routes'
-import { login, sendEmailVerifyCode } from '@/apis/login'
+import { sendEmailVerifyCode } from '@/apis/login'
 import { useLoginStore } from '@/store/login'
 import { setIsLogin, setToken } from '@/utils/token'
 import { Timeout } from 'ahooks/lib/useRequest/src/types'

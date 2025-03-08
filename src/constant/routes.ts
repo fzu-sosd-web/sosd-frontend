@@ -18,4 +18,6 @@ export const RoutePath = {
   Competition: `/competition/:competitionId`,
   /**竞赛列表 */
   CompetitionList: `/comp_list`,
+  /**SSO登录 */
+  SSOLogin: `/sso/session`,
 }

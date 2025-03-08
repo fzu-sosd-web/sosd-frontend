@@ -3,6 +3,7 @@ import { devtools } from 'zustand/middleware'
 import { IUserInfo } from '@/types'
 import { loginApi } from '@/apis'
 import { token } from '@/utils/'
+import { loginBySso } from '@/apis/login'
 
 interface LoginStore {
   // 状态
@@ -105,11 +106,11 @@ export const useLoginStore = create<LoginStore>()(
       },
 
       // 登录
-      login: async (credentials: any) => {
+      login: async (ticket: string) => {
         set({ loading: true })
 
         try {
-          const res = await loginApi.login(credentials)
+          const res = await loginBySso({ ticket })
 
           if (res.code === 200 && res.data) {
             // 登录成功，设置用户信息

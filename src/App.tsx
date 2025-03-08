@@ -13,6 +13,7 @@ import MainLayout from './components/main-layout'
 import ProfilePage from './views/profile'
 import CompetitionListPage from './views/comp/comp_list'
 import AuthWrap from './components/auth-wrap'
+import SSOSession from './components/sso/SsoSession'
 // import PersonPage from './views/personal'
 
 const App = () => {
@@ -22,6 +23,7 @@ const App = () => {
         {/* 登录/注册页面，没有HeaderBar */}
         <Route path={RoutePath.Login} element={<LoginPage />} />
         <Route path={RoutePath.Register} element={<LoginPage />} />
+        <Route path={RoutePath.SSOLogin} element={<SSOSession />} />
 
         {/* 使用MainLayout的页面 */}
         <Route element={<MainLayout />}>

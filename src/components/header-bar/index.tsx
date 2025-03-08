@@ -124,7 +124,10 @@ const HeaderBar: React.FC = () => {
           label: '登录',
           key: 'login',
           icon: <LoginOutlined />,
-          onClick: () => navigate(RoutePath.Login),
+          onClick: () => {
+            window.location.href =
+              'https://sso.fzu.edu.cn/login?service=https://sosd.fzu.edu.cn/sso/session'
+          },
         },
   ]
 

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "rsbuild build",
-    "dev": "rsbuild dev --open",
+    "dev": "rsbuild dev --open --port 443",
     "format": "prettier --write .",
     "lint": "eslint .",
     "preview": "rsbuild preview"
@@ -24,6 +24,7 @@
     "@eslint/compat": "^1.2.7",
     "@eslint/js": "^9.21.0",
     "@rsbuild/core": "^1.2.14",
+    "@rsbuild/plugin-basic-ssl": "^1.1.1",
     "@rsbuild/plugin-react": "^1.1.1",
     "@tailwindcss/postcss": "^4.0.9",
     "@types/react": "^18.3.18",
