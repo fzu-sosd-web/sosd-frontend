@@ -68,9 +68,9 @@ const SSOSession: React.FC = () => {
           <button
             key="login"
             className="ant-btn ant-btn-primary"
-            onClick={() => navigate(RoutePath.Login)}
+            onClick={() => navigate(RoutePath.Home)}
           >
-            返回登录页
+            返回主页
           </button>,
         ]}
       />

@@ -133,6 +133,7 @@ export const useLoginStore = create<LoginStore>()(
             return true
           } else {
             // 登录失败
+            console.error('登录失败:', res.msg || '未知错误')
             set({ loading: false })
             return false
           }
