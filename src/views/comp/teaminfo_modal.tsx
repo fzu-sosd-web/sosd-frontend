@@ -103,9 +103,7 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
     try {
       const response = await isTeamMaterialsUploaded(teamId)
       if (response && response.code === 200) {
-        setMaterialsUploaded(true)
-      } else {
-        setMaterialsUploaded(false)
+        setMaterialsUploaded(Boolean(response.data))
       }
     } catch (error) {
       console.error('检查材料上传状态出错:', error)
