@@ -1,52 +1,54 @@
 // components/MemberSection.tsx
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
 
 export interface Member {
-  name: string;
-  role: string;
-  description: string;
-  department?: string;
-  photo: string;
+  name: string
+  role: string
+  description: string
+  department?: string
+  photo: string
 }
 
 interface MemberSectionProps {
-  title: string;
-  members: Member[];
-  avatarSize?: 'sm' | 'md' | 'lg';
-  showDivider?: boolean;
-  columns?: number | { base: number; md?: number; lg?: number };
-  className?: string;
+  title: string
+  members: Member[]
+  avatarSize?: 'sm' | 'md' | 'lg'
+  showDivider?: boolean
+  columns?: number | { base: number; md?: number; lg?: number }
+  className?: string
 }
 
-const defaultAvatar = require('@/assets/aboutUs/default-avatar.png');
+const defaultAvatar = require('@/assets/aboutUs/default-avatar.png')
 
 const MemberSection: React.FC<MemberSectionProps> = ({
-                                                       title,
-                                                       members,
-                                                       avatarSize = 'md',
-                                                       showDivider = false,
-                                                       columns = 2,
-                                                       className
-                                                     }) => {
+  title,
+  members,
+  avatarSize = 'md',
+  showDivider = false,
+  columns = 2,
+  className,
+}) => {
   // 响应式列数处理
   const getGridClasses = () => {
     if (typeof columns === 'object') {
       return [
         `grid-cols-${columns.base}`,
         columns.md && `md:grid-cols-${columns.md}`,
-        columns.lg && `lg:grid-cols-${columns.lg}`
-      ].filter(Boolean).join(' ');
+        columns.lg && `lg:grid-cols-${columns.lg}`,
+      ]
+        .filter(Boolean)
+        .join(' ')
     }
-    return `grid-cols-1 md:grid-cols-${columns}`;
-  };
+    return `grid-cols-1 md:grid-cols-${columns}`
+  }
 
   // 头像尺寸配置
   const sizeClasses = {
     sm: 'w-16 h-16',
     md: 'w-20 h-20',
-    lg: 'w-24 h-24'
-  };
+    lg: 'w-24 h-24',
+  }
 
   return (
     <section className={classNames('mb-12', className)}>
@@ -72,10 +74,10 @@ const MemberSection: React.FC<MemberSectionProps> = ({
                     alt={member.name}
                     className={classNames(
                       sizeClasses[avatarSize],
-                      'rounded-full object-cover border-4 border-blue-50'
+                      'rounded-full object-cover border-4 border-blue-50',
                     )}
                     onError={(e) => {
-                      e.currentTarget.src = defaultAvatar;
+                      e.currentTarget.src = defaultAvatar
                     }}
                   />
                 </div>
@@ -101,7 +103,7 @@ const MemberSection: React.FC<MemberSectionProps> = ({
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default MemberSection;
+export default MemberSection

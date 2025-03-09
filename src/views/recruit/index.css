@@ -14,14 +14,14 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 20px;
   background-color: var(--background-color);
 }
 
 /* 头部样式 */
 .header {
   text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 32px;
   position: relative;
 }
 
@@ -32,12 +32,12 @@
 
 .subtitle {
   font-size: 16px;
-  margin-top: 8px;
+  margin-bottom: 0 !important;
   color: var(--text-secondary);
 }
 
 .headerAccent {
-  width: 80px;
+  width: 60px;
   height: 4px;
   background-color: var(--primary-blue-dark);
   margin: 16px auto;
@@ -52,7 +52,7 @@
 /* 卡片样式 */
 .activityCardFullWidth {
   width: 100%;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   border-radius: var(--border-radius);
   transition: all 0.3s;
   box-shadow: var(--shadow);
@@ -78,19 +78,20 @@
 .disabledCard {
   opacity: 0.8;
   filter: grayscale(30%);
+  background-color: #fafafa;
+  border-color: #f0f0f0;
 }
 
 /* 卡片内容布局 */
 .cardContentRow {
   display: flex;
-  align-items: center;
+  align-items: stretch;
 }
 
 /* 活动图片 */
 .activityImage {
-  width: 120px;
-  height: 120px;
-  margin-right: 24px;
+  flex: 0 0 200px;
+  margin-right: 20px;
   border-radius: var(--border-radius);
   overflow: hidden;
   flex-shrink: 0;
@@ -102,47 +103,89 @@
   object-fit: cover;
 }
 
+/* 图片容器样式 */
+.imageContainer {
+  width: 200px;
+  height: 140px;
+  overflow: hidden;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+/* 图片样式 - 适应容器并保持比例 */
+.activityImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 重要：保持纵横比并裁剪图片 */
+  transition:
+    opacity 0.3s,
+    transform 0.3s;
+}
+
+.activityImg:hover {
+  transform: scale(1.05);
+}
+
+/* 禁用状态的图片 */
+.disabledImg {
+  opacity: 0.6;
+  filter: grayscale(50%);
+}
+
 /* 活动主要信息 */
 .activityMainInfo {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* 确保文本截断功能正常工作 */
   padding-right: 20px;
 }
 
 .activityHeader {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .activityName {
-  margin-bottom: 0 !important;
+  margin: 0 !important;
   margin-right: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: calc(100% - 80px); /* 为状态标签留出空间 */
 }
 
 .activityStatus {
   background-color: var(--primary-blue);
   color: var(--primary-blue-dark);
-  padding: 2px 10px;
-  border-radius: 12px;
+  padding: 4px 12px;
+  border-radius: 16px;
   font-size: 12px;
   font-weight: 500;
 }
 
 .description {
   color: var(--text-secondary);
-  margin-bottom: 8px !important;
+  margin-bottom: 0 !important;
 }
 
 /* 分隔线 */
 .verticalDivider {
-  height: 80px;
-  margin: 0 24px;
+  height: auto;
+  margin: 0 20px;
 }
 
 /* 日期信息 */
 .dateInfoHorizontal {
+  flex: 0 0 180px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   min-width: 200px;
   gap: 12px;
 }
@@ -151,11 +194,12 @@
   display: flex;
   align-items: center;
   color: var(--text-secondary);
+  margin-bottom: 8px;
 }
 
 .dateIcon {
   color: var(--primary-blue-dark);
-  margin-right: 8px;
+  margin-right: 6px;
   font-size: 16px;
 }
 
@@ -176,6 +220,8 @@
   justify-content: center;
   align-items: center;
   height: 400px;
+  flex-direction: column;
+  min-height: 300px;
 }
 
 /* 错误状态 */
@@ -186,11 +232,13 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  justify-content: center;
+  min-height: 300px;
 }
 
 /* 空状态 */
 .emptyState {
-  margin-top: 40px;
+  margin: 40px 0;
   background-color: var(--primary-blue);
   padding: 40px;
   border-radius: var(--border-radius);
@@ -208,6 +256,12 @@
     height: 180px;
     margin-right: 0;
     margin-bottom: 16px;
+    flex: none;
+  }
+
+  .imageContainer {
+    width: 100%;
+    height: 180px;
   }
 
   .activityMainInfo {
@@ -224,5 +278,11 @@
     width: 100%;
     border-top: 1px solid #f0f0f0;
     padding-top: 16px;
+    flex: none;
+    margin-top: 16px;
+  }
+
+  .dateItem {
+    margin-bottom: 8px;
   }
 }

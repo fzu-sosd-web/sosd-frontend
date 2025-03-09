@@ -187,13 +187,13 @@ const RecruitListPage: React.FC = () => {
               >
                 <div className="cardContentRow">
                   <div className="activityImage">
-                    <Image
-                      src={DEFAULT_IMAGE}
-                      alt={activity.name || '纳新活动'}
-                      fallback={DEFAULT_IMAGE}
-                      preview={false}
-                      style={!inProgress ? { opacity: 0.6 } : {}}
-                    />
+                    <div className="imageContainer">
+                      <img
+                        src={DEFAULT_IMAGE}
+                        alt={activity.name || '纳新活动'}
+                        className={`activityImg ${!inProgress ? 'disabledImg' : ''}`}
+                      />
+                    </div>
                   </div>
 
                   <div className="activityMainInfo">

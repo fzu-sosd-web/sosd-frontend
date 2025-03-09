@@ -239,220 +239,235 @@ const RecruitDetail: React.FC = () => {
         </Button>
       </div>
 
-      <div className="detail-header">
-        <div className="detail-header-content">
-          <div className="detail-image-container">
-            <Image
+      <div className="detail-container">
+        {/* 宽幅图片区域 - 现在位于顶部 */}
+        <div className="detail-banner">
+          <div className="banner-image-container">
+            <img
               src={DEFAULT_IMAGE}
               alt={activity.name || '纳新活动'}
-              fallback={DEFAULT_IMAGE}
-              preview={false}
-              className="detail-image"
+              className="banner-image"
             />
-          </div>
-
-          <div className="detail-header-info">
-            <Typography.Title level={2} className="detail-title">
-              {activity.name || '未命名纳新活动'}
-            </Typography.Title>
-
-            <div className={`activity-status status-${activityStatus}`}>
-              {activityStatus === 'upcoming'
-                ? '即将开始'
-                : activityStatus === 'ended'
-                  ? '已结束'
-                  : '进行中'}
-            </div>
-
-            <div className="activity-dates">
-              <div className="date-item">
-                <CalendarOutlined className="date-icon" /> 开始时间:{' '}
-                {formatDate(activity.startDate)}
-              </div>
-              <div className="date-item">
-                <FieldTimeOutlined className="date-icon" /> 结束时间:{' '}
-                {formatDate(activity.endDate)}
+            <div className="banner-overlay">
+              <div className="banner-content">
+                <Typography.Title level={2} className="banner-title">
+                  {activity.name || '未命名纳新活动'}
+                </Typography.Title>
+                <div className={`activity-status status-${activityStatus}`}>
+                  {activityStatus === 'upcoming'
+                    ? '即将开始'
+                    : activityStatus === 'ended'
+                      ? '已结束'
+                      : '进行中'}
+                </div>
               </div>
             </div>
-
-            <Divider className="info-divider" />
-
-            <div className="description-content">
-              <Paragraph
-                ellipsis={{ rows: 3, expandable: true, symbol: '展开' }}
-              >
-                {activity.description || '暂无详细描述'}
-              </Paragraph>
-            </div>
           </div>
+        </div>
 
-          <div className="detail-actions">
-            <div className="action-section">
-              <h3 className="action-title">报名参与</h3>
+        <div className="detail-content">
+          <Row gutter={24}>
+            {/* 右侧 - 报名操作区域 */}
+            <Col xs={24} md={8} lg={7} xl={6} className="detail-sidebar">
+              <Card bordered={false} className="action-card">
+                <div className="action-section">
+                  <h3 className="action-title">报名参与</h3>
 
-              {registered ? (
-                <>
-                  <div className="registered-info">
-                    <Tag color="success" className="register-status-tag">
-                      <CheckCircleOutlined /> 已报名
-                    </Tag>
+                  {registered ? (
+                    <>
+                      <div className="registered-info">
+                        <Tag color="success" className="register-status-tag">
+                          <CheckCircleOutlined /> 已报名
+                        </Tag>
 
-                    {checkingResume ? (
-                      <Tag color="processing" className="resume-status-tag">
-                        <Spin size="small" /> 检查附件状态
-                      </Tag>
-                    ) : resumeUploaded ? (
-                      <Tag color="green" className="resume-status-tag">
-                        <FilePdfOutlined /> 已上传附件
-                      </Tag>
-                    ) : (
-                      <Tag color="warning" className="resume-status-tag">
-                        <ExclamationCircleOutlined /> 未上传附件
-                      </Tag>
-                    )}
-                  </div>
+                        {checkingResume ? (
+                          <Tag color="processing" className="resume-status-tag">
+                            <Spin size="small" /> 检查附件状态
+                          </Tag>
+                        ) : resumeUploaded ? (
+                          <Tag color="green" className="resume-status-tag">
+                            <FilePdfOutlined /> 已上传附件
+                          </Tag>
+                        ) : (
+                          <Tag color="warning" className="resume-status-tag">
+                            <ExclamationCircleOutlined /> 未上传附件
+                          </Tag>
+                        )}
+                      </div>
 
-                  <div className="registered-detail">
-                    <div className="registered-item">
-                      <Text type="secondary">第一志愿:</Text>
-                      <Text strong style={{ marginLeft: '8px' }}>
-                        {resumeData?.firstChoose || '-'}
-                      </Text>
-                    </div>
-                    <div className="registered-item">
-                      <Text type="secondary">第二志愿:</Text>
-                      <Text strong style={{ marginLeft: '8px' }}>
-                        {resumeData?.secondChoose || '-'}
-                      </Text>
-                    </div>
-                    <div className="registered-item">
-                      <Text type="secondary">是否服从调剂:</Text>
-                      <Text strong style={{ marginLeft: '8px' }}>
-                        {resumeData?.status === '1' ? '是' : '否'}
-                      </Text>
-                    </div>
-                  </div>
+                      <div className="registered-detail">
+                        <div className="registered-item">
+                          <Text type="secondary">第一志愿:</Text>
+                          <Text strong style={{ marginLeft: '8px' }}>
+                            {resumeData?.firstChoose || '-'}
+                          </Text>
+                        </div>
+                        <div className="registered-item">
+                          <Text type="secondary">第二志愿:</Text>
+                          <Text strong style={{ marginLeft: '8px' }}>
+                            {resumeData?.secondChoose || '-'}
+                          </Text>
+                        </div>
+                        <div className="registered-item">
+                          <Text type="secondary">是否服从调剂:</Text>
+                          <Text strong style={{ marginLeft: '8px' }}>
+                            {resumeData?.status === '1' ? '是' : '否'}
+                          </Text>
+                        </div>
+                      </div>
 
-                  <div className="resume-upload-section">
-                    <Upload
-                      accept=".pdf,.doc,.docx"
-                      showUploadList={false}
-                      beforeUpload={async (file) => {
-                        const validTypes = ['application/pdf']
-                        const isValidFileType =
-                          validTypes.includes(file.type) ||
-                          file.name.endsWith('.pdf')
+                      <div className="resume-upload-section">
+                        <Upload
+                          accept=".pdf,.doc,.docx"
+                          showUploadList={false}
+                          beforeUpload={async (file) => {
+                            const validTypes = ['application/pdf']
+                            const isValidFileType =
+                              validTypes.includes(file.type) ||
+                              file.name.endsWith('.pdf')
 
-                        if (!isValidFileType) {
-                          message.error('只能上传PDF文档!')
-                          return false
-                        }
+                            if (!isValidFileType) {
+                              message.error('只能上传PDF文档!')
+                              return false
+                            }
 
-                        const isLt10M = file.size / 1024 / 1024 < 10
-                        if (!isLt10M) {
-                          message.error('文件大小不能超过10MB!')
-                          return false
-                        }
+                            const isLt10M = file.size / 1024 / 1024 < 10
+                            if (!isLt10M) {
+                              message.error('文件大小不能超过10MB!')
+                              return false
+                            }
 
-                        setUploading(true)
-                        try {
-                          if (!recruitId) return false
-
-                          const response = await fetchRecruitResumeUploadUrl(
-                            Number(recruitId),
-                          )
-                          if (response.code === 200 && response.data) {
+                            setUploading(true)
                             try {
-                              const formData = new FormData()
-                              formData.append('file', file)
-                              console.log('上传链接:', response.data)
-                              console.log('上传文件:', file)
+                              if (!recruitId) return false
 
-                              const uploadResponse = await fetch(
-                                response.data,
-                                {
-                                  method: 'PUT',
-                                  body: formData,
-                                  redirect: 'follow',
-                                },
-                              )
+                              const response =
+                                await fetchRecruitResumeUploadUrl(
+                                  Number(recruitId),
+                                )
+                              if (response.code === 200 && response.data) {
+                                try {
+                                  const formData = new FormData()
+                                  formData.append('file', file)
+                                  console.log('上传链接:', response.data)
+                                  console.log('上传文件:', file)
 
-                              console.log('上传响应:', uploadResponse)
+                                  const uploadResponse = await fetch(
+                                    response.data,
+                                    {
+                                      method: 'PUT',
+                                      body: formData,
+                                      redirect: 'follow',
+                                    },
+                                  )
 
-                              if (!uploadResponse.ok) {
-                                throw new Error(
-                                  `上传失败: ${uploadResponse.status} ${uploadResponse.statusText}`,
+                                  console.log('上传响应:', uploadResponse)
+
+                                  if (!uploadResponse.ok) {
+                                    throw new Error(
+                                      `上传失败: ${uploadResponse.status} ${uploadResponse.statusText}`,
+                                    )
+                                  }
+
+                                  message.success('简历上传成功！')
+                                  setResumeUploaded(true)
+                                } catch (error) {
+                                  console.error('上传出错:', error)
+                                  message.error('文件上传失败，请稍后重试')
+                                }
+                              } else {
+                                console.error('获取上传链接失败:', response)
+                                message.error(
+                                  response.message ||
+                                    '获取上传链接失败，请稍后重试',
                                 )
                               }
-
-                              message.success('简历上传成功！')
-                              setResumeUploaded(true)
                             } catch (error) {
-                              console.error('上传出错:', error)
-                              message.error('文件上传失败，请稍后重试')
+                              console.error('获取上传链接网络错误:', error)
+                              message.error('网络连接异常，请检查网络后重试')
+                            } finally {
+                              setUploading(false)
                             }
-                          } else {
-                            console.error('获取上传链接失败:', response)
-                            message.error(
-                              response.message ||
-                                '获取上传链接失败，请稍后重试',
-                            )
-                          }
-                        } catch (error) {
-                          console.error('获取上传链接网络错误:', error)
-                          message.error('网络连接异常，请检查网络后重试')
-                        } finally {
-                          setUploading(false)
-                        }
-                        return false
-                      }}
-                    >
+                            return false
+                          }}
+                        >
+                          <Button
+                            icon={<UploadOutlined />}
+                            loading={uploading}
+                            className="resume-upload-button"
+                          >
+                            {getUploadButtonText()}
+                          </Button>
+                        </Upload>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p className="action-text">
+                        {activityStatus === 'active'
+                          ? '该纳新活动正在进行中，欢迎报名参加！'
+                          : activityStatus === 'upcoming'
+                            ? '该纳新活动尚未开始，请耐心等待。'
+                            : '该纳新活动已结束，报名通道已关闭。'}
+                      </p>
+
                       <Button
-                        icon={<UploadOutlined />}
-                        loading={uploading}
-                        className="resume-upload-button"
+                        type="primary"
+                        size="large"
+                        onClick={() => setRegisterModalVisible(true)}
+                        loading={applying}
+                        disabled={activityStatus !== 'active'}
+                        className="apply-button"
                       >
-                        {getUploadButtonText()}
+                        {activityStatus === 'active'
+                          ? '立即报名'
+                          : activityStatus === 'upcoming'
+                            ? '未开始'
+                            : '已结束'}
                       </Button>
-                    </Upload>
+                    </>
+                  )}
+                </div>
+
+                <Divider className="action-divider" />
+
+                <div className="contact-section">
+                  <h3 className="action-title">联系我们</h3>
+                  <p className="contact-item">邮箱：spaceluke@qq.com</p>
+                  <p className="contact-item">qq群：</p>
+                </div>
+              </Card>
+            </Col>
+
+            {/* 左侧 - 活动详情区域 */}
+            <Col xs={24} md={16} lg={17} xl={18} className="detail-main">
+              <Card bordered={false} className="info-card">
+                <div className="activity-dates">
+                  <div className="date-item">
+                    <CalendarOutlined className="date-icon" /> 开始时间:{' '}
+                    {formatDate(activity.startDate)}
                   </div>
-                </>
-              ) : (
-                <>
-                  <p className="action-text">
-                    {activityStatus === 'active'
-                      ? '该纳新活动正在进行中，欢迎报名参加！'
-                      : activityStatus === 'upcoming'
-                        ? '该纳新活动尚未开始，请耐心等待。'
-                        : '该纳新活动已结束，报名通道已关闭。'}
-                  </p>
+                  <div className="date-item">
+                    <FieldTimeOutlined className="date-icon" /> 结束时间:{' '}
+                    {formatDate(activity.endDate)}
+                  </div>
+                </div>
 
-                  <Button
-                    type="primary"
-                    size="large"
-                    onClick={() => setRegisterModalVisible(true)}
-                    loading={applying}
-                    disabled={activityStatus !== 'active'}
-                    className="apply-button"
-                  >
-                    {activityStatus === 'active'
-                      ? '立即报名'
-                      : activityStatus === 'upcoming'
-                        ? '未开始'
-                        : '已结束'}
-                  </Button>
-                </>
-              )}
-            </div>
+                <Divider className="info-divider" />
 
-            <Divider className="action-divider" />
-
-            <div className="contact-section">
-              <h3 className="action-title">联系我们</h3>
-              <p className="contact-item">邮箱：spaceluke@qq.com</p>
-              <p className="contact-item">qq群：</p>
-            </div>
-          </div>
+                <div className="description-section">
+                  <Typography.Title level={4} className="section-title">
+                    活动详情
+                  </Typography.Title>
+                  <div className="description-content">
+                    <Paragraph>
+                      {activity.description || '暂无详细描述'}
+                    </Paragraph>
+                  </div>
+                </div>
+              </Card>
+            </Col>
+          </Row>
         </div>
       </div>
 
@@ -478,11 +493,10 @@ const RecruitDetail: React.FC = () => {
             rules={[{ required: true, message: '请选择第一志愿' }]}
           >
             <Select placeholder="请选择您的第一志愿">
-              <Option value="前端组">前端组</Option>
-              <Option value="后端组">后端组</Option>
-              <Option value="算法组">算法组</Option>
-              <Option value="设计组">设计组</Option>
-              <Option value="运维组">运维组</Option>
+              <Option value="前端组">Web组</Option>
+              <Option value="后端组">设计组</Option>
+              <Option value="算法组">移动组</Option>
+              <Option value="设计组">AI组</Option>
             </Select>
           </Form.Item>
 
@@ -492,11 +506,10 @@ const RecruitDetail: React.FC = () => {
             rules={[{ required: true, message: '请选择第二志愿' }]}
           >
             <Select placeholder="请选择您的第二志愿">
-              <Option value="前端组">前端组</Option>
-              <Option value="后端组">后端组</Option>
-              <Option value="算法组">算法组</Option>
-              <Option value="设计组">设计组</Option>
-              <Option value="运维组">运维组</Option>
+              <Option value="前端组">Web组</Option>
+              <Option value="后端组">设计组</Option>
+              <Option value="算法组">移动组</Option>
+              <Option value="设计组">AI组</Option>
             </Select>
           </Form.Item>
 

@@ -125,24 +125,24 @@ const CompPage = React.memo(() => {
   // 从竞赛阶段数据生成时间轴项
   const generateTimelineItems = (comp: Competition) => {
     // 获取当前时间
-  const now = new Date();
+    const now = new Date()
     return comp.data.competitionStages.map((stage) => {
       // 将字符串日期转换为Date对象
-    const startDate = new Date(stage.startAt);
-    const endDate = new Date(stage.endAt);
-    
-    // 根据时间动态计算阶段状态，而不是依赖后端返回的status
-    let timelineStatus: 'finish' | 'process' | 'wait';
-    if (now > endDate) {
-      // 如果当前时间已经超过了结束时间，则为已完成
-      timelineStatus = 'finish';
-    } else if (now >= startDate && now <= endDate) {
-      // 如果当前时间在开始和结束之间，则为进行中
-      timelineStatus = 'process';
-    } else {
-      // 如果当前时间在开始时间之前，则为等待中
-      timelineStatus = 'wait';
-    }
+      const startDate = new Date(stage.startAt)
+      const endDate = new Date(stage.endAt)
+
+      // 根据时间动态计算阶段状态，而不是依赖后端返回的status
+      let timelineStatus: 'finish' | 'process' | 'wait'
+      if (now > endDate) {
+        // 如果当前时间已经超过了结束时间，则为已完成
+        timelineStatus = 'finish'
+      } else if (now >= startDate && now <= endDate) {
+        // 如果当前时间在开始和结束之间，则为进行中
+        timelineStatus = 'process'
+      } else {
+        // 如果当前时间在开始时间之前，则为等待中
+        timelineStatus = 'wait'
+      }
 
       return {
         title: stage.status,

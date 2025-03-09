@@ -1,6 +1,6 @@
 // views/AboutUsPage.tsx
-import React, { useState, useEffect } from 'react';
-import MemberSection from '@/views/aboutus/MemberSection.tsx';
+import React, { useState, useEffect } from 'react'
+import MemberSection from '@/views/aboutus/MemberSection.tsx'
 
 // 教师数据
 const teachers = [
@@ -8,27 +8,27 @@ const teachers = [
     name: '刘宪玲',
     photo: require('@/assets/aboutUs/liu-xianling.png'),
     role: '博士，实验师',
-    description: '计算机科学与技术'
+    description: '计算机科学与技术',
   },
   {
     name: '孙岚',
     photo: require('@/assets/aboutUs/sun-lan.png'),
     role: '硕士，副教授',
-    description: '计算机科学与技术'
+    description: '计算机科学与技术',
   },
   {
     name: '傅仰耿',
     photo: require('@/assets/aboutUs/fu-yanggeng.png'),
     role: '博士，教授',
-    description: '计算机科学与技术'
+    description: '计算机科学与技术',
   },
   {
     name: '王一蕾',
     photo: require('@/assets/aboutUs/wang-yilei.png'),
     role: '博士，副教授',
-    description: '计算机科学与技术'
-  }
-];
+    description: '计算机科学与技术',
+  },
+]
 
 // 实验室成员数据
 const labMembers = {
@@ -37,26 +37,26 @@ const labMembers = {
       name: '叶飞扬',
       photo: require('@/assets/aboutUs/ye-feiyang.png'),
       role: '2022级硕士',
-      description: '计算机应用技术'
+      description: '计算机应用技术',
     },
     {
       name: '陈宏侨',
       photo: require('@/assets/aboutUs/chen-hongqiao.png'),
       role: '2020级本科',
-      description: '计算机科学与技术'
+      description: '计算机科学与技术',
     },
     {
       name: '魏知乐',
       photo: require('@/assets/aboutUs/wei-zhile.png'),
       role: '2021级本科',
-      description: '计算机科学与技术'
+      description: '计算机科学与技术',
     },
     {
       name: '赖沛超',
       photo: require('@/assets/aboutUs/lai-peichao.png'),
       role: '2015级硕士',
-      description: '计算机科学与技术'
-    }
+      description: '计算机科学与技术',
+    },
   ],
   mobileGroup: [
     // {
@@ -69,8 +69,8 @@ const labMembers = {
       name: '崔修起',
       photo: require('@/assets/aboutUs/cui-xiuqi.png'),
       role: '2021级本科',
-      description: '计算机科学与技术'
-    }
+      description: '计算机科学与技术',
+    },
   ],
 
   uiGroup: [
@@ -78,58 +78,58 @@ const labMembers = {
       name: '张程越',
       photo: require('@/assets/aboutUs/zhang-chenyue.png'),
       role: '2021级本科',
-      description: '计算机科学与技术'
+      description: '计算机科学与技术',
     },
     {
       name: '陈诗雪',
       photo: require('@/assets/aboutUs/chen-shixue.png'),
       role: '2021级本科',
-      description: '计算机科学与技术'
+      description: '计算机科学与技术',
     },
     {
       name: '林毅',
       photo: require('@/assets/aboutUs/lin-yi.png'),
       role: '2021级本科',
-      description: '计算机科学与技术'
+      description: '计算机科学与技术',
     },
-  ]
-};
+  ],
+}
 
 const AboutUsPage: React.FC = () => {
-  const [activeBanner, setActiveBanner] = useState(0);
+  const [activeBanner, setActiveBanner] = useState(0)
   const banners = [
     {
       image: require('@/assets/aboutUs/banner1.png'),
-      label: "日常状态",
-      title: "Dream House",
-      subtitle: "创新实践日常，打造理想技术之家"
+      label: '日常状态',
+      title: 'Dream House',
+      subtitle: '创新实践日常，打造理想技术之家',
     },
     {
       image: require('../../assets/aboutUs/banner2.png'),
-      label: "项目成果",
-      title: "Innovation Showcase",
-      subtitle: "探索前沿技术，展现团队创新成果"
+      label: '项目成果',
+      title: 'Innovation Showcase',
+      subtitle: '探索前沿技术，展现团队创新成果',
     },
     {
       image: require('../../assets/aboutUs/banner3.png'),
-      label: "团队风采",
-      title: "Team Spirit",
-      subtitle: "凝聚团队力量，共创科技未来"
-    }
-  ];
+      label: '团队风采',
+      title: 'Team Spirit',
+      subtitle: '凝聚团队力量，共创科技未来',
+    },
+  ]
   // 自动轮播逻辑
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveBanner(prev => (prev + 1) % banners.length);
-    }, 2000);
+      setActiveBanner((prev) => (prev + 1) % banners.length)
+    }, 2000)
 
-    return () => clearInterval(timer);
-  }, [banners.length]);
+    return () => clearInterval(timer)
+  }, [banners.length])
 
   // 处理导航点点击
   const handleDotClick = (index: number) => {
-    setActiveBanner(index);
-  };
+    setActiveBanner(index)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -137,7 +137,9 @@ const AboutUsPage: React.FC = () => {
       <header className="pt-12 pb-8 bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900">了解团队</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
+              了解团队
+            </h1>
             <h2 className="text-3xl md:text-4xl font-semibold text-blue-600">
               ACM协同创新团队
             </h2>
@@ -241,7 +243,7 @@ const AboutUsPage: React.FC = () => {
         </div>
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default AboutUsPage;
+export default AboutUsPage
