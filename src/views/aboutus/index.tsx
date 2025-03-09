@@ -5,7 +5,13 @@ import MemberSection from '@/views/aboutus/MemberSection.tsx'
 // 教师数据
 const teachers = [
   {
-    name: '刘宪玲',
+    name: '傅仰耿',
+    photo: require('@/assets/aboutUs/fu-yanggeng.png'),
+    role: '博士，教授',
+    description: '计算机科学与技术',
+  },
+  {
+    name: '刘莞玲',
     photo: require('@/assets/aboutUs/liu-xianling.png'),
     role: '博士，实验师',
     description: '计算机科学与技术',
@@ -14,12 +20,6 @@ const teachers = [
     name: '孙岚',
     photo: require('@/assets/aboutUs/sun-lan.png'),
     role: '硕士，副教授',
-    description: '计算机科学与技术',
-  },
-  {
-    name: '傅仰耿',
-    photo: require('@/assets/aboutUs/fu-yanggeng.png'),
-    role: '博士，教授',
     description: '计算机科学与技术',
   },
   {

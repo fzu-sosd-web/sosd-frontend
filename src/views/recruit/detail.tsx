@@ -433,8 +433,8 @@ const RecruitDetail: React.FC = () => {
 
                 <div className="contact-section">
                   <h3 className="action-title">联系我们</h3>
-                  <p className="contact-item">邮箱：spaceluke@qq.com</p>
-                  <p className="contact-item">qq群：</p>
+                  <p className="contact-item">邮箱：2609242369@qq.com</p>
+                  <p className="contact-item">qq群：975834618</p>
                 </div>
               </Card>
             </Col>
@@ -493,10 +493,10 @@ const RecruitDetail: React.FC = () => {
             rules={[{ required: true, message: '请选择第一志愿' }]}
           >
             <Select placeholder="请选择您的第一志愿">
-              <Option value="前端组">Web组</Option>
-              <Option value="后端组">设计组</Option>
-              <Option value="算法组">移动组</Option>
-              <Option value="设计组">AI组</Option>
+              <Option value="Web组">Web组</Option>
+              <Option value="设计组">设计组</Option>
+              <Option value="移动组">移动组</Option>
+              <Option value="AI组">AI组</Option>
             </Select>
           </Form.Item>
 
@@ -506,10 +506,10 @@ const RecruitDetail: React.FC = () => {
             rules={[{ required: true, message: '请选择第二志愿' }]}
           >
             <Select placeholder="请选择您的第二志愿">
-              <Option value="前端组">Web组</Option>
-              <Option value="后端组">设计组</Option>
-              <Option value="算法组">移动组</Option>
-              <Option value="设计组">AI组</Option>
+              <Option value="Web组">Web组</Option>
+              <Option value="设计组">设计组</Option>
+              <Option value="移动组">移动组</Option>
+              <Option value="AI组">AI组</Option>
             </Select>
           </Form.Item>
 

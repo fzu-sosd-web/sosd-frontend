@@ -11,7 +11,7 @@ interface Teacher {
 // 教师数据
 const teachers: Teacher[] = [
   {
-    name: '刘宪玲',
+    name: '刘莞玲',
     degree: '博士',
     position: '实验师',
     department: '计算机科学与技术',
