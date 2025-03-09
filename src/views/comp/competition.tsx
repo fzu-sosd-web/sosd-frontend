@@ -124,21 +124,25 @@ const CompPage = React.memo(() => {
 
   // 从竞赛阶段数据生成时间轴项
   const generateTimelineItems = (comp: Competition) => {
+    // 获取当前时间
+  const now = new Date();
     return comp.data.competitionStages.map((stage) => {
-      // 将API返回的状态映射到Timeline需要的状态
-      let timelineStatus: 'finish' | 'process' | 'wait'
-      switch (stage.status) {
-        case 'finish':
-        case 'finished':
-          timelineStatus = 'finish'
-          break
-        case 'process':
-        case 'ongoing':
-          timelineStatus = 'process'
-          break
-        default:
-          timelineStatus = 'wait'
-      }
+      // 将字符串日期转换为Date对象
+    const startDate = new Date(stage.startAt);
+    const endDate = new Date(stage.endAt);
+    
+    // 根据时间动态计算阶段状态，而不是依赖后端返回的status
+    let timelineStatus: 'finish' | 'process' | 'wait';
+    if (now > endDate) {
+      // 如果当前时间已经超过了结束时间，则为已完成
+      timelineStatus = 'finish';
+    } else if (now >= startDate && now <= endDate) {
+      // 如果当前时间在开始和结束之间，则为进行中
+      timelineStatus = 'process';
+    } else {
+      // 如果当前时间在开始时间之前，则为等待中
+      timelineStatus = 'wait';
+    }
 
       return {
         title: stage.status,
@@ -564,7 +568,7 @@ const CompPage = React.memo(() => {
         visible={showTeamModal}
         setShowTeamModal={setShowTeamModal}
         setShowRegisterModal={setShowRegisterModal}
-        onCancel={() => setShowTeamModal}
+        onCancel={() => setShowTeamModal(false)}
         competitionId={competition.id.toString()}
       />
     </div>
