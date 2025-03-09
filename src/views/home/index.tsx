@@ -72,6 +72,7 @@ const HomePage = React.memo(() => {
                 <Button
                   type="primary"
                   size="large"
+                  onClick={() => navigate(RoutePath.Recruit)}
                   className="px-8 h-12 text-lg font-medium"
                 >
                   加入我们
@@ -79,6 +80,7 @@ const HomePage = React.memo(() => {
                 <Button
                   ghost
                   style={{ borderColor: '#3e97ff', color: '#3e97ff' }}
+                  onClick={() => navigate(RoutePath.AboutUs)}
                   size="large"
                   className="px-8 h-12 text-lg font-medium"
                 >
