@@ -40,7 +40,7 @@ import {
 import './detail.css'
 
 // 默认图片路径
-import DEFAULT_IMAGE from '@/assets/sadaharu.png'
+import DEFAULT_IMAGE from '@/assets/recruit.png'
 
 const { Title, Paragraph, Text } = Typography
 const { Option } = Select

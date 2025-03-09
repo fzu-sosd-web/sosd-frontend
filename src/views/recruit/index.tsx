@@ -21,7 +21,7 @@ import { fetchRecruitList, Recruit } from './api' // 假设service文件存放�
 import './index.css'
 
 // 默认图片路径
-import DEFAULT_IMAGE from '@/assets/sadaharu.png'
+import DEFAULT_IMAGE from '@/assets/recruit.png'
 
 const { Title, Paragraph } = Typography
 
