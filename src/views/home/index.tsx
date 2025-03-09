@@ -18,7 +18,7 @@ import {
   SafetyCertificateOutlined,
 } from '@ant-design/icons'
 import React from 'react'
-import sosd from '@/assets/logo.png'
+import recruit from '@/assets/recruit.png'
 
 import sadaharu from '@/assets/sadaharu.png'
 import { Navigate, useNavigate } from 'react-router-dom'
@@ -241,7 +241,7 @@ const HomePage = React.memo(() => {
                         position: 'absolute',
                         top: '12px',
                         right: '12px',
-                        background: '#ff4d4f',
+                        background: '#8c8c8c',
                         color: 'white',
                         padding: '4px 12px',
                         borderRadius: '16px',
@@ -249,7 +249,7 @@ const HomePage = React.memo(() => {
                         fontSize: '14px',
                       }}
                     >
-                      进行中
+                      未开放
                     </div>
                   </div>
                 }
@@ -259,7 +259,7 @@ const HomePage = React.memo(() => {
                     2025年福州大学服务外包与软件设计校赛
                   </Title>
                   <Paragraph type="secondary" style={{ marginBottom: '16px' }}>
-                    <div>时间：2024年3月1日 - 2024年4月20日</div>
+                    <div>时间：2025年3月15日 - 2025年4月9日</div>
                     <div>地点：福州大学</div>
                   </Paragraph>
                   <Paragraph
@@ -269,12 +269,8 @@ const HomePage = React.memo(() => {
                     参与校内最具影响力的软件设计赛事，展示你的创意和技术实力，优胜者将代表学校参加全国大赛！
                   </Paragraph>
                   <div style={{ textAlign: 'right' }}>
-                    <Button
-                      type="primary"
-                      onClick={() => navigate(RoutePath.CompetitionList)}
-                      size="middle"
-                    >
-                      立即参加
+                    <Button type="primary" disabled size="middle">
+                      即将开始
                     </Button>
                   </div>
                 </div>
@@ -302,7 +298,7 @@ const HomePage = React.memo(() => {
                   >
                     <img
                       alt="纳新封面"
-                      src={sosd}
+                      src={recruit}
                       style={{
                         width: '100%',
                         objectFit: 'cover',
@@ -315,7 +311,7 @@ const HomePage = React.memo(() => {
                         position: 'absolute',
                         top: '12px',
                         right: '12px',
-                        background: '#8c8c8c',
+                        background: '#ff4d4f',
                         color: 'white',
                         padding: '4px 12px',
                         borderRadius: '16px',
@@ -323,7 +319,7 @@ const HomePage = React.memo(() => {
                         fontSize: '14px',
                       }}
                     >
-                      即将开始
+                      进行中
                     </div>
                   </div>
                 }
@@ -333,7 +329,7 @@ const HomePage = React.memo(() => {
                     2025年服务外包与软件设计实验室春季纳新
                   </Title>
                   <Paragraph type="secondary" style={{ marginBottom: '16px' }}>
-                    <div>时间：2025年9月10日 - 2025年10月10日</div>
+                    <div>时间：2025年3月9日 - 2025年3月14日</div>
                     <div>地点：福州大学</div>
                   </Paragraph>
                   <Paragraph
@@ -343,8 +339,12 @@ const HomePage = React.memo(() => {
                     加入我们的团队，提升技术能力，参与各类比赛，结交志同道合的伙伴！我们期待着你的加入！
                   </Paragraph>
                   <div style={{ textAlign: 'right' }}>
-                    <Button type="primary" disabled size="middle">
-                      即将开始
+                    <Button
+                      type="primary"
+                      onClick={() => navigate(RoutePath.Recruit)}
+                      size="middle"
+                    >
+                      立即参加
                     </Button>
                   </div>
                 </div>

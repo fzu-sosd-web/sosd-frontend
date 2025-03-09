@@ -16,6 +16,8 @@ import AuthWrap from './components/auth-wrap'
 import SSOSession from './components/sso/SsoSession'
 import RecruitListPage from './views/recruit'
 import RecruitDetail from './views/recruit/detail'
+import AboutUs from './views/aboutus'
+
 // import PersonPage from './views/personal'
 
 const App = () => {
@@ -47,6 +49,7 @@ const App = () => {
           ></Route>
           <Route path={RoutePath.Recruit} element={<RecruitListPage />} />
           <Route path={RoutePath.RecruitDetail} element={<RecruitDetail />} />
+          <Route path={RoutePath.AboutUs} element={<AboutUs />} />
           {/* 404页面 */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>
