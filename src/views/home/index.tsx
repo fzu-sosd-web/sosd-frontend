@@ -20,7 +20,7 @@ import {
 import React from 'react'
 import recruit from '@/assets/recruit.png'
 
-import sadaharu from '@/assets/sadaharu.png'
+import sadaharu from '@/assets/gateway.png'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { routes } from '@/routes'
 import { RoutePath } from '@/constant/routes'

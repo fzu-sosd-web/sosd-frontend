@@ -311,7 +311,7 @@ const RecruitDetail: React.FC = () => {
                         <div className="registered-item">
                           <Text type="secondary">是否服从调剂:</Text>
                           <Text strong style={{ marginLeft: '8px' }}>
-                            {resumeData?.status === '1' ? '是' : '否'}
+                            {String(resumeData?.status) === '1' ? '是' : '否'}
                           </Text>
                         </div>
                       </div>
