@@ -16,6 +16,7 @@ import {
   LogoutOutlined,
   UserSwitchOutlined,
   LoginOutlined,
+  MenuOutlined,
 } from '@ant-design/icons'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -177,26 +178,45 @@ const HeaderBar: React.FC = () => {
             onClick={() => navigate(RoutePath.Home)}
           >
             <img src={sosd} alt="Logo" className="h-10 w-10" />
-            <Text strong style={{ fontSize: '1.2rem', marginLeft: '0.7rem' }}>
+            <Text strong className="hidden md:block" style={{ fontSize: '1.2rem', marginLeft: '0.7rem' }}>
               福州大学服务外包与软件设计实验室
             </Text>
           </div>
 
-          {/* 导航菜单 */}
-          <Menu
-            items={navItems}
-            mode="horizontal"
-            className="border-b-0"
-            selectedKeys={[current]}
-            onClick={handleNavClick}
-            style={{ backgroundColor: 'transparent', fontWeight: 500 }}
-          />
+          {/* 导航菜单 - 桌面端 */}
+          <div className="hidden md:block">
+            <Menu
+              items={navItems}
+              mode="horizontal"
+              className="border-b-0"
+              selectedKeys={[current]}
+              onClick={handleNavClick}
+              style={{ backgroundColor: 'transparent', fontWeight: 500 }}
+            />
+          </div>
+
+          {/* 导航菜单 - 移动端 */}
+          <div className="md:hidden">
+            <Dropdown
+              menu={{
+                items: navItems,
+                onClick: handleNavClick,
+                selectedKeys: [current]
+              }}
+              trigger={['click']}
+              placement="bottomLeft"
+            >
+              <Button type="text">
+                <MenuOutlined style={{ fontSize: '20px' }} />
+              </Button>
+            </Dropdown>
+          </div>
         </div>
 
         {/* 右侧操作区 */}
         <div className="flex items-center">
           {/* 用户问候 */}
-          <div className="mr-4">
+          <div className="hidden md:block mr-4">
             {isLogin && userInfo ? (
               <Text
                 strong
