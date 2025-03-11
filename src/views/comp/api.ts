@@ -31,6 +31,10 @@ export const registerCompetition = (
   )
 }
 
+export const updateTeamInfo = (teamId: any, teamInfo: any) => {
+  return request.put<any>(`${baseURL}/update/${teamId}`, teamInfo)
+}
+
 export const delCompetitionTeam = (teamId: number): Promise<IResult<any>> => {
   return request.delete<any>(`${baseURL}/deleteTeam/${teamId}`)
 }

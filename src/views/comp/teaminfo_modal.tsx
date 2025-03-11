@@ -172,7 +172,6 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
           </Button>,
         ]}
         width={820}
-        bodyStyle={{ padding: '24px' }}
       >
         <div className="py-16 flex justify-center">
           <Spin size="large" tip="加载团队信息..." />

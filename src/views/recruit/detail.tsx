@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+// import fileUrl from '@/assets/enroll/form.docx'
 import {
   Typography,
   Spin,
@@ -42,7 +43,7 @@ import './detail.css'
 // 默认图片路径
 import DEFAULT_IMAGE from '@/assets/recruit.png'
 
-const { Title, Paragraph, Text } = Typography
+const { Link, Paragraph, Text } = Typography
 const { Option } = Select
 
 const RecruitDetail: React.FC = () => {
@@ -60,6 +61,18 @@ const RecruitDetail: React.FC = () => {
   const [checkingResume, setCheckingResume] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [registerModalVisible, setRegisterModalVisible] = useState(false)
+
+  const fileUrl = '/enroll/form.docx'
+
+  const handleDownload = () => {
+    const link = document.createElement('a')
+    link.href = fileUrl
+    link.download = 'form.docx' // 确保文件名和文件类型一致
+    link.download = 'example.docx' // 下载的文件名
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 
   // 获取活动详情
   useEffect(() => {
@@ -462,6 +475,7 @@ const RecruitDetail: React.FC = () => {
                   <div className="description-content">
                     <Paragraph>
                       {activity.description || '暂无详细描述'}
+                      <Link onClick={handleDownload}>下载简历模版</Link>
                     </Paragraph>
                   </div>
                 </div>

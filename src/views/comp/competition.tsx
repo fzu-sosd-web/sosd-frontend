@@ -30,7 +30,7 @@ import { Competition, CompetitionFile } from './type'
 
 import schoolcomp2025 from '@/assets/2025schoolcomp.png'
 import { useLoginStore } from '@/store/login'
-import { fetchCompetitionById } from './api'
+import { fetchCompetitionById, fetchCompetitionTeamInfo } from './api'
 
 const { Title, Paragraph, Text } = Typography
 
@@ -43,8 +43,16 @@ const CompPage = React.memo(() => {
   const [showTeamModal, setShowTeamModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [competition, setCompetition] = useState<Competition | null>(null)
+  const [flag, setFlag] = useState<boolean>(false)
 
   const isLogin = useLoginStore((state) => state.isLogin)
+  const fetchTeamInfo = async () => {
+    const res = await fetchCompetitionTeamInfo(Number(competitionId))
+    if (res.code == 200) {
+      setFlag(true)
+      console.log(flag)
+    }
+  }
 
   // 获取竞赛详情数据
   const fetchCompetitionDetails = async () => {
@@ -187,6 +195,7 @@ const CompPage = React.memo(() => {
   // 在组件挂载时和competitionId变化时获取数据
   useEffect(() => {
     fetchCompetitionDetails()
+    fetchTeamInfo()
   }, [competitionId])
 
   // 加载中显示加载状态
@@ -465,7 +474,7 @@ const CompPage = React.memo(() => {
                 alignItems: 'center',
               }}
             >
-              立即报名
+              {flag == true ? '修改报名' : '立即报名'}
             </Button>
             <Button
               type="default"
