@@ -98,6 +98,7 @@ const ProfilePage: React.FC = () => {
         mobile: values.mobile,
         major: values.major,
         avatarBase64: avatarUrl || userInfo.avatarBase64,
+        email: values.email
       }
 
       // 调用API更新用户信息
@@ -320,8 +321,8 @@ const ProfilePage: React.FC = () => {
                     <Input
                       prefix={<MailOutlined className="form-icon" />}
                       placeholder="请输入邮箱"
-                      disabled
-                      className="profile-input profile-input-disabled"
+                      className="profile-input"
+                      autoComplete="off"
                     />
                   </Form.Item>
                 </Col>

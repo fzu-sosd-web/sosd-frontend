@@ -8,6 +8,7 @@ export interface UpdateUserForm {
   mobile: string
   major: string
   avatarBase64: string
+  email: string
 }
 
 export const updateUser = (form: UpdateUserForm) => {

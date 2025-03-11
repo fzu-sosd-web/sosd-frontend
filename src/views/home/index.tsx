@@ -9,6 +9,7 @@ import {
   Row,
   Col,
   Divider,
+  Modal,
 } from 'antd'
 import { Content, Footer, Header } from 'antd/es/layout/layout'
 import {
@@ -17,13 +18,14 @@ import {
   BulbOutlined,
   SafetyCertificateOutlined,
 } from '@ant-design/icons'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import recruit from '@/assets/recruit.png'
 
 import sadaharu from '@/assets/gateway.png'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { routes } from '@/routes'
 import { RoutePath } from '@/constant/routes'
+import { useLoginStore } from '@/store/login'
 
 import schoolcomp2025 from '@/assets/2025schoolcomp.png'
 
@@ -31,6 +33,28 @@ const { Title, Paragraph, Text } = Typography
 
 const HomePage = React.memo(() => {
   const navigate = useNavigate()
+  const userInfo = useLoginStore((state) => state.userInfo)
+  const [modalShown, setModalShown] = useState(false)
+
+  useEffect(() => {
+    // 检查用户是否已登录且未填写邮箱，并且弹窗未显示过
+    if (userInfo && !userInfo.email && !modalShown) {
+      setModalShown(true)
+      Modal.confirm({
+        title: '提示',
+        content: '为了更好的服务体验，请前往个人中心完善邮箱信息。',
+        okText: '前往完善',
+        cancelText: '稍后再说',
+        onOk: () => {
+          navigate(RoutePath.Profile)
+        },
+        onCancel: () => {
+          // 用户选择稍后完善，不做任何操作
+        }
+      })
+    }
+  }, [userInfo, navigate, modalShown])
+
   return (
     <>
       <ConfigProvider
@@ -185,7 +209,7 @@ const HomePage = React.memo(() => {
                 />
                 <Title level={4}>组织架构</Title>
                 <Paragraph>
-                  目前实验室主要设有四个小组：Web组、移动组、设计组和AI-NLP组，正式成员60余名。
+                  目前实验室主要设有四个小组：Web组、移动组、设计组和AI-NLP组，正式成员60化名。
                   实验室先后开发了包括福州大学算法与数据结构教学网站、福州大学教务信息化管理系统在内的一系列应用软件。
                 </Paragraph>
               </Card>
