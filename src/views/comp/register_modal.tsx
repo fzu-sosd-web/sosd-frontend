@@ -43,6 +43,7 @@ interface RegisterModalProps {
   visible: boolean
   onCancel: () => void
   competitionId: string
+  setFlag1?: any
 }
 
 const MAX_MEMBERS = 3
@@ -51,6 +52,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
   visible,
   onCancel,
   competitionId,
+  setFlag1,
 }) => {
   const userInfo = useLoginStore((state) => state.userInfo)
   const [form] = Form.useForm()
@@ -155,7 +157,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     }
 
     setSubmitting(true)
-    values.topic = values.topic.at(-1) as string
+    if (Array.isArray(values.topic)) {
+      values.topic = values.topic[values.topic.length - 1] // 取最后一个元素
+    }
     // 如果未报名
     if (!flag) {
       try {
@@ -183,6 +187,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               },
             ])
           }
+          setFlag1(true)
           onCancel()
           return
         }

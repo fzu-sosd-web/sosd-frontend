@@ -50,7 +50,6 @@ const CompPage = React.memo(() => {
     const res = await fetchCompetitionTeamInfo(Number(competitionId))
     if (res.code == 200) {
       setFlag(true)
-      console.log(flag)
     }
   }
 
@@ -196,7 +195,7 @@ const CompPage = React.memo(() => {
   useEffect(() => {
     fetchCompetitionDetails()
     fetchTeamInfo()
-  }, [competitionId])
+  }, [competitionId, flag])
 
   // 加载中显示加载状态
   if (loading) {
@@ -567,6 +566,7 @@ const CompPage = React.memo(() => {
 
       {/* 报名弹窗 */}
       <RegisterModal
+        setFlag1={setFlag}
         visible={showRegisterModal}
         onCancel={() => setShowRegisterModal(false)}
         competitionId={competition.id.toString()}
@@ -574,6 +574,7 @@ const CompPage = React.memo(() => {
 
       {/* 队伍弹窗 */}
       <TeamModal
+        setFlag={setFlag}
         visible={showTeamModal}
         setShowTeamModal={setShowTeamModal}
         setShowRegisterModal={setShowRegisterModal}

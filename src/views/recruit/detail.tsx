@@ -27,6 +27,7 @@ import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   FilePdfOutlined,
+  DownloadOutlined,
 } from '@ant-design/icons'
 import {
   fetchRecruitDetail,
@@ -68,7 +69,7 @@ const RecruitDetail: React.FC = () => {
     const link = document.createElement('a')
     link.href = fileUrl
     link.download = 'form.docx' // 确保文件名和文件类型一致
-    link.download = 'example.docx' // 下载的文件名
+    link.download = '福州大学服务外包与软件设计实验室纳新报名表.docx' // 下载的文件名
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -186,7 +187,7 @@ const RecruitDetail: React.FC = () => {
         // 刷新报名状态
         checkUserRegistration(Number(recruitId))
       } else {
-        message.error(response.message || '提交失败，请稍后重试')
+        message.error(response.msg || '提交失败，请稍后重试')
       }
     } catch (err) {
       message.error('申请提交失败，请稍后重试')
@@ -329,7 +330,7 @@ const RecruitDetail: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="resume-upload-section">
+                      <div className="resume-upload-section flex flex-col">
                         <Upload
                           accept=".pdf,.doc,.docx"
                           showUploadList={false}
@@ -407,11 +408,19 @@ const RecruitDetail: React.FC = () => {
                           <Button
                             icon={<UploadOutlined />}
                             loading={uploading}
-                            className="resume-upload-button"
+                            className="resume-upload-button w-full "
                           >
                             {getUploadButtonText()}
                           </Button>
                         </Upload>
+                        <Button
+                          icon={<DownloadOutlined />}
+                          type="primary"
+                          onClick={handleDownload}
+                          className="w-[138px] h-[16px] mt-4"
+                        >
+                          下载简历模版
+                        </Button>
                       </div>
                     </>
                   ) : (
@@ -475,7 +484,6 @@ const RecruitDetail: React.FC = () => {
                   <div className="description-content">
                     <Paragraph>
                       {activity.description || '暂无详细描述'}
-                      <Link onClick={handleDownload}>下载简历模版</Link>
                     </Paragraph>
                   </div>
                 </div>

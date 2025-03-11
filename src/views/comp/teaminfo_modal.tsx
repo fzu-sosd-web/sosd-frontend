@@ -55,6 +55,7 @@ interface TeamModalProps {
   onEdit?: () => void
   setShowTeamModal?: any
   setShowRegisterModal?: any
+  setFlag?: any
 }
 
 const TeamInfoModal: React.FC<TeamModalProps> = ({
@@ -64,6 +65,7 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
   onEdit,
   setShowTeamModal,
   setShowRegisterModal,
+  setFlag,
 }) => {
   const [loading, setLoading] = React.useState(true)
   const [deleting, setDeleting] = React.useState(false)
@@ -136,6 +138,7 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
 
       if (response && response.code === 200) {
         message.success('队伍已成功删除')
+        setFlag(false)
         onCancel()
       } else {
         message.error(response?.message || '删除失败，请稍后再试')
