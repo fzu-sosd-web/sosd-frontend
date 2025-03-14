@@ -50,7 +50,7 @@ const HomePage = React.memo(() => {
         },
         onCancel: () => {
           // 用户选择稍后完善，不做任何操作
-        }
+        },
       })
     }
   }, [userInfo, navigate, modalShown])
@@ -337,7 +337,7 @@ const HomePage = React.memo(() => {
                         position: 'absolute',
                         top: '12px',
                         right: '12px',
-                        background: '#ff4d4f',
+                        background: '#8c8c8c',
                         color: 'white',
                         padding: '4px 12px',
                         borderRadius: '16px',
@@ -345,7 +345,7 @@ const HomePage = React.memo(() => {
                         fontSize: '14px',
                       }}
                     >
-                      进行中
+                      已结束
                     </div>
                   </div>
                 }
@@ -369,6 +369,7 @@ const HomePage = React.memo(() => {
                       type="primary"
                       onClick={() => navigate(RoutePath.Recruit)}
                       size="middle"
+                      disabled
                     >
                       立即参加
                     </Button>

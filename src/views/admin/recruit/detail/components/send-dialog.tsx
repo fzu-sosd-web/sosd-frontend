@@ -38,6 +38,7 @@ export const AdminSendDialog = React.memo<props>(({ id }: any) => {
       if (res.code == 200) {
         message.success('发送成功')
       } else {
+        alert(res.code)
         message.error(res.msg)
       }
       form.resetFields()

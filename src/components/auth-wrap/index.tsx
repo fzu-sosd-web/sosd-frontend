@@ -4,17 +4,18 @@ import useRefCallback from '@/hooks/useRefCallback'
 import { usePermission } from '@/hooks/usePermission'
 import NotPermissionPage from '../other/not-permission-page'
 import { fetchInfo } from '@/apis/login'
+import { useLoginStore } from '@/store/login'
 
 type AuthWrapProps = {
   children?: React.ReactNode
 }
 
 export const AuthWrap: React.FC<AuthWrapProps> = React.memo(({ children }) => {
-  // const { pathname } = useLocation()
   const { isLogin } = usePermission()
   const [hasPermission, setHasPermission] = React.useState(true)
   const [loading, setLoading] = React.useState(true)
   const [name, setName] = React.useState('')
+  const { userInfo } = useLoginStore()
 
   const fetchUserInfo = async () => {
     const res = await fetchInfo()
@@ -25,20 +26,16 @@ export const AuthWrap: React.FC<AuthWrapProps> = React.memo(({ children }) => {
     }
   }
 
-  const init = useRefCallback(() => {
-    const timer = setTimeout(() => {
-      setLoading(true)
-    }, 10000)
-    const flag = isLogin() && name == '游文馨'
-    clearTimeout(timer)
-    setHasPermission(flag)
-    setLoading(false)
-  })
-
   React.useEffect(() => {
-    fetchUserInfo()
+    const init = async () => {
+      setLoading(true)
+      await fetchUserInfo() // 确保用户信息已加载
+      const flag = name === '游文馨' || userInfo?.name === '游文馨'
+      setHasPermission(flag)
+      setLoading(false)
+    }
     init()
-  }, [init])
+  }, [name, userInfo])
 
   if (loading) return <Spin fullscreen tip="加载中" size="large" />
   if (!hasPermission) return <NotPermissionPage />

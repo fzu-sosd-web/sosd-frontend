@@ -19,6 +19,7 @@ import RecruitDetail from './views/recruit/detail'
 import AboutUs from './views/aboutus'
 import AdminRecruitPage from './views/admin/recruit'
 import AdminRecruitDetailPage from './views/admin/recruit/detail'
+import AuthWrapLogin from './components/auth-wrap-login'
 
 // import PersonPage from './views/personal'
 
@@ -37,37 +38,41 @@ const App = () => {
           <Route index element={<Navigate to={RoutePath.Home} />} />
           <Route path={RoutePath.Home} element={<HomePage />} />
           <Route path={RoutePath.Competition} element={<CompPage />} />
-          <Route path={RoutePath.AdminRecruit} element={<AdminRecruitPage />} />
+          <Route
+            path={RoutePath.AdminRecruit}
+            element={
+              <AuthWrap>
+                <AdminRecruitPage />
+              </AuthWrap>
+            }
+          />
           <Route
             path={RoutePath.AdminRecruitDetail}
-            element={<AdminRecruitDetailPage />}
+            element={
+              <AuthWrap>
+                <AdminRecruitDetailPage />
+              </AuthWrap>
+            }
           />
           <Route
             path={RoutePath.Profile}
             element={
-              <AuthWrap>
+              <AuthWrapLogin>
                 <ProfilePage />
-              </AuthWrap>
+              </AuthWrapLogin>
             }
           />
           <Route
             path={RoutePath.CompetitionList}
             element={<CompetitionListPage />}
           ></Route>
-          <Route
-            path={RoutePath.Recruit}
-            element={
-              <AuthWrap>
-                <RecruitListPage />
-              </AuthWrap>
-            }
-          />
+          <Route path={RoutePath.Recruit} element={<RecruitListPage />} />
           <Route
             path={RoutePath.RecruitDetail}
             element={
-              <AuthWrap>
+              <AuthWrapLogin>
                 <RecruitDetail />
-              </AuthWrap>
+              </AuthWrapLogin>
             }
           />
           <Route path={RoutePath.AboutUs} element={<AboutUs />} />
