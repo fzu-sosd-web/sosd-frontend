@@ -26,7 +26,7 @@ export const fetchAdminRecruitDetailList = (query: any) => {
     )
   } else {
     return request.get<any>(
-      `${baseURL}/task/${query.id}/${query.page}/${query.pageSize}`,
+      `${baseURL}/task/${query.id}/${query.page}/${query.pageSize}?groupName=0`,
     )
   }
 }

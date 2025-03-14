@@ -19,6 +19,7 @@ import RecruitDetail from './views/recruit/detail'
 import AboutUs from './views/aboutus'
 import AdminRecruitPage from './views/admin/recruit'
 import AdminRecruitDetailPage from './views/admin/recruit/detail'
+import AuthWrapLogin from './components/auth-wrap-login'
 
 // import PersonPage from './views/personal'
 
@@ -40,14 +41,18 @@ const App = () => {
           <Route path={RoutePath.AdminRecruit} element={<AdminRecruitPage />} />
           <Route
             path={RoutePath.AdminRecruitDetail}
-            element={<AdminRecruitDetailPage />}
+            element={
+              <AuthWrap>
+                <AdminRecruitDetailPage />
+              </AuthWrap>
+            }
           />
           <Route
             path={RoutePath.Profile}
             element={
-              <AuthWrap>
+              <AuthWrapLogin>
                 <ProfilePage />
-              </AuthWrap>
+              </AuthWrapLogin>
             }
           />
           <Route
@@ -57,9 +62,9 @@ const App = () => {
           <Route
             path={RoutePath.Recruit}
             element={
-              <AuthWrap>
+              <AuthWrapLogin>
                 <RecruitListPage />
-              </AuthWrap>
+              </AuthWrapLogin>
             }
           />
           <Route
