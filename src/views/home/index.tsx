@@ -267,7 +267,7 @@ const HomePage = React.memo(() => {
                         position: 'absolute',
                         top: '12px',
                         right: '12px',
-                        background: '#8c8c8c',
+                        background: '#f7ffee',
                         color: 'white',
                         padding: '4px 12px',
                         borderRadius: '16px',
@@ -275,7 +275,7 @@ const HomePage = React.memo(() => {
                         fontSize: '14px',
                       }}
                     >
-                      未开放
+                      进行中
                     </div>
                   </div>
                 }
@@ -295,8 +295,8 @@ const HomePage = React.memo(() => {
                     参与校内最具影响力的软件设计赛事，展示你的创意和技术实力，优胜者将代表学校参加全国大赛！
                   </Paragraph>
                   <div style={{ textAlign: 'right' }}>
-                    <Button type="primary" disabled size="middle">
-                      即将开始
+                    <Button type="primary" size="middle">
+                      立即报名
                     </Button>
                   </div>
                 </div>
