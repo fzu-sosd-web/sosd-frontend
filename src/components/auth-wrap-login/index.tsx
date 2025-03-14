@@ -3,7 +3,6 @@ import { message, Spin } from 'antd'
 import useRefCallback from '@/hooks/useRefCallback'
 import { usePermission } from '@/hooks/usePermission'
 import NotPermissionPage from '../other/not-permission-page'
-import { fetchInfo } from '@/apis/login'
 
 type AuthWrapProps = {
   children?: React.ReactNode
@@ -15,6 +14,7 @@ export const AuthWrapLogin: React.FC<AuthWrapProps> = React.memo(
     const { isLogin } = usePermission()
     const [hasPermission, setHasPermission] = React.useState(true)
     const [loading, setLoading] = React.useState(true)
+    const [name, setName] = React.useState('')
 
     const init = useRefCallback(() => {
       const timer = setTimeout(() => {
