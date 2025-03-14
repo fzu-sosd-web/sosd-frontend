@@ -109,6 +109,13 @@ const HeaderBar: React.FC = () => {
       disabled: !isLogin,
       onClick: () => navigate(RoutePath.Profile),
     },
+    userInfo?.name === '游文馨'
+      ? {
+          label: '管理端-纳新页面',
+          key: 'admin-recruit',
+          onClick: () => navigate(RoutePath.AdminRecruit),
+        }
+      : null,
     {
       type: 'divider',
     },
@@ -178,7 +185,11 @@ const HeaderBar: React.FC = () => {
             onClick={() => navigate(RoutePath.Home)}
           >
             <img src={sosd} alt="Logo" className="h-10 w-10" />
-            <Text strong className="hidden md:block" style={{ fontSize: '1.2rem', marginLeft: '0.7rem' }}>
+            <Text
+              strong
+              className="hidden md:block"
+              style={{ fontSize: '1.2rem', marginLeft: '0.7rem' }}
+            >
               福州大学服务外包与软件设计实验室
             </Text>
           </div>
@@ -201,7 +212,7 @@ const HeaderBar: React.FC = () => {
               menu={{
                 items: navItems,
                 onClick: handleNavClick,
-                selectedKeys: [current]
+                selectedKeys: [current],
               }}
               trigger={['click']}
               placement="bottomLeft"

@@ -26,4 +26,12 @@ export const RoutePath = {
   Recruit: `/recruit`,
   /**纳新详情 */
   RecruitDetail: `/recruit/:recruitId`,
+  /**管理端纳新管理 */
+  AdminRecruit: '/admin/recruit',
+  /**管理端纳新详情 */
+  AdminRecruitDetail: '/admin/recruit/:adminRecruitId',
+  /**管理端竞赛管理 */
+  AdminCompetition: '/admin/competition',
+  /**管理端用户管理 */
+  AdminAccount: '/admin/account',
 }

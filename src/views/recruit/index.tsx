@@ -144,46 +144,29 @@ const RecruitListPage: React.FC = () => {
 
           // 根据活动状态创建不同的卡片包装
           const CardWrapper = ({ children }: { children: React.ReactNode }) => {
-            if (inProgress) {
-              // 如果活动进行中，使用Link包装
-              return (
-                <Link to={`/recruit/${activity.id}`} className="cardLink">
-                  {children}
-                </Link>
-              )
-            } else {
-              // 否则使用div包装，添加点击事件
-              return (
-                <div
-                  className="cardLink disabledCardLink"
-                  onClick={(e) => handleDisabledClick(e, activity)}
-                >
-                  {children}
-                </div>
-              )
-            }
+            // 否则使用div包装，添加点击事件
+            return (
+              <div
+                className="cardLink disabledCardLink"
+                onClick={(e) => handleDisabledClick(e, activity)}
+              >
+                {children}
+              </div>
+            )
           }
 
           return (
             <CardWrapper key={activity.id}>
               <Card
                 hoverable={inProgress}
-                className={`activityCardFullWidth ${!inProgress ? 'disabledCard' : ''}`}
-                actions={
-                  inProgress
-                    ? [
-                        <div key="more" className="viewMoreButton">
-                          查看详情 <RightOutlined />
-                        </div>,
-                      ]
-                    : [
-                        <div key="more" className="viewMoreButtonDisabled">
-                          {new Date(activity.startDate) > new Date()
-                            ? '未开始'
-                            : '已结束'}
-                        </div>,
-                      ]
-                }
+                className={`activityCardFullWidth disabledCard`}
+                actions={[
+                  <div key="more" className="viewMoreButtonDisabled">
+                    {new Date(activity.startDate) > new Date()
+                      ? '未开始'
+                      : '已结束'}
+                  </div>,
+                ]}
               >
                 <div className="cardContentRow">
                   <div className="activityImage">
@@ -202,29 +185,15 @@ const RecruitListPage: React.FC = () => {
                         {activity.name || '未命名活动'}
                       </Typography.Title>
 
-                      {new Date(activity.startDate) > new Date() ? (
-                        <div
-                          className="activityStatus"
-                          style={{
-                            backgroundColor: '#f6ffed',
-                            color: '#52c41a',
-                          }}
-                        >
-                          未开始
-                        </div>
-                      ) : new Date(activity.endDate) < new Date() ? (
-                        <div
-                          className="activityStatus"
-                          style={{
-                            backgroundColor: '#fff1f0',
-                            color: '#f5222d',
-                          }}
-                        >
-                          已结束
-                        </div>
-                      ) : (
-                        <div className="activityStatus">进行中</div>
-                      )}
+                      <div
+                        className="activityStatus"
+                        style={{
+                          backgroundColor: '#fff1f0',
+                          color: '#f5222d',
+                        }}
+                      >
+                        已结束
+                      </div>
                     </div>
 
                     <Paragraph ellipsis={{ rows: 2 }} className="description">

@@ -22,11 +22,7 @@ export const loginBySso = (form: LoginRes) => {
 }
 
 export const fetchIUserInfo = (withAvatar: boolean) => {
-  return request.get<IUserInfo>(`${baseURL}/info?withAvatar=${withAvatar}`, {
-    // headers: {
-    //   'sosd-last-modify-time': formatCurrentTime(),
-    // },
-  })
+  return request.get<IUserInfo>(`${baseURL}/info?withAvatar=${withAvatar}`, {})
 }
 
 export const sendEmailVerifyCode = (email: string) => {
@@ -47,4 +43,8 @@ export interface RegisterData {
 
 export const register = (form: RegisterData) => {
   return request.post(`${baseURL}/register`, form)
+}
+
+export const fetchInfo = () => {
+  return request.get<IResult>(`${baseURL}/info`)
 }

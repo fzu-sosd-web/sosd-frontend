@@ -17,6 +17,8 @@ import SSOSession from './components/sso/SsoSession'
 import RecruitListPage from './views/recruit'
 import RecruitDetail from './views/recruit/detail'
 import AboutUs from './views/aboutus'
+import AdminRecruitPage from './views/admin/recruit'
+import AdminRecruitDetailPage from './views/admin/recruit/detail'
 
 // import PersonPage from './views/personal'
 
@@ -35,6 +37,11 @@ const App = () => {
           <Route index element={<Navigate to={RoutePath.Home} />} />
           <Route path={RoutePath.Home} element={<HomePage />} />
           <Route path={RoutePath.Competition} element={<CompPage />} />
+          <Route path={RoutePath.AdminRecruit} element={<AdminRecruitPage />} />
+          <Route
+            path={RoutePath.AdminRecruitDetail}
+            element={<AdminRecruitDetailPage />}
+          />
           <Route
             path={RoutePath.Profile}
             element={
@@ -47,8 +54,22 @@ const App = () => {
             path={RoutePath.CompetitionList}
             element={<CompetitionListPage />}
           ></Route>
-          <Route path={RoutePath.Recruit} element={<RecruitListPage />} />
-          <Route path={RoutePath.RecruitDetail} element={<RecruitDetail />} />
+          <Route
+            path={RoutePath.Recruit}
+            element={
+              <AuthWrap>
+                <RecruitListPage />
+              </AuthWrap>
+            }
+          />
+          <Route
+            path={RoutePath.RecruitDetail}
+            element={
+              <AuthWrap>
+                <RecruitDetail />
+              </AuthWrap>
+            }
+          />
           <Route path={RoutePath.AboutUs} element={<AboutUs />} />
           {/* 404页面 */}
           <Route path="*" element={<NotFoundPage />} />

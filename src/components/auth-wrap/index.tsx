@@ -1,8 +1,9 @@
 import * as React from 'react'
-import { Spin } from 'antd'
+import { message, Spin } from 'antd'
 import useRefCallback from '@/hooks/useRefCallback'
 import { usePermission } from '@/hooks/usePermission'
 import NotPermissionPage from '../other/not-permission-page'
+import { fetchInfo } from '@/apis/login'
 
 type AuthWrapProps = {
   children?: React.ReactNode
@@ -13,18 +14,29 @@ export const AuthWrap: React.FC<AuthWrapProps> = React.memo(({ children }) => {
   const { isLogin } = usePermission()
   const [hasPermission, setHasPermission] = React.useState(true)
   const [loading, setLoading] = React.useState(true)
+  const [name, setName] = React.useState('')
+
+  const fetchUserInfo = async () => {
+    const res = await fetchInfo()
+    if (res.code === 200 && res.data) {
+      setName(res.data.name)
+    } else {
+      message.error(res.msg)
+    }
+  }
 
   const init = useRefCallback(() => {
     const timer = setTimeout(() => {
       setLoading(true)
     }, 10000)
-    const flag = isLogin()
+    const flag = isLogin() && name == '游文馨'
     clearTimeout(timer)
     setHasPermission(flag)
     setLoading(false)
   })
 
   React.useEffect(() => {
+    fetchUserInfo()
     init()
   }, [init])
 
