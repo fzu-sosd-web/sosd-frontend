@@ -263,11 +263,11 @@ const HomePage = React.memo(() => {
                       }}
                     />
                     <div
+                      className="bg-green-400 text-white"
                       style={{
                         position: 'absolute',
                         top: '12px',
                         right: '12px',
-                        background: '#f7ffee',
                         color: 'white',
                         padding: '4px 12px',
                         borderRadius: '16px',
@@ -295,7 +295,11 @@ const HomePage = React.memo(() => {
                     参与校内最具影响力的软件设计赛事，展示你的创意和技术实力，优胜者将代表学校参加全国大赛！
                   </Paragraph>
                   <div style={{ textAlign: 'right' }}>
-                    <Button type="primary" size="middle">
+                    <Button
+                      type="primary"
+                      size="middle"
+                      onClick={() => navigate(RoutePath.CompetitionList)}
+                    >
                       立即报名
                     </Button>
                   </div>
