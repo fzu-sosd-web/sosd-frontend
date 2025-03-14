@@ -66,14 +66,7 @@ const App = () => {
             path={RoutePath.CompetitionList}
             element={<CompetitionListPage />}
           ></Route>
-          <Route
-            path={RoutePath.Recruit}
-            element={
-              <AuthWrap>
-                <RecruitListPage />
-              </AuthWrap>
-            }
-          />
+          <Route path={RoutePath.Recruit} element={<RecruitListPage />} />
           <Route
             path={RoutePath.RecruitDetail}
             element={
