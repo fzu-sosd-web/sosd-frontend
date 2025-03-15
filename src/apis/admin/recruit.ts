@@ -52,11 +52,8 @@ export const fetchAdminMemberList = () => {
 }
 
 /**管理端修改面试情况 */
-export const updateAdminInterview = (data: any) => {
-  return request.put<any>(
-    `${baseURL}/interview/update/${data.interviewId}`,
-    data,
-  )
+export const updateAdminInterview = (data: any, id: any) => {
+  return request.put<any>(`${baseURL}/interview/update/${id}`, data)
 }
 
 /**管理端创建学生面试 */

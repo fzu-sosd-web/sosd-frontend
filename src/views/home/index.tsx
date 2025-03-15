@@ -209,7 +209,7 @@ const HomePage = React.memo(() => {
                 />
                 <Title level={4}>组织架构</Title>
                 <Paragraph>
-                  目前实验室主要设有四个小组：Web组、移动组、设计组和AI-NLP组，正式成员60化名。
+                  目前实验室主要设有四个小组：Web组、移动组、设计组和AI-NLP组，正式成员60余名。
                   实验室先后开发了包括福州大学算法与数据结构教学网站、福州大学教务信息化管理系统在内的一系列应用软件。
                 </Paragraph>
               </Card>
@@ -263,7 +263,7 @@ const HomePage = React.memo(() => {
                       }}
                     />
                     <div
-                      className="bg-green-400 text-white"
+                      className="bg-green-300"
                       style={{
                         position: 'absolute',
                         top: '12px',

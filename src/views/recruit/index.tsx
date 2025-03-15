@@ -144,27 +144,41 @@ const RecruitListPage: React.FC = () => {
 
           // 根据活动状态创建不同的卡片包装
           const CardWrapper = ({ children }: { children: React.ReactNode }) => {
-            // 否则使用div包装，添加点击事件
-            return (
-              <div
-                className="cardLink disabledCardLink"
-                onClick={(e) => handleDisabledClick(e, activity)}
-              >
-                {children}
-              </div>
-            )
+            if (inProgress) {
+              // 如果活动进行中，使用 Link 包装
+              return (
+                <Link to={`/recruit/${activity.id}`} className="cardLink">
+                  {children}
+                </Link>
+              )
+            } else {
+              // 否则使用 div 包装，添加点击事件
+              return (
+                <div
+                  className="cardLink disabledCardLink"
+                  onClick={(e) => handleDisabledClick(e, activity)}
+                >
+                  {children}
+                </div>
+              )
+            }
           }
 
           return (
             <CardWrapper key={activity.id}>
               <Card
                 hoverable={inProgress}
-                className={`activityCardFullWidth disabledCard`}
+                className={`activityCardFullWidth ${!inProgress ? 'disabledCard' : ''}`}
                 actions={[
-                  <div key="more" className="viewMoreButtonDisabled">
-                    {new Date(activity.startDate) > new Date()
-                      ? '未开始'
-                      : '已结束'}
+                  <div
+                    key="more"
+                    className={`viewMoreButton ${!inProgress ? 'viewMoreButtonDisabled' : ''}`}
+                  >
+                    {inProgress
+                      ? '查看详情'
+                      : new Date(activity.startDate) > new Date()
+                        ? '未开始'
+                        : '已结束'}
                   </div>,
                 ]}
               >
@@ -188,11 +202,11 @@ const RecruitListPage: React.FC = () => {
                       <div
                         className="activityStatus"
                         style={{
-                          backgroundColor: '#fff1f0',
-                          color: '#f5222d',
+                          backgroundColor: inProgress ? '#f6ffed' : '#fff1f0',
+                          color: inProgress ? '#52c41a' : '#f5222d',
                         }}
                       >
-                        已结束
+                        {inProgress ? '进行中' : '已结束'}
                       </div>
                     </div>
 

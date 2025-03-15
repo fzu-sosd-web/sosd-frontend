@@ -4,7 +4,7 @@ import { pluginBasicSsl } from '@rsbuild/plugin-basic-ssl'
 import fs from 'node:fs'
 
 export default defineConfig({
-  plugins: [pluginReact(), pluginBasicSsl()],
+  plugins: [pluginReact()],
   html: {
     title: 'SOSD',
     favicon: './src/assets/logo.png',
