@@ -28,9 +28,12 @@ import {
   ExclamationCircleOutlined,
   FilePdfOutlined,
   DownloadOutlined,
+  ClockCircleOutlined
 } from '@ant-design/icons'
+import { Timeline } from 'antd';
 import {
   fetchRecruitDetail,
+  fetchRecruitStatus,
   Recruit,
   registerRecruit,
   RecruitRegisterReq,
@@ -62,6 +65,9 @@ const RecruitDetail: React.FC = () => {
   const [checkingResume, setCheckingResume] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [registerModalVisible, setRegisterModalVisible] = useState(false)
+  const [interviewStatus, setInterviewStatus] = useState<string>('');
+  const statusOrder = ['未报名','已报名', '一轮面试', '二轮考核', '综合评估', '正式加入'];
+  const currentStatusIndex = statusOrder.indexOf(interviewStatus);
 
   const fileUrl = '/enroll/form.docx'
 
@@ -85,6 +91,8 @@ const RecruitDetail: React.FC = () => {
         setLoading(true)
         const response = await fetchRecruitDetail(Number(recruitId))
         console.log('Activity detail:', response)
+        const responseStatus = await fetchRecruitStatus(Number(recruitId))
+        setInterviewStatus(responseStatus.msg)
 
         if (response.data && response.code === 200) {
           setActivity(response.data)
@@ -451,8 +459,11 @@ const RecruitDetail: React.FC = () => {
                   )}
                 </div>
 
-                <Divider className="action-divider" />
 
+
+                <Divider className="action-divider" />
+                
+                
                 <div className="contact-section">
                   <h3 className="action-title">联系我们</h3>
                   <p className="contact-item">邮箱：2609242369@qq.com</p>
@@ -486,6 +497,78 @@ const RecruitDetail: React.FC = () => {
                       {activity.description || '暂无详细描述'}
                     </Paragraph>
                   </div>
+                  
+                  <div className="progress-section">
+                  <Typography.Title level={4} className="section-title">
+                  申请进度
+                  </Typography.Title>
+                    <Timeline
+  mode="horizontal"
+  style={{
+    padding: '0 20px',
+    position: 'relative', 
+  }}
+>
+                      <Timeline.Item
+                        className={currentStatusIndex >= 2 ? 'ant-timeline-item-active' : ''}
+                        color={currentStatusIndex >= 1 ? 'blue' : 'gray'}
+                        dot={currentStatusIndex >= 1 ? 
+                          <CheckCircleOutlined style={{ fontSize: '24px' }}/> : 
+                          <ClockCircleOutlined style={{ fontSize: '24px' }}/>}
+                      >
+                        <div className="timeline-item-content">
+                          <div>提交报名表</div>
+                        </div>
+                      </Timeline.Item>
+                      <Timeline.Item
+                        className={currentStatusIndex >= 3 ? 'ant-timeline-item-active' : ''}
+                        color={currentStatusIndex >= 2 ? 'blue' : 'gray'}
+                        dot={currentStatusIndex >= 2 ? 
+                          <CheckCircleOutlined style={{ fontSize: '24px' }}/> : 
+                          <ClockCircleOutlined style={{ fontSize: '24px' }}/>}
+                      >
+                        <div className="timeline-item-content">
+                          <div>一轮面试</div>
+                          {interviewStatus === 'first_interview' && 
+                            <Text type="secondary" style={{ fontSize: 12 }}>10/15-10/20</Text>}
+                        </div>
+                      </Timeline.Item>
+                      <Timeline.Item
+                        className={currentStatusIndex >= 4? 'ant-timeline-item-active' : ''}
+                        color={currentStatusIndex >= 3 ? 'blue' : 'gray'}
+                        dot={currentStatusIndex >= 3 ? 
+                          <CheckCircleOutlined style={{ fontSize: '24px' }}/> : 
+                          <ClockCircleOutlined style={{ fontSize: '24px' }}/>}
+                      >
+                        <div className="timeline-item-content">
+                          <div>二轮面试</div>
+                        </div>
+                      </Timeline.Item>
+                      <Timeline.Item
+                        className={currentStatusIndex >= 5? 'ant-timeline-item-active' : ''}
+                        color={currentStatusIndex >= 4 ? 'blue' : 'gray'}
+                        dot={currentStatusIndex >= 4 ? 
+                          <CheckCircleOutlined style={{ fontSize: '24px' }}/> : 
+                          <ClockCircleOutlined style={{ fontSize: '24px' }}/>}
+                      >
+                        <div className="timeline-item-content">
+                          <div>考核阶段</div>
+                        </div>
+                      </Timeline.Item>
+                      <Timeline.Item
+                        className={currentStatusIndex >= 5? 'ant-timeline-item-active' : ''}
+                        color={currentStatusIndex >= 5 ? 'blue' : 'gray'}
+                        dot={currentStatusIndex >= 5 ? 
+                          <CheckCircleOutlined style={{ fontSize: '24px' }}/> : 
+                          <ClockCircleOutlined style={{ fontSize: '24px' }}/>}
+                      >
+                        <div className="timeline-item-content">
+                          <div>正式加入</div>
+                        </div>
+                      </Timeline.Item>
+                    </Timeline>
+                  </div>
+
                 </div>
               </Card>
             </Col>

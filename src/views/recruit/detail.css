@@ -322,3 +322,65 @@
     position: static;
   }
 }
+
+/* 进度时间轴样式 */
+.progress-section {
+  margin: 20px 0;
+}
+
+/* 时间轴容器 */
+.ant-timeline-horizontal {
+  display: flex;
+  padding: 0 20px;
+}
+
+/* 时间轴项 */
+.ant-timeline-item {
+  flex: 0 1 auto;
+  min-width: 140px;
+  padding: 0 24px;
+}
+
+/* 时间轴连接线 */
+.ant-timeline-item {
+  position: relative;
+  flex: 0 1 auto;
+  min-width: 140px;
+  padding: 0 24px;
+  padding-top: 10px;  /* 增加顶部空间放置节点 */
+  padding-left: 3px;
+}
+
+/* 时间轴连接线 */
+.ant-timeline-item-tail {
+  border-top: 2px solid rgba(15, 14, 14, 0.15) !important;
+  display: block !important;
+  height: 2px;
+  left: 80px!important;
+  top: 53% !important;          /* 垂直居中 */
+  transform: translateY(-50%);  /* 微调位置 */
+  width: calc(100% - 2px);    /* 动态计算宽度 */
+}
+.ant-timeline-item-active .ant-timeline-item-tail {
+  border-top-color: #1677ff !important;
+}
+.ant-timeline-item:last-child .ant-timeline-item-tail {
+  display: none !important;
+}
+
+/* 时间轴节点 */
+.ant-timeline-item-head {
+  top: 8px !important;
+  left: 70px!important;
+  z-index: 1;  /* 确保节点在连接线上方 */
+}
+
+/* 时间轴内容容器 */
+.timeline-item-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 32px;  /* 增大与节点的间距 */
+  text-align: center;
+  min-width: 80px;
+}

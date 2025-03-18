@@ -17,6 +17,9 @@ export const fetchRecruitList = async () => {
 export const fetchRecruitDetail = async (id: number) => {
   return request.get<Recruit>(baseURL + 'detail/' + id)
 }
+export const fetchRecruitStatus = async (id: number) => {
+  return request.get<Recruit>(baseURL + 'status/' + id)
+}
 
 export interface RecruitRegisterReq {
   firstChoose: string // 第一志愿
