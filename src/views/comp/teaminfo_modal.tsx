@@ -509,13 +509,13 @@ const TeamInfoModal: React.FC<TeamModalProps> = ({
                 const response = await getTeamMaterialsUploadUrl(teamInfo.id)
                 if (response.code === 200 && response.data) {
                   try {
-                    const formData = new FormData()
-                    formData.append('file', file)
+                    // const formData = new FormData()
+                    // formData.append('file', file)
                     console.log('上传链接:', response.data)
                     console.log('上传文件:', file)
                     const uploadResponse = await fetch(response.data, {
                       method: 'PUT',
-                      body: formData,
+                      body: file,
                       redirect: 'follow',
                     })
 
