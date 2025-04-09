@@ -285,7 +285,7 @@ const HomePage = React.memo(() => {
                     2025年福州大学服务外包与软件设计校赛
                   </Title>
                   <Paragraph type="secondary" style={{ marginBottom: '16px' }}>
-                    <div>时间：2025年3月15日 - 2025年4月9日</div>
+                    <div>时间：2025年3月15日 - 2025年4月16日</div>
                     <div>地点：福州大学</div>
                   </Paragraph>
                   <Paragraph

@@ -446,7 +446,7 @@ const CompPage = React.memo(() => {
               marginBottom: '2rem',
             }}
           >
-            比赛报名已开放，截止日期为2024年4月30日。组队完成后请点击下方"立即报名"按钮。
+            比赛报名已开放，截止日期为2025年4月16日。组队完成后请点击下方"立即报名"按钮。
           </Paragraph>
 
           <div className="flex flex-wrap gap-4">
