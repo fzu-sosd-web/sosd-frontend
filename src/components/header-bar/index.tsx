@@ -20,9 +20,10 @@ import {
 } from '@ant-design/icons'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-
+import { API_BASE_URL } from '@/constant/web'
 import sosd from '@/assets/logo.png'
 import { useLoginStore } from '@/store/login'
+import { usePermission } from '@/hooks/usePermission'
 
 const { Text } = Typography
 
@@ -48,6 +49,7 @@ const navItems: MenuItem[] = [
 ]
 
 const HeaderBar: React.FC = () => {
+  const { isAdmin } = usePermission()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -109,9 +111,9 @@ const HeaderBar: React.FC = () => {
       disabled: !isLogin,
       onClick: () => navigate(RoutePath.Profile),
     },
-    userInfo?.name === '游文馨'
+    isAdmin() == true
       ? {
-          label: '管理端-纳新页面',
+          label: '管理端',
           key: 'admin-recruit',
           onClick: () => navigate(RoutePath.AdminRecruit),
         }
@@ -131,8 +133,12 @@ const HeaderBar: React.FC = () => {
           key: 'login',
           icon: <LoginOutlined />,
           onClick: () => {
-            window.location.href =
-              'https://sso.fzu.edu.cn/login?service=https://sosd.fzu.edu.cn/sso/session'
+            if (API_BASE_URL == 'http://81.68.212.127:5083') {
+              navigate(RoutePath.Login)
+            } else {
+              window.location.href =
+                'https://sso.fzu.edu.cn/login?service=https://sosd.fzu.edu.cn/sso/session'
+            }
           },
         },
   ]

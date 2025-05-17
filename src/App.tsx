@@ -19,23 +19,48 @@ import RecruitDetail from './views/recruit/detail'
 import AboutUs from './views/aboutus'
 import AdminRecruitPage from './views/admin/recruit'
 import AdminRecruitDetailPage from './views/admin/recruit/detail'
-import AuthWrapLogin from './components/auth-wrap-login'
+import { API_BASE_URL } from './constant/web'
+import { route } from './utils'
+import { routes } from './routes'
 
 // import PersonPage from './views/personal'
 
 const App = () => {
+  const routeList = route.flattenRoutes(routes)
   return (
     <BrowserRouter>
       <Routes>
-        {/* 登录/注册页面，没有HeaderBar */}
-        <Route path={RoutePath.Login} element={<LoginPage />} />
-        <Route path={RoutePath.Register} element={<LoginPage />} />
+        {API_BASE_URL == 'http://81.68.212.127:5083' && (
+          <Route path={RoutePath.Login} element={<LoginPage />} />
+        )}
         <Route path={RoutePath.SSOLogin} element={<SSOSession />} />
-
-        {/* 使用MainLayout的页面 */}
         <Route element={<MainLayout />}>
           {/* 首页重定向 */}
           <Route index element={<Navigate to={RoutePath.Home} />} />
+          {routeList.map((item) => (
+            <Route
+              key={item.path}
+              path={item.path}
+              element={
+                <AuthWrap permission={item.permission}>{item.element}</AuthWrap>
+              }
+            />
+          ))}
+          {/* 404页面 */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  )
+}
+
+export default App
+
+{
+  /* 首页重定向 */
+}
+{
+  /* <Route index element={<Navigate to={RoutePath.Home} />} />
           <Route path={RoutePath.Home} element={<HomePage />} />
           <Route path={RoutePath.Competition} element={<CompPage />} />
           <Route
@@ -67,21 +92,6 @@ const App = () => {
             element={<CompetitionListPage />}
           ></Route>
           <Route path={RoutePath.Recruit} element={<RecruitListPage />} />
-          <Route
-            path={RoutePath.RecruitDetail}
-            element={
-              <AuthWrapLogin>
-                <RecruitDetail />
-              </AuthWrapLogin>
-            }
-          />
-          <Route path={RoutePath.AboutUs} element={<AboutUs />} />
-          {/* 404页面 */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  )
+          <Route path={RoutePath.RecruitDetail} element={<RecruitDetail />} />
+          <Route path={RoutePath.AboutUs} element={<AboutUs />} /> */
 }
-
-export default App

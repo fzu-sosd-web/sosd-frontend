@@ -21,6 +21,10 @@ export const loginBySso = (form: LoginRes) => {
   return request.post<LoginResp>(`${baseURL}/login/sso`, form)
 }
 
+export const login = (form: any) => {
+  return request.post<LoginResp>(`${baseURL}/login`, form)
+}
+
 export const fetchIUserInfo = (withAvatar: boolean) => {
   return request.get<IUserInfo>(`${baseURL}/info?withAvatar=${withAvatar}`, {})
 }

@@ -1,4 +1,4 @@
-import { homeRoutes } from './home'
-import { loginRoutes } from './login'
+import { AdminRoutes } from './admin'
+import { ClientRoutes } from './client'
 
-export const routes = [...homeRoutes, ...loginRoutes]
+export const routes = [...AdminRoutes, ...ClientRoutes]

@@ -10,6 +10,8 @@ export const setToken = (token: string) => {
 
 export const removeToken = () => {
   localStorage.removeItem(TOKEN_KEY)
+  // console.log('清除token')
+  // console.trace('调用 removeToken 的堆栈如下：')
 }
 
 export const setIsLogin = (need: boolean) => {

@@ -66,7 +66,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
       if (loginMethod === 'password') {
         // 学号+密码登录
         loginData = {
-          studentId: values.id,
+          id: values.id,
+          studentId: values.studentId,
+          email: values.email,
           password: values.password,
         }
       } else {
@@ -154,7 +156,31 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
             >
               <Input
                 size="large"
-                placeholder="学号"
+                placeholder="id"
+                prefix={<IdcardOutlined />}
+                autoComplete="off"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="email"
+              rules={[{ required: true, message: '请输入邮箱' }]}
+            >
+              <Input
+                size="large"
+                placeholder="email"
+                prefix={<IdcardOutlined />}
+                autoComplete="off"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="studentId"
+              rules={[{ required: true, message: '请输入学号' }]}
+            >
+              <Input
+                size="large"
+                placeholder="studentId"
                 prefix={<IdcardOutlined />}
                 autoComplete="off"
               />
@@ -166,7 +192,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
             >
               <Input.Password
                 size="large"
-                placeholder="密码"
+                placeholder="password"
                 prefix={<LockOutlined />}
               />
             </Form.Item>

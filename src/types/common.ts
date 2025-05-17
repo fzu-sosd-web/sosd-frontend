@@ -4,6 +4,8 @@ export interface RouteType {
   name: string
   /**路由 */
   path: string
+  /**权限 */
+  permission?: string
   /**路由组件 */
   element?: JSX.Element
   // permission?: string;

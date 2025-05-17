@@ -3,7 +3,8 @@ import { devtools } from 'zustand/middleware'
 import { IUserInfo } from '@/types'
 import { loginApi } from '@/apis'
 import { token } from '@/utils/'
-import { loginBySso } from '@/apis/login'
+import { login, loginBySso } from '@/apis/login'
+import { API_BASE_URL } from '@/constant/web'
 
 interface LoginStore {
   // 状态
@@ -106,40 +107,79 @@ export const useLoginStore = create<LoginStore>()(
       // 登录
       login: async (ticket: string) => {
         set({ loading: true })
+        if (API_BASE_URL == 'http://81.68.212.127:5083') {
+          try {
+            const res = await login(ticket)
 
-        try {
-          const res = await loginBySso({ ticket })
+            if (res.code === 200 && res.data) {
+              // 登录成功，设置用户信息
+              const { token: userToken, user: userInfo } = res.data
+              console.log('登录成功:', userInfo)
+              // 保存token
+              if (userToken) {
+                token.setToken(userToken)
+                console.log('getToken', token.getToken())
+              }
 
-          if (res.code === 200 && res.data) {
-            // 登录成功，设置用户信息
-            const { token: userToken, user: userInfo } = res.data
-            console.log('登录成功:', userInfo)
-            // 保存token
-            if (userToken) {
-              token.setToken(userToken)
+              // 更新状态
+              set({
+                userInfo: userInfo,
+                isLogin: true,
+                loading: false,
+              })
+
+              token.setIsLogin(true)
+              console.log('isLogin', token.getIsLogin())
+
+              token.setAvatar(userInfo.avatarBase64 || '')
+
+              return true
+            } else {
+              // 登录失败
+              console.error('登录失败:', res.msg || '未知错误')
+              set({ loading: false })
+              return false
             }
-
-            // 更新状态
-            set({
-              userInfo: userInfo,
-              isLogin: true,
-              loading: false,
-            })
-
-            token.setIsLogin(true)
-            token.setAvatar(userInfo.avatarBase64 || '')
-
-            return true
-          } else {
-            // 登录失败
-            console.error('登录失败:', res.msg || '未知错误')
+          } catch (error) {
+            console.error('登录失败:', error)
             set({ loading: false })
             return false
           }
-        } catch (error) {
-          console.error('登录失败:', error)
-          set({ loading: false })
-          return false
+        } else {
+          try {
+            const res = await loginBySso({ ticket })
+
+            if (res.code === 200 && res.data) {
+              // 登录成功，设置用户信息
+              const { token: userToken, user: userInfo } = res.data
+              console.log('登录成功:', userInfo)
+              // 保存token
+              if (userToken) {
+                token.setToken(userToken)
+              }
+
+              // 更新状态
+              set({
+                userInfo: userInfo,
+                isLogin: true,
+                loading: false,
+              })
+
+              token.setIsLogin(true)
+              token.setAvatar(userInfo.avatarBase64 || '')
+
+              return true
+            } else {
+              // 登录失败
+              console.error('登录失败:', res.msg || '未知错误')
+              set({ loading: false })
+              return false
+            }
+          } catch (error) {
+            console.error('登录失败:', error)
+            set({ loading: false })
+            return false
+          }
         }
       },
 

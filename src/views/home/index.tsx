@@ -28,6 +28,7 @@ import { RoutePath } from '@/constant/routes'
 import { useLoginStore } from '@/store/login'
 
 import schoolcomp2025 from '@/assets/2025schoolcomp.png'
+import { token } from '@/utils'
 
 const { Title, Paragraph, Text } = Typography
 
@@ -37,6 +38,7 @@ const HomePage = React.memo(() => {
   const [modalShown, setModalShown] = useState(false)
 
   useEffect(() => {
+    console.log(token.getToken())
     // 检查用户是否已登录且未填写邮箱，并且弹窗未显示过
     if (userInfo && !userInfo.email && !modalShown) {
       setModalShown(true)

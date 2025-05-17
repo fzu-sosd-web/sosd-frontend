@@ -16,7 +16,7 @@ export interface IRegisterForm {
 /**角色 */
 type role = {
   id: string
-  name: string
+  roleid: string
   description: string
 }
 
@@ -41,7 +41,7 @@ export type IUserInfo = {
   studentId: string
   openid: string
   lastModifyTime: string
-  role: Array<role>
+  roles: Array<role>
   permissions: Array<permission>
   token: string
 }
